@@ -1,0 +1,49 @@
+@model QuizTakeViewModel
+
+@{
+    ViewData["Title"] = Model.QuizTitle;
+}
+
+<div class="container py-4">
+    <h2>@Model.QuizTitle</h2>
+
+    <form asp-action="Take" method="post">
+        <input type="hidden" asp-for="QuizId" />
+        <input type="hidden" asp-for="QuizTitle" />
+
+        @for (int i = 0; i < Model.Questions.Count; i++)
+        {
+            <div class="card mb-3">
+                <div class="card-body">
+                    <input type="hidden" asp-for="Questions[i].QuestionId" />
+                    <input type="hidden" asp-for="Questions[i].QuestionText" />
+                    <input type="hidden" asp-for="Questions[i].OptionA" />
+                    <input type="hidden" asp-for="Questions[i].OptionB" />
+                    <input type="hidden" asp-for="Questions[i].OptionC" />
+                    <input type="hidden" asp-for="Questions[i].OptionD" />
+
+                    <h6 class="mb-3">@(i + 1). @Model.Questions[i].QuestionText</h6>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="Questions[@i].SelectedOption" id="q@(i)_a" value="A" required>
+                        <label class="form-check-label" for="q@(i)_a">@Model.Questions[i].OptionA</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="Questions[@i].SelectedOption" id="q@(i)_b" value="B">
+                        <label class="form-check-label" for="q@(i)_b">@Model.Questions[i].OptionB</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="Questions[@i].SelectedOption" id="q@(i)_c" value="C">
+                        <label class="form-check-label" for="q@(i)_c">@Model.Questions[i].OptionC</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="Questions[@i].SelectedOption" id="q@(i)_d" value="D">
+                        <label class="form-check-label" for="q@(i)_d">@Model.Questions[i].OptionD</label>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <button type="submit" class="btn btn-primary">Submit Quiz</button>
+    </form>
+</div>

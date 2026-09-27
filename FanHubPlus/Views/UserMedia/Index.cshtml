@@ -1,0 +1,111 @@
+@model IEnumerable<MediaItem>
+@{
+    ViewData["Title"] = "Media Hub | FanHub+";
+
+    string GetPoster(MediaItem item)
+    {
+        if (!string.IsNullOrEmpty(item.FileUrl) && (item.FileUrl.EndsWith(".png") || item.FileUrl.EndsWith(".jpg") || item.FileUrl.EndsWith(".jpeg") || item.FileUrl.EndsWith(".webp")))
+        {
+            return item.FileUrl;
+        }
+
+        var title = (item.Title ?? "").ToLower();
+        var cat = (item.Category?.Name ?? "").ToLower();
+
+        if (title.Contains("stranger")) return "/images/explore/stranger-things.png";
+        if (title.Contains("blackpink")) return "/images/explore/blackpink.png";
+        if (title.Contains("batman") || title.Contains("spider") || cat.Contains("comic")) return "/images/explore/spider-man.png";
+        if (title.Contains("solo") || title.Contains("leveling")) return "/images/explore/solo-leveling.png";
+        if (title.Contains("one piece") || title.Contains("luffy") || cat.Contains("manga")) return "/images/explore/one-piece.png";
+        if (title.Contains("genshin") || cat.Contains("game")) return "/images/explore/genshin-impact.png";
+        if (title.Contains("jujutsu") || title.Contains("demon") || cat.Contains("anime")) return "/images/explore/jujutsu-kaisen.png";
+
+        return "/images/explore/event-hero-convention.jpg";
+    }
+}
+
+<main class="explore-page py-4">
+    <div class="container-fluid site-container">
+        <!-- HEADER BAR -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+            <div>
+                <span class="section-label">FANDOM MEDIA CENTER</span>
+                <h1 class="h2 fw-extrabold text-white mb-1" style="font-family: 'Manrope', sans-serif;">Trailers & Media Library</h1>
+                <p class="text-muted mb-0 small">Watch official trailers, gameplay clips, character showcases and soundtracks.</p>
+            </div>
+            <div class="btn-group rounded-pill overflow-hidden border border-secondary border-opacity-25" role="group">
+                <a asp-action="Index" class="btn btn-sm px-3 text-white fw-bold active" style="background: linear-gradient(135deg, #ff2e93, #8b5cf6);"><i class="bi bi-collection-play me-1"></i> All</a>
+                <a asp-action="Videos" class="btn btn-sm px-3 text-white fw-semibold" style="background: rgba(255, 255, 255, 0.08);"><i class="bi bi-film me-1"></i> Videos</a>
+                <a asp-action="Trailers" class="btn btn-sm px-3 text-white fw-semibold" style="background: rgba(255, 255, 255, 0.08);"><i class="bi bi-play-btn me-1"></i> Trailers</a>
+                <a asp-action="Audio" class="btn btn-sm px-3 text-white fw-semibold" style="background: rgba(255, 255, 255, 0.08);"><i class="bi bi-music-note-beamed me-1"></i> Audio</a>
+                <a asp-action="Gallery" class="btn btn-sm px-3 text-white fw-semibold" style="background: rgba(255, 255, 255, 0.08);"><i class="bi bi-images me-1"></i> Gallery</a>
+            </div>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="cyber-nebula-card p-5 text-center rounded-4">
+                <i class="bi bi-collection-play display-1 text-primary mb-3"></i>
+                <h4 class="text-white">No media items found</h4>
+                <p class="text-muted mb-0">Check back soon for new trailers and fandom video content.</p>
+            </div>
+        }
+        else
+        {
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                @foreach (var item in Model)
+                {
+                    var posterUrl = GetPoster(item);
+                    var badgeColor = "linear-gradient(135deg, #ff2e93, #8b5cf6)";
+                    if (item.MediaType == "Trailer") { badgeColor = "linear-gradient(135deg, #ec4899, #f43f5e)"; }
+                    else if (item.MediaType == "Audio") { badgeColor = "linear-gradient(135deg, #10b981, #059669)"; }
+                    else if (item.MediaType == "Gallery" || item.MediaType == "Image") { badgeColor = "linear-gradient(135deg, #3b82f6, #6366f1)"; }
+
+                    <div class="col reveal">
+                        <article class="cyber-nebula-card p-0 rounded-4 overflow-hidden h-100 d-flex flex-column shadow-lg">
+                            <!-- WIDESCREEN VIDEO THUMBNAIL (Sleek low height & wide width) -->
+                            <div class="position-relative overflow-hidden" style="height: 165px; background-image: url('@posterUrl'); background-size: cover; background-position: center;">
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(7, 7, 20, 0.5); backdrop-filter: blur(1px);">
+                                    @if (item.MediaType == "Audio")
+                                    {
+                                        <a asp-action="Details" asp-route-id="@item.MediaId" class="btn rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);">
+                                            <i class="bi bi-disc fs-4"></i>
+                                        </a>
+                                    }
+                                    else if (item.MediaType == "Gallery" || item.MediaType == "Image")
+                                    {
+                                        <a asp-action="Details" asp-route-id="@item.MediaId" class="btn rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; background: linear-gradient(135deg, #3b82f6, #6366f1); box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);">
+                                            <i class="bi bi-eye fs-4"></i>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-action="Details" asp-route-id="@item.MediaId" class="btn rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; background: linear-gradient(135deg, #ff2e93, #8b5cf6); box-shadow: 0 0 20px rgba(255, 46, 147, 0.6);">
+                                            <i class="bi bi-play-fill fs-3 ms-1"></i>
+                                        </a>
+                                    }
+                                </div>
+                                <span class="badge position-absolute top-0 end-0 m-2 px-2.5 py-1 rounded-pill text-uppercase fw-bold shadow-sm" style="background: @badgeColor; color: #ffffff; font-size: 0.65rem; letter-spacing: 0.5px;">@item.MediaType</span>
+                            </div>
+
+                            <!-- CARD BODY -->
+                            <div class="p-3 d-flex flex-column flex-grow-1">
+                                <h3 class="h6 fw-bold text-white mb-1 text-truncate" title="@item.Title">
+                                    <a asp-action="Details" asp-route-id="@item.MediaId" class="text-white text-decoration-none">@item.Title</a>
+                                </h3>
+                                <p class="text-muted small mb-2"><i class="bi bi-grid me-1 text-primary"></i> Category: <span class="text-secondary fw-semibold">@(item.Category?.Name ?? "Uncategorized")</span></p>
+
+                                <div class="mt-auto pt-2 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                                    <small class="text-muted" style="font-size: 0.75rem;"><i class="bi bi-clock me-1"></i> @item.UploadedAt.ToString("MMM dd, yyyy")</small>
+                                    <a asp-action="Details" asp-route-id="@item.MediaId" class="cyber-read-btn py-1 px-3 fs-6" style="font-size: 0.8rem !important;">
+                                        Watch Video <i class="bi bi-play-fill ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</main>

@@ -1,0 +1,87 @@
+@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Create Account | FanHub+";
+}
+
+<div class="d-flex align-items-center justify-content-center py-4 my-auto" style="min-height: calc(100vh - 140px); position: relative; z-index: 2;">
+    <div class="card cosmic-auth-card shadow-lg border-0" style="max-width: 490px; width: 100%;">
+        
+        <!-- Header Star Icon -->
+        <div class="text-center mb-4 pt-1">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 64px; height: 64px; background: linear-gradient(135deg, #FF4D8D, #8B5CF6); box-shadow: 0 8px 25px rgba(255, 77, 141, 0.35);">
+                <i class="bi bi-star-fill text-white fs-3"></i>
+            </div>
+            <h3 class="fw-extrabold mb-1" style="font-family: 'Manrope', sans-serif; font-size: 1.65rem;">Create Account ✨</h3>
+            <p class="auth-muted small mb-0">Join FanHub+ — your fandom mission begins</p>
+        </div>
+
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small text-center" role="alert"></div>
+
+            <div class="row g-2.5">
+                <!-- Username / Full Name -->
+                <div class="col-6 mb-2 text-start">
+                    <label asp-for="Input.FullName" class="form-label small fw-bold mb-1"><i class="bi bi-person me-1 text-primary"></i> Username</label>
+                    <input asp-for="Input.FullName" class="form-control py-2 px-3" placeholder="cosmicfan22" />
+                    <span asp-validation-for="Input.FullName" class="text-danger small"></span>
+                </div>
+
+                <!-- Email -->
+                <div class="col-6 mb-2 text-start">
+                    <label asp-for="Input.Email" class="form-label small fw-bold mb-1"><i class="bi bi-envelope me-1 text-primary"></i> Email</label>
+                    <input asp-for="Input.Email" class="form-control py-2 px-3" autocomplete="username" placeholder="you@email.com" />
+                    <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <!-- Avatar (Profile Picture) Field -->
+            <div class="mb-2 text-start">
+                <label asp-for="Input.ProfilePicture" class="form-label small fw-bold mb-1"><i class="bi bi-image me-1 text-primary"></i> Profile Avatar (Optional)</label>
+                <input asp-for="Input.ProfilePicture" type="file" class="form-control py-1.5 px-3" accept="image/*" />
+                <span asp-validation-for="Input.ProfilePicture" class="text-danger small"></span>
+            </div>
+
+            <div class="row g-2.5">
+                <!-- Password -->
+                <div class="col-6 mb-2 text-start">
+                    <label asp-for="Input.Password" class="form-label small fw-bold mb-1"><i class="bi bi-lock me-1 text-primary"></i> Password</label>
+                    <input asp-for="Input.Password" class="form-control py-2 px-3" autocomplete="new-password" placeholder="••••••••" />
+                    <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="col-6 mb-2 text-start">
+                    <label asp-for="Input.ConfirmPassword" class="form-label small fw-bold mb-1"><i class="bi bi-shield-lock me-1 text-primary"></i> Confirm</label>
+                    <input asp-for="Input.ConfirmPassword" class="form-control py-2 px-3" autocomplete="new-password" placeholder="••••••••" />
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <!-- Mission Terms Checkbox -->
+            <div class="form-check my-3 text-start">
+                <input class="form-check-input" type="checkbox" id="termsCheck" required checked />
+                <label class="form-check-label auth-muted small" for="termsCheck">
+                    I agree to the <span style="color: #FF4D8D; font-weight: 700;">Mission Terms & Privacy</span>
+                </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button id="registerSubmit" type="submit" class="w-100 py-2.5 btn text-white fw-bold text-uppercase tracking-wider d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, #FF4D8D, #8B5CF6); border-radius: 14px; border: none; box-shadow: 0 6px 20px rgba(255, 77, 141, 0.35); font-size: 0.9rem; font-weight: 800;">
+                <i class="bi bi-rocket-takeoff-fill"></i> Start Mission
+            </button>
+        </form>
+
+        <!-- Footer Log In Link -->
+        <div class="text-center mt-3 pt-3 border-top border-secondary border-opacity-25">
+            <p class="auth-muted small mb-0">
+                Already have an account? 
+                <a asp-page="./Login" class="fw-bold text-decoration-none ms-1" style="color: #FF4D8D;">Log in &rarr;</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

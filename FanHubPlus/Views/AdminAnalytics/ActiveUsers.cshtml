@@ -1,0 +1,70 @@
+@using FanHubPlus.ViewModels
+@model PagedList<ActiveUserRow>
+
+@{
+    ViewData["Title"] = "Active Users";
+    Layout = "_AdminLayout";
+    int days = ViewBag.Days;
+    var q = Context.Request.Query["q"].ToString();
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2>Active Users</h2>
+        <a asp-action="Index" class="btn btn-secondary">Back to Analytics</a>
+    </div>
+    <p class="text-muted">
+        Users who viewed content or merchandise, bookmarked, used the chatbot or were logged as active in the last @days days.
+        @Model.TotalCount of @ViewBag.TotalUsers registered users.
+    </p>
+
+    <form method="get" class="row g-2 mb-3" role="search">
+        <div class="col-md-4">
+            <input type="search" name="q" value="@q" class="form-control" placeholder="Search name, username or email" aria-label="Search active users" />
+        </div>
+        <div class="col-md-2">
+            <select name="days" class="form-select" aria-label="Time window">
+                @foreach (var d in new[] { 7, 30, 90 })
+                {
+                    <option value="@d" selected="@(d == days)">Last @d days</option>
+                }
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Apply</button>
+            <a asp-action="ActiveUsers" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                    <th>Last Active</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td><strong>@user.UserName</strong></td>
+                        <td>@user.FullName</td>
+                        <td>@user.Email</td>
+                        <td><span class="badge bg-primary">@user.Actions</span></td>
+                        <td>@user.LastActive.ToString("yyyy-MM-dd HH:mm")</td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="5" class="text-center text-muted py-4">No active users in this period.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <partial name="_Pager" model="(IPagedList)Model" />
+</div>

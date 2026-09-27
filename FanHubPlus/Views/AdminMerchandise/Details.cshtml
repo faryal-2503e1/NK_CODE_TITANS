@@ -1,0 +1,82 @@
+﻿@model MerchandiseItem
+
+@{
+    ViewData["Title"] = Model.Name;
+    // Admin* controllers already get _AdminLayout from _ViewStart.cshtml.
+    // This view previously forced "_DashboardLayout" (the member-facing
+    // sidebar), which is why Admins saw a different/extra navbar+sidebar
+    // when opening a merchandise item's details from the Admin panel.
+    var isBookmarked = ViewBag.IsBookmarked as bool? ?? false;
+}
+
+<div class="container-fluid px-4 py-4 text-white">
+    <!-- Back Button Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <a asp-action="Index" asp-controller="AdminMerchandise" class="btn btn-sm rounded-pill px-3 py-2 text-white shadow-sm d-inline-flex align-items-center gap-2" style="background-color: #1a162b; border: 1px solid #3b3254;">
+            <i class="fa-solid fa-arrow-left"></i> Back to Catalog
+        </a>
+        <div class="d-flex align-items-center gap-2">
+            @if (Model.IsUpcoming)
+            {
+                <span class="badge px-3 py-2 rounded-pill fw-semibold" style="background-color: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #b45309;">
+                    <i class="fa-solid fa-clock me-1"></i> Upcoming Release
+                </span>
+            }
+        </div>
+    </div>
+
+    <!-- Main Detail Card -->
+    <div class="card shadow-lg border-0 rounded-4 p-4 position-relative overflow-hidden" style="background: linear-gradient(135deg, #12101e 0%, #1e1b38 100%); border: 1px solid #3b3254 !important;">
+        <div class="row g-4 align-items-center">
+            <!-- Merchandise Image (Controlled Size) -->
+            <div class="col-lg-5 text-center">
+                <div class="p-3 rounded-4 shadow-inner d-flex align-items-center justify-content-center" style="background-color: #1a162b; border: 1px solid #2d2640; min-height: 280px;">
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" class="img-fluid rounded-3 shadow" alt="@Model.Name" style="max-height: 260px; width: 100%; object-fit: contain;" />
+                    }
+                    else
+                    {
+                        <div class="py-5 text-muted">
+                            <i class="fa-solid fa-image fs-1 mb-2"></i>
+                            <p class="small mb-0">No image available</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Merchandise Info -->
+            <div class="col-lg-7">
+                <div class="mb-3">
+                    <span class="text-uppercase fw-bold small" style="color: #c084fc; letter-spacing: 1px;">
+                        <i class="fa-solid fa-tag me-1"></i> Category: @(Model.Category?.Name ?? "General")
+                    </span>
+                </div>
+
+                <h1 class="fw-bold text-white mb-3">@Model.Name</h1>
+
+                <p class="text-muted fst-italic mb-4">Explore this exclusive merchandise item from your favorite fandom collection!</p>
+
+                <!-- Actions Row -->
+                <div class="d-flex flex-wrap align-items-center gap-3 pt-3 border-top border-secondary border-opacity-20">
+                    <!-- Share Button -->
+                    <a href="/share?title=@Uri.EscapeDataString(Model.Name)&url=/merchandise/@Model.ItemId" class="btn px-4 py-2 rounded-pill fw-semibold text-white d-inline-flex align-items-center gap-2 shadow-sm" style="background-color: #1a162b; border: 1px solid #3b3254;">
+                        <i class="fa-solid fa-share-nodes text-primary"></i> Share Item
+                    </a>
+
+                    <!-- Bookmark Toggle Button -->
+                    <button type="button" class="btn px-4 py-2 rounded-pill fw-semibold text-white d-inline-flex align-items-center gap-2 shadow-sm" style="background-color: #1a162b; border: 1px solid #3b3254;">
+                        @if (isBookmarked)
+                        {
+                            <i class="fa-solid fa-bookmark text-warning"></i> <span>Bookmarked</span>
+                        }
+                        else
+                        {
+                            <i class="fa-regular fa-bookmark text-muted"></i> <span>Save Bookmark</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

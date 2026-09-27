@@ -1,0 +1,66 @@
+@model PagedList<MediaRating>
+
+@{
+    ViewData["Title"] = "Media Ratings";
+    Layout = "_AdminLayout";
+    var users = ViewBag.Users as Dictionary<string, string> ?? new Dictionary<string, string>();
+    var stars = Context.Request.Query["stars"].ToString();
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Media Ratings</h2>
+        <a asp-action="Index" class="btn btn-secondary">Back to Media List</a>
+    </div>
+
+    <form method="get" class="row g-2 mb-3">
+        <div class="col-md-4">
+            <select name="mediaId" class="form-select" aria-label="Filter by media" asp-items="ViewBag.MediaList">
+                <option value="">All media</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="stars" class="form-select" aria-label="Filter by stars">
+                <option value="">Any rating</option>
+                @for (var i = 5; i >= 1; i--)
+                {
+                    <option value="@i" selected="@(stars == i.ToString())">@i star(s)</option>
+                }
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a asp-action="Ratings" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Media Title</th>
+                    <th>User</th>
+                    <th>Rating (1-5)</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var rating in Model)
+                {
+                    <tr>
+                        <td><strong>@rating.MediaItem?.Title</strong></td>
+                        <td>@(users.TryGetValue(rating.UserId, out var name) ? name : "Unknown")</td>
+                        <td><span class="badge bg-success">@rating.Rating / 5</span></td>
+                        <td>@rating.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="4" class="text-center text-muted py-4">No ratings found.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <partial name="_Pager" model="(IPagedList)Model" />
+</div>

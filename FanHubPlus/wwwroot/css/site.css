@@ -1,0 +1,193 @@
+/* =========================================================
+   GLOBAL NEBULA BLOOM CYBER CARD DESIGN SYSTEM
+   Matches Reference Image 2: Glowing Neon Pink/Purple Borders,
+   Translucent Dark Glass Surfaces, Tech HUD Corners, Cyber Pills
+   ========================================================= */
+
+:root {
+    --cyber-neon-pink: #ff2e93;
+    --cyber-neon-purple: #8b5cf6;
+    --cyber-neon-violet: #a855f7;
+    --cyber-neon-cyan: #00f0ff;
+    --cyber-card-bg: rgba(18, 14, 38, 0.88);
+    --cyber-card-border: rgba(255, 46, 147, 0.55);
+    --cyber-glow-shadow: 0 0 25px rgba(255, 46, 147, 0.28);
+}
+
+/* Global Cards across the entire site */
+.card,
+.content-card,
+.nebula-glow-card,
+.event-card,
+.merch-card,
+.category-card,
+.fandom-card,
+.character-card {
+    background: var(--cyber-card-bg) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 2px solid var(--cyber-card-border) !important;
+    border-radius: 24px !important;
+    box-shadow: var(--cyber-glow-shadow) !important;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    color: #ffffff !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.card:hover,
+.content-card:hover,
+.nebula-glow-card:hover,
+.event-card:hover,
+.merch-card:hover,
+.category-card:hover,
+.fandom-card:hover,
+.character-card:hover {
+    transform: translateY(-8px) scale(1.02) !important;
+    border-color: #ff2e93 !important;
+    box-shadow: 0 0 45px rgba(255, 46, 147, 0.5), 0 0 20px rgba(168, 85, 247, 0.4) !important;
+}
+
+/* HUD Image Container */
+.cyber-hud-image-wrap {
+    position: relative;
+    height: 190px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #090717;
+    border: 1px dashed rgba(168, 85, 247, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cyber-hud-corner-tl {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    color: #ff2e93;
+    font-size: 14px;
+    line-height: 1;
+    z-index: 3;
+}
+
+.cyber-hud-corner-br {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    color: #00f0ff;
+    font-size: 14px;
+    line-height: 1;
+    z-index: 3;
+}
+
+.cyber-hud-placeholder-label {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    background: rgba(7, 7, 20, 0.88);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    z-index: 3;
+    text-transform: uppercase;
+}
+
+/* Cyber Tag Badges */
+.cyber-pill-pink {
+    background: linear-gradient(135deg, #ff2e93, #ff65b2) !important;
+    color: #ffffff !important;
+    border-radius: 20px !important;
+    padding: 6px 14px !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    box-shadow: 0 0 12px rgba(255, 46, 147, 0.35) !important;
+}
+
+.cyber-pill-purple {
+    background: linear-gradient(135deg, #7028e4, #8b5cf6) !important;
+    color: #ffffff !important;
+    border-radius: 20px !important;
+    padding: 6px 14px !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.35) !important;
+}
+
+.cyber-pill-violet {
+    background: linear-gradient(135deg, #8b5cf6, #a855f7) !important;
+    color: #ffffff !important;
+    border-radius: 20px !important;
+    padding: 6px 14px !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    box-shadow: 0 0 12px rgba(168, 85, 247, 0.35) !important;
+}
+
+/* Bottom Action Buttons */
+.cyber-action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    margin-top: auto;
+    border-top: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.cyber-like-btn {
+    background: transparent;
+    border: none;
+    color: #ff2e93;
+    font-weight: 700;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cyber-save-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    color: #ffffff;
+    border-radius: 10px;
+    padding: 5px 14px;
+    font-weight: 600;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.25s ease;
+    text-decoration: none;
+}
+
+.cyber-save-btn:hover {
+    background: rgba(168, 85, 247, 0.25);
+    color: #ffffff;
+    border-color: #ff2e93;
+}
+
+.cyber-btn-read {
+    background: linear-gradient(135deg, #7028e4 0%, #8b5cf6 50%, #ff2e93 100%) !important;
+    border: none !important;
+    color: #ffffff !important;
+    border-radius: 25px !important;
+    padding: 6px 22px !important;
+    font-weight: 800 !important;
+    font-size: 15px !important;
+    box-shadow: 0 0 20px rgba(255, 46, 147, 0.4) !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cyber-btn-read:hover {
+    box-shadow: 0 0 32px rgba(255, 46, 147, 0.75) !important;
+    transform: translateY(-2px);
+    color: #ffffff !important;
+}

@@ -1,0 +1,157 @@
+@model Event
+
+@{
+    ViewData["Title"] = Model.Title;
+    // Admin* controllers already get _AdminLayout from _ViewStart.cshtml.
+    // This view previously forced "_DashboardLayout" (the member-facing
+    // sidebar), which is why Admins saw a different/extra navbar+sidebar
+    // when opening an event's details from the Admin panel.
+}
+
+<div class="container-fluid px-4 py-4 text-white">
+    <!-- Back Button Header -->
+    <div class="mb-4">
+        <a asp-action="Index" class="btn btn-sm rounded-pill px-3 py-2 text-white shadow-sm d-inline-flex align-items-center gap-2" style="background-color: #1a162b; border: 1px solid #3b3254;">
+            <i class="fa-solid fa-arrow-left"></i> Back to Events
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Event Details -->
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4 p-4 mb-4" style="background: linear-gradient(135deg, #12101e 0%, #1e1b38 100%); border: 1px solid #3b3254 !important;">
+                <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-2">
+                    <div>
+                        <span class="badge px-3 py-2 rounded-pill fw-semibold mb-2" style="background-color: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid #0369a1;">
+                            <i class="fa-solid fa-location-dot me-1"></i>@(string.IsNullOrEmpty(Model.City) ? "Location TBD" : Model.City)
+                        </span>
+                        <h1 class="fw-bold text-white mb-1">@Model.Title</h1>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <a asp-controller="UserShare" asp-action="Share"
+                           asp-route-title="@Model.Title"
+                           asp-route-url="@Url.Action("Details", "UserEvent", new { id = Model.EventId })"
+                           class="btn btn-sm rounded-pill px-3 py-2 text-white shadow-sm d-inline-flex align-items-center gap-1" style="background-color: #1a162b; border: 1px solid #3b3254;">
+                            <i class="fa-solid fa-share-nodes text-primary"></i> Share
+                        </a>
+                        <a asp-controller="UserEventChat" asp-action="Chat" asp-route-id="@Model.EventId"
+                           class="btn btn-sm rounded-pill px-3 py-2 text-white shadow-sm d-inline-flex align-items-center gap-1 fw-semibold" style="background-color: #7b2cbf; border: none;">
+                            <i class="fa-solid fa-comments"></i> Live Chat
+                        </a>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center text-muted mb-4 flex-wrap gap-4 pt-2">
+                    <div class="d-flex align-items-center gap-2"><i class="fa-regular fa-calendar-days" style="color: #c084fc;"></i><span>@Model.EventDate.ToString("dddd, MMMM dd, yyyy")</span></div>
+                    <div class="d-flex align-items-center gap-2"><i class="fa-regular fa-clock text-warning"></i><span>@Model.EventDate.ToString("hh:mm tt")</span></div>
+                </div>
+
+                <hr class="border-secondary opacity-25 my-4" />
+
+                <h5 class="fw-bold mb-3 text-white">About This Event</h5>
+                <p class="text-muted style-description" style="white-space: pre-line; line-height: 1.6;">
+                    @(string.IsNullOrEmpty(Model.Description) ? "No detailed description provided for this event." : Model.Description)
+                </p>
+
+                <!-- Tags / Categories -->
+                @if (Model.EventCategories != null && Model.EventCategories.Any())
+                {
+                    <div class="mt-4 pt-3 border-top border-secondary border-opacity-10">
+                        <h6 class="fw-bold mb-2 text-white">Categories:</h6>
+                        <div class="d-flex flex-wrap gap-1">
+                            @foreach (var ec in Model.EventCategories)
+                            {
+                                <span class="badge px-3 py-2 rounded-pill fw-normal" style="background-color: #1a162b; border: 1px solid #3b3254; color: #c084fc;">
+                                    #@(ec.Category?.Name ?? "General")
+                                </span>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Sidebar: Location & Ticket Platforms -->
+        <div class="col-lg-4">
+            <!-- Location Details Card -->
+            <div class="card shadow-lg border-0 rounded-4 mb-4 overflow-hidden" style="background: linear-gradient(135deg, #12101e 0%, #1e1b38 100%); border: 1px solid #3b3254 !important;">
+                <div class="card-header py-3 px-4 fw-bold text-white d-flex align-items-center gap-2" style="background-color: #1a162b; border-bottom: 1px solid #3b3254;">
+                    <i class="fa-solid fa-map-location-dot" style="color: #c084fc;"></i> Location & Venue
+                </div>
+                <div class="card-body p-4">
+                    <p class="mb-2 text-white"><strong>City:</strong> <span class="text-muted">@(string.IsNullOrEmpty(Model.City) ? "N/A" : Model.City)</span></p>
+                    @if (!string.IsNullOrEmpty(Model.LocationCoordinates))
+                    {
+                        <p class="mb-1 text-white mt-3"><strong>Coordinates / Address:</strong></p>
+                        <p class="text-muted small mb-3">@Model.LocationCoordinates</p>
+                        <div class="ratio ratio-4x3 rounded-3 overflow-hidden" style="border: 1px solid #3b3254;">
+                            <iframe src="https://maps.google.com/maps?q=@Uri.EscapeDataString(Model.LocationCoordinates)&output=embed"
+                                    style="border:0; filter: invert(90%) hue-rotate(180deg);" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Get Tickets Card -->
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden" style="background: linear-gradient(135deg, #12101e 0%, #1e1b38 100%); border: 1px solid #3b3254 !important;">
+                <div class="card-header py-3 px-4 fw-bold text-white d-flex align-items-center gap-2" style="background-color: #1a162b; border-bottom: 1px solid #3b3254;">
+                    <i class="fa-solid fa-ticket" style="color: #38bdf8;"></i> Get Tickets
+                </div>
+                <div class="card-body p-4">
+                    @if (Model.EventTicketLinks != null && Model.EventTicketLinks.Any())
+                    {
+                        <p class="small text-muted mb-3">Official ticket purchasing options for this event:</p>
+                        <div class="d-grid gap-2">
+                            @foreach (var ticket in Model.EventTicketLinks)
+                            {
+                                <button type="button" class="btn text-white d-flex justify-content-between align-items-center rounded-pill py-2 px-4 shadow-sm"
+                                        style="background-color: #1a162b; border: 1px solid #3b3254;"
+                                        data-bs-toggle="modal" data-bs-target="#ticketModal"
+                                        data-platform="@ticket.PlatformName" data-url="@ticket.Url">
+                                    <span class="fw-semibold"><i class="fa-solid fa-bag-shopping me-2 text-primary"></i>@ticket.PlatformName</span>
+                                    <i class="fa-solid fa-circle-info small text-muted"></i>
+                                </button>
+                            }
+                        </div>
+
+                        <!-- Ticket Info Modal (Dark Styled) -->
+                        <div class="modal fade" id="ticketModal" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content border-0 shadow-lg rounded-4 text-white" style="background: #161224; border: 1px solid #3b3254 !important;">
+                                    <div class="modal-header border-bottom border-secondary border-opacity-25 px-4 py-3">
+                                        <h6 class="modal-title fw-bold text-white" id="ticketModalPlatform">Ticket Info</h6>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body p-4">
+                                        <p class="small text-muted mb-3">Tickets for this event are sold by the platform below. Copy the link to purchase on their website:</p>
+                                        <div class="input-group">
+                                            <input type="text" id="ticketModalUrl" class="form-control text-white border-end-0 shadow-none" readonly style="background-color: #1a162b; border-color: #3b3254;">
+                                            <button class="btn text-white px-3 fw-semibold" type="button" style="background-color: #7b2cbf; border: none;" onclick="navigator.clipboard.writeText(document.getElementById('ticketModalUrl').value)">
+                                                <i class="fa-regular fa-copy me-1"></i> Copy
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                                                document.getElementById('ticketModal')?.addEventListener('show.bs.modal', function (event) {
+                                                    var btn = event.relatedTarget;
+                                                    document.getElementById('ticketModalPlatform').textContent = btn.getAttribute('data-platform') + ' — Ticket Link';
+                                                    document.getElementById('ticketModalUrl').value = btn.getAttribute('data-url');
+                                                });
+                        </script>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-3">
+                            <i class="fa-solid fa-circle-info fs-4 d-block mb-2" style="color: #c084fc;"></i>
+                            <p class="mb-0 small">No external ticket links registered yet.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

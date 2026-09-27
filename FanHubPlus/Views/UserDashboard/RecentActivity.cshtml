@@ -1,0 +1,25 @@
+﻿@model List<UserActivity>
+@{
+    ViewData["Title"] = "Recent Activity";
+}
+
+<section class="dashboard-page">
+    <h1>Recent Activity</h1>
+
+    @if (Model != null && Model.Any())
+    {
+        <ul class="activity-list">
+            @foreach (var activity in Model)
+            {
+                <li>
+                    <span>@activity.ActionDescription</span>
+                    <span class="text-muted">@activity.Timestamp.ToString("dd MMM yyyy, hh:mm tt")</span>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No activity recorded yet. Start exploring the site to see your history here.</p>
+    }
+</section>

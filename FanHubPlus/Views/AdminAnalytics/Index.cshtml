@@ -1,0 +1,253 @@
+@using FanHubPlus.ViewModels
+@{
+    ViewData["Title"] = "Analytics Dashboard";
+    Layout = "_AdminLayout";
+    var top = ViewBag.TopCategories as List<CategoryPopularityRow> ?? new List<CategoryPopularityRow>();
+}
+
+<div class="container-fluid px-4 py-4 text-white">
+    <!-- Header Section with Date Filter Mock -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary">
+        <div>
+            <h2 class="fw-bold mb-1 text-white"><i class="bi bi-graph-up-arrow me-2 text-primary"></i>Analytics Dashboard</h2>
+            <p class="text-muted small mb-0">Usage statistics: active users, popular categories and chatbot volume.</p>
+        </div>
+        <div class="mt-2 mt-md-0">
+            <div class="px-3 py-2 rounded d-flex align-items-center gap-2 shadow-sm" style="background-color: #1a162b; border: 1px solid #3b3254; font-size: 0.85rem;">
+                <i class="bi bi-calendar-event text-muted"></i>
+                <span class="text-white">April 20, 2025 – April 26, 2025</span>
+                <i class="bi bi-chevron-down text-muted ms-1"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Metric Cards (4 Columns) -->
+    <div class="row g-4 mb-4">
+        <!-- Active Users Card -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card h-100 shadow-lg border-0 rounded-4 p-3 position-relative overflow-hidden" style="background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 100%); border: 1px solid #1e3a8a !important;">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="p-2 rounded-3 bg-primary bg-opacity-20 text-primary">
+                        <i class="bi bi-people-fill fs-5"></i>
+                    </div>
+                    <span class="badge bg-success bg-opacity-20 text-success fw-semibold" style="font-size: 0.75rem;"><i class="bi bi-arrow-up-short"></i> +50%</span>
+                </div>
+                <div class="mb-2">
+                    <span class="text-muted small d-block">Active Users (30 days)</span>
+                    <h3 class="fw-bold text-white mb-0">@ViewBag.ActiveUsers</h3>
+                    <span class="text-muted" style="font-size: 0.75rem;">of @ViewBag.TotalUsers registered</span>
+                </div>
+                <div class="mt-2 pt-2 border-top border-secondary border-opacity-20">
+                    <svg class="w-100" height="30" viewBox="0 0 100 30" preserveAspectRatio="none">
+                        <path d="M0,25 Q25,5 50,20 T100,10" fill="none" stroke="#3b82f6" stroke-width="2" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Views Card -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card h-100 shadow-lg border-0 rounded-4 p-3 position-relative overflow-hidden" style="background: linear-gradient(135deg, #064e3b 0%, #022c22 100%); border: 1px solid #065f46 !important;">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="p-2 rounded-3 bg-success bg-opacity-20 text-success">
+                        <i class="bi bi-eye-fill fs-5"></i>
+                    </div>
+                    <span class="badge bg-success bg-opacity-20 text-success fw-semibold" style="font-size: 0.75rem;"><i class="bi bi-dash"></i> +0%</span>
+                </div>
+                <div class="mb-2">
+                    <span class="text-muted small d-block">Content Views</span>
+                    <h3 class="fw-bold text-white mb-0">@ViewBag.TotalContentViews</h3>
+                    <span class="text-muted" style="font-size: 0.75rem;">Total views</span>
+                </div>
+                <div class="mt-2 pt-2 border-top border-secondary border-opacity-20">
+                    <svg class="w-100" height="30" viewBox="0 0 100 30" preserveAspectRatio="none">
+                        <path d="M0,20 Q30,25 60,10 T100,15" fill="none" stroke="#10b981" stroke-width="2" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Merchandise Views Card -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card h-100 shadow-lg border-0 rounded-4 p-3 position-relative overflow-hidden" style="background: linear-gradient(135deg, #78350f 0%, #451a03 100%); border: 1px solid #b45309 !important;">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="p-2 rounded-3 bg-warning bg-opacity-20 text-warning">
+                        <i class="bi bi-bag-fill fs-5"></i>
+                    </div>
+                    <span class="badge bg-warning bg-opacity-20 text-warning fw-semibold" style="font-size: 0.75rem;"><i class="bi bi-dash"></i> +0%</span>
+                </div>
+                <div class="mb-2">
+                    <span class="text-muted small d-block">Merchandise Views</span>
+                    <h3 class="fw-bold text-white mb-0">@ViewBag.TotalMerchViews</h3>
+                    <span class="text-muted" style="font-size: 0.75rem;">Total views</span>
+                </div>
+                <div class="mt-2 pt-2 border-top border-secondary border-opacity-20">
+                    <svg class="w-100" height="30" viewBox="0 0 100 30" preserveAspectRatio="none">
+                        <path d="M0,15 Q40,30 70,10 T100,20" fill="none" stroke="#f59e0b" stroke-width="2" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chatbot Queries Card -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card h-100 shadow-lg border-0 rounded-4 p-3 position-relative overflow-hidden" style="background: linear-gradient(135deg, #3b0764 0%, #2e1065 100%); border: 1px solid #7c3aed !important;">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="p-2 rounded-3 bg-purple bg-opacity-20 text-purple" style="background-color: rgba(168, 85, 247, 0.2); color: #c084fc;">
+                        <i class="bi bi-robot fs-5"></i>
+                    </div>
+                    <span class="badge bg-purple bg-opacity-20 text-purple fw-semibold" style="background-color: rgba(168, 85, 247, 0.2); color: #c084fc; font-size: 0.75rem;"><i class="bi bi-arrow-up-short"></i> +30%</span>
+                </div>
+                <div class="mb-2">
+                    <span class="text-muted small d-block">Chatbot Queries</span>
+                    <h3 class="fw-bold text-white mb-0">@ViewBag.TotalChatbotQueries</h3>
+                    <span class="text-muted" style="font-size: 0.75rem;">(@ViewBag.ChatbotLast7Days in 7 days)</span>
+                </div>
+                <div class="mt-2 pt-2 border-top border-secondary border-opacity-20">
+                    <svg class="w-100" height="30" viewBox="0 0 100 30" preserveAspectRatio="none">
+                        <path d="M0,10 Q30,20 60,5 T100,15" fill="none" stroke="#a855f7" stroke-width="2" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Middle Section: Top Categories / Progress Bars -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-6">
+            <div class="card shadow-lg border-0 rounded-4 p-4 h-100" style="background-color: #12101e; border: 1px solid #2d2640 !important;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold text-white mb-0"><i class="bi bi-fire text-danger me-2"></i>Top Categories by Views</h5>
+                    <a asp-action="PopularCategories" class="text-decoration-none small text-purple" style="color: #c084fc;">View All <i class="bi bi-chevron-right"></i></a>
+                </div>
+                <div class="d-flex flex-column gap-3 mt-3">
+                    @foreach (var c in top.Take(3))
+                    {
+                        <div class="p-3 rounded-3" style="background-color: #1a162b; border: 1px solid #2d2640;">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-semibold text-white">@c.Name</span>
+                                <span class="badge px-2 py-1" style="background-color: #2b1f3d; color: #d8b4fe; font-size: 0.75rem;">@c.TotalViews views</span>
+                            </div>
+                            <div class="progress" style="height: 6px; background-color: #2d2640;">
+                                <div class="progress-bar rounded-pill" role="progressbar" style="width: 70%; background: linear-gradient(90deg, #7b2cbf, #c084fc);" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    }
+                    @if (!top.Any())
+                    {
+                        <div class="text-center text-muted py-4">No categories yet.</div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6">
+            <div class="card shadow-lg border-0 rounded-4 p-4 h-100" style="background-color: #12101e; border: 1px solid #2d2640 !important;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold text-white mb-0"><i class="bi bi-robot text-purple me-2" style="color: #c084fc;"></i>Chatbot Analytics Summary</h5>
+                    <span class="badge bg-secondary bg-opacity-20 text-muted" style="font-size: 0.75rem;">Last 7 Days</span>
+                </div>
+                <div class="d-flex flex-column gap-3 mt-3">
+                    <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #1a162b; border: 1px solid #2d2640;">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-question-circle text-primary fs-5"></i>
+                            <span class="text-white">Total Queries</span>
+                        </div>
+                        <span class="fw-bold text-white">@ViewBag.TotalQueries (@ViewBag.ChatbotLast7Days in 7 days)</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #1a162b; border: 1px solid #2d2640;">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-check-circle text-success fs-5"></i>
+                            <span class="text-white">Answered</span>
+                        </div>
+                        <span class="fw-bold text-success">Active</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #1a162b; border: 1px solid #2d2640;">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-clock-history text-warning fs-5"></i>
+                            <span class="text-white">System Status</span>
+                        </div>
+                        <span class="fw-bold text-warning">Operational</span>
+                    </div>
+                </div>
+                <div class="mt-4 text-end">
+                    <a asp-action="ChatbotAnalytics" class="text-decoration-none small text-purple" style="color: #c084fc;">View Details <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Quick Action Links Grid (Matching Reference Footer Style) -->
+    <div class="row g-3">
+        <div class="col-md-4 col-lg-2">
+            <a asp-action="ActiveUsers" class="card text-decoration-none shadow-sm h-100 p-3 rounded-4 transition-card" style="background-color: #12101e; border: 1px solid #2d2640;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <i class="bi bi-people text-primary fs-4"></i>
+                    <i class="bi bi-arrow-right text-muted small"></i>
+                </div>
+                <span class="text-white fw-semibold small">Active Users</span>
+                <span class="text-muted" style="font-size: 0.7rem;">@ViewBag.ActiveUsers online</span>
+            </a>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <a asp-action="PopularCategories" class="card text-decoration-none shadow-sm h-100 p-3 rounded-4 transition-card" style="background-color: #12101e; border: 1px solid #2d2640;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <i class="bi bi-grid text-success fs-4"></i>
+                    <i class="bi bi-arrow-right text-muted small"></i>
+                </div>
+                <span class="text-white fw-semibold small">Popular Categories</span>
+                <span class="text-muted" style="font-size: 0.7rem;">View stats</span>
+            </a>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <a asp-action="ChatbotAnalytics" class="card text-decoration-none shadow-sm h-100 p-3 rounded-4 transition-card" style="background-color: #12101e; border: 1px solid #2d2640;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <i class="bi bi-robot text-purple fs-4" style="color: #c084fc;"></i>
+                    <i class="bi bi-arrow-right text-muted small"></i>
+                </div>
+                <span class="text-white fw-semibold small">Chatbot Analytics</span>
+                <span class="text-muted" style="font-size: 0.7rem;">@ViewBag.TotalChatbotQueries queries</span>
+            </a>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <a asp-action="ContentViews" class="card text-decoration-none shadow-sm h-100 p-3 rounded-4 transition-card" style="background-color: #12101e; border: 1px solid #2d2640;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <i class="bi bi-file-text text-info fs-4"></i>
+                    <i class="bi bi-arrow-right text-muted small"></i>
+                </div>
+                <span class="text-white fw-semibold small">Content Views</span>
+                <span class="text-muted" style="font-size: 0.7rem;">@ViewBag.TotalContentViews views</span>
+            </a>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <a asp-action="MerchandiseViews" class="card text-decoration-none shadow-sm h-100 p-3 rounded-4 transition-card" style="background-color: #12101e; border: 1px solid #2d2640;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <i class="bi bi-bag text-warning fs-4"></i>
+                    <i class="bi bi-arrow-right text-muted small"></i>
+                </div>
+                <span class="text-white fw-semibold small">Merchandise</span>
+                <span class="text-muted" style="font-size: 0.7rem;">@ViewBag.TotalMerchViews views</span>
+            </a>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <a asp-action="UserActivity" class="card text-decoration-none shadow-sm h-100 p-3 rounded-4 transition-card" style="background-color: #12101e; border: 1px solid #2d2640;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <i class="bi bi-activity text-secondary fs-4"></i>
+                    <i class="bi bi-arrow-right text-muted small"></i>
+                </div>
+                <span class="text-white fw-semibold small">Activity Log</span>
+                <span class="text-muted" style="font-size: 0.7rem;">Recent logs</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .transition-card {
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .transition-card:hover {
+        transform: translateY(-3px);
+        border-color: #7b2cbf !important;
+    }
+</style>

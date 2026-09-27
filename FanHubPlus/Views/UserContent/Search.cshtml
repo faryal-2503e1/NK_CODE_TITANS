@@ -1,0 +1,111 @@
+@model List<Content>
+@{
+    ViewData["Title"] = "Search Content | FanHub+";
+    var query = ViewBag.Query as string;
+}
+
+<main class="explore-page py-4">
+    <div class="container-fluid site-container">
+        <!-- BREADCRUMB -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb fanhub-breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-controller="UserContent" asp-action="Index">Content</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Search</li>
+            </ol>
+        </nav>
+
+        <!-- HERO HEADER -->
+        <div class="explore-hero mb-4 p-4 rounded-4 position-relative overflow-hidden shadow-lg border border-secondary border-opacity-20" style="background: linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(255,77,141,0.1) 100%); backdrop-filter: blur(16px);">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div>
+                    <span class="section-label text-uppercase text-warning fw-bold tracking-wider" style="font-size: 0.8rem;">CONTENT SEARCH</span>
+                    <h1 class="display-6 fw-extrabold mb-2">Search <span>Fandom Content</span></h1>
+                    <p class="text-muted mb-0">Find articles, videos, guides, and media across all fandom categories.</p>
+                </div>
+            </div>
+
+            <!-- SEARCH BAR -->
+            <form asp-action="Search" method="get" class="mt-4">
+                <div class="input-group shadow-sm rounded-pill overflow-hidden border border-primary border-opacity-25" style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);">
+                    <span class="input-group-text bg-transparent border-0 ps-3 text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" name="query" value="@query" class="form-control bg-transparent border-0 text-body py-2" placeholder="Search anime series, game guides, comics, videos..." autocomplete="off" />
+                    <button type="submit" class="btn btn-primary px-4 fw-semibold">Search</button>
+                </div>
+            </form>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(query))
+        {
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold mb-0">Results for "<span class="text-warning">@query</span>"</h4>
+                <span class="badge bg-primary bg-opacity-20 text-primary px-3 py-2 rounded-pill">@(Model?.Count ?? 0) items found</span>
+            </div>
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    @foreach (var item in Model)
+                    {
+                        var iconClass = "bi-controller";
+                        var typeLower = item.Type?.ToLower() ?? "";
+                        if (typeLower.Contains("anime")) { iconClass = "bi-mask"; }
+                        else if (typeLower.Contains("article") || typeLower.Contains("news")) { iconClass = "bi-newspaper"; }
+                        else if (typeLower.Contains("video") || typeLower.Contains("movie")) { iconClass = "bi-film"; }
+
+                        <div class="col">
+                            <article class="cyber-nebula-card">
+                                <div>
+                                    <div class="cyber-hud-cover">
+                                        <div class="cyber-hud-placeholder">
+                                            <i class="bi @iconClass"></i>
+                                            <span class="cyber-hud-tag">@item.Type.ToUpper()</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="cyber-chip-group">
+                                        <span class="cyber-chip">#@item.Type</span>
+                                        @if (item.Category != null)
+                                        {
+                                            <span class="cyber-chip">#@item.Category.Name</span>
+                                        }
+                                    </div>
+
+                                    <h3>
+                                        <a asp-action="Details" asp-route-id="@item.ContentId">@item.Title</a>
+                                    </h3>
+                                    <p>@(string.IsNullOrEmpty(item.Description) ? "Explore official details, guides, and fandom lore for " + item.Title : item.Description)</p>
+                                </div>
+
+                                <div class="cyber-action-bar">
+                                    <span class="cyber-meta-btn">
+                                        <i class="bi bi-calendar3"></i> @item.ReleaseDate.ToString("dd MMM yyyy")
+                                    </span>
+                                    <a asp-action="Details" asp-route-id="@item.ContentId" class="cyber-read-btn">
+                                        View Content <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </article>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 rounded-4 shadow-sm border border-secondary border-opacity-20 dash-card-panel">
+                    <i class="bi bi-search text-muted display-4 d-block mb-3"></i>
+                    <h4 class="fw-bold">No results found for "@query"</h4>
+                    <p class="text-muted">Try searching with a different keyword or category name.</p>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center py-5 rounded-4 shadow-sm border border-secondary border-opacity-20 dash-card-panel">
+                <i class="bi bi-search text-muted display-4 d-block mb-3"></i>
+                <h4 class="fw-bold">Search Fandom Library</h4>
+                <p class="text-muted">Type something in the search box above to discover content.</p>
+            </div>
+        }
+    </div>
+</main>

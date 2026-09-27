@@ -1,0 +1,141 @@
+@model List<MerchandiseItem>
+@{
+    ViewData["Title"] = "Shop & Collectibles | FanHub+";
+}
+
+<main class="merchandise-page">
+    <!-- HERO -->
+    <section class="merchandise-hero">
+        <div class="container-fluid site-container">
+            <div class="merchandise-hero-heading reveal text-center mb-4">
+                <span class="section-label">OFFICIAL FANHUB+ STORE</span>
+                <h1>Fandom Store & <span>Collectibles</span></h1>
+                <p>Shop limited figures, hoodies, posters, pins and exclusive fandom merchandise.</p>
+            </div>
+
+            <div class="merchandise-search-box reveal">
+                <i class="bi bi-search"></i>
+                <input type="search" id="merchandiseSearch" placeholder="Search figures, hoodies, posters, accessories..." autocomplete="off">
+                <button type="button" id="merchandiseSearchButton">Search</button>
+            </div>
+
+            <div class="merchandise-category-chips reveal mt-3" id="merchandiseCategoryChips">
+                <button class="merchandise-chip active" type="button" data-category="all">All Items</button>
+                <button class="merchandise-chip" type="button" data-category="anime">Anime</button>
+                <button class="merchandise-chip" type="button" data-category="gaming">Gaming</button>
+                <button class="merchandise-chip" type="button" data-category="comics">Comics</button>
+                <button class="merchandise-chip" type="button" data-category="movies">Movies</button>
+                <button class="merchandise-chip" type="button" data-category="cosplay">Cosplay</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCT GRID -->
+    <section class="merchandise-section py-5">
+        <div class="container-fluid site-container">
+            <div class="section-header reveal mb-4">
+                <span class="section-label">EXCLUSIVE GEAR</span>
+                <h2 class="text-white h2 fw-extrabold">Official Merchandise Catalog</h2>
+            </div>
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="merchandise-grid" id="merchandiseGrid">
+                    @foreach (var item in Model)
+                    {
+                        var categoryName = item.Category?.Name ?? "Store";
+                        var categoryLower = categoryName.ToLower();
+                        var coverClass = "merch-anime-purple";
+                        if (categoryLower.Contains("game") || categoryLower.Contains("gaming")) coverClass = "merch-gaming-blue";
+                        else if (categoryLower.Contains("comic")) coverClass = "merch-anime-red";
+
+                        var imgStyle = !string.IsNullOrEmpty(item.ImageUrl) ? $"background-image: url('{item.ImageUrl}'); background-size: cover; background-position: center;" : "";
+
+                        <article class="merchandise-card reveal" data-title="@item.Name.ToLower()" data-category="@categoryLower">
+                            <div class="merchandise-cover @coverClass" style="@imgStyle">
+                                <div class="merchandise-card-badges">
+                                    @if (!string.IsNullOrEmpty(item.Tag))
+                                    {
+                                        <span class="merch-badge limited">@item.Tag</span>
+                                    }
+                                    <span class="merch-badge collectible">Official Collectible</span>
+                                </div>
+                                @if (string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <i class="bi bi-bag-check merchandise-cover-icon"></i>
+                                }
+                            </div>
+
+                            <div class="merchandise-card-content p-4">
+                                <span class="merchandise-category">@categoryName.ToUpper()</span>
+                                <h3 class="my-2">@item.Name</h3>
+                                <p class="text-muted small mb-3">Official display item and high-quality collectible inspired by @categoryName fandom.</p>
+
+                                <div class="merchandise-card-footer mt-3 pt-3 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                                    <span class="small text-muted">Exclusive Item</span>
+                                    <a asp-action="Details" asp-route-id="@item.ItemId" class="merchandise-details-button">
+                                        View Details <i class="bi bi-arrow-up-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <p class="lead text-muted">No merchandise items found in this section.</p>
+                </div>
+            }
+        </div>
+    </section>
+</main>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chips = document.querySelectorAll('#merchandiseCategoryChips .merchandise-chip');
+            const searchInput = document.getElementById('merchandiseSearch');
+            const searchBtn = document.getElementById('merchandiseSearchButton');
+            const cards = document.querySelectorAll('#merchandiseGrid .merchandise-card');
+
+            function filterMerchandise() {
+                const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+                const activeChip = document.querySelector('#merchandiseCategoryChips .merchandise-chip.active');
+                const catTarget = activeChip ? activeChip.getAttribute('data-category').toLowerCase().trim() : 'all';
+
+                cards.forEach(card => {
+                    const title = (card.getAttribute('data-title') || '').toLowerCase();
+                    const category = (card.getAttribute('data-category') || '').toLowerCase();
+                    const textContent = card.textContent.toLowerCase();
+
+                    const matchCategory = (catTarget === 'all' || category.includes(catTarget) || catTarget.includes(category));
+                    const matchSearch = !query || title.includes(query) || category.includes(query) || textContent.includes(query);
+
+                    if (matchCategory && matchSearch) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            chips.forEach(chip => {
+                chip.addEventListener('click', function () {
+                    chips.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    filterMerchandise();
+                });
+            });
+
+            if (searchInput) {
+                searchInput.addEventListener('input', filterMerchandise);
+                searchInput.addEventListener('keyup', filterMerchandise);
+            }
+            if (searchBtn) {
+                searchBtn.addEventListener('click', filterMerchandise);
+            }
+        });
+    </script>
+}

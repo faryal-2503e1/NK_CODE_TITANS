@@ -1,0 +1,61 @@
+@model MerchandiseItem
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+@if (Model.ItemId > 0)
+{
+    <input type="hidden" asp-for="ItemId" />
+}
+
+<div class="field-grid">
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CategoryId" class="form-label">Category</label>
+        <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId"></select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Tag" class="form-label"></label>
+        <select asp-for="Tag" class="form-select">
+            <option value="">No tag</option>
+            @foreach (var t in AdminOptions.WithCurrent(AdminOptions.MerchandiseTags, Model.Tag))
+            {
+                <option value="@t" selected="@(Model.Tag == t)">@t</option>
+            }
+        </select>
+        <span asp-validation-for="Tag" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3 align-self-center">
+        <input class="form-check-input" asp-for="IsUpcoming" />
+        <label class="form-check-label" asp-for="IsUpcoming">Upcoming release</label>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <div class="mb-3 field-full">
+            <label class="form-label fw-bold">Current Image Preview</label>
+            <div>
+                <img src="@Model.ImageUrl" alt="Merchandise Preview" class="img-thumbnail" style="max-height: 100px;" />
+            </div>
+        </div>
+    }
+
+    <div class="mb-3">
+        <label class="form-label">Upload Image File (Optional)</label>
+        <input type="file" name="imageFile" class="form-control" accept="image/*" />
+        <small class="text-muted">Allowed: JPG, PNG, WebP. Uploading a new file will replace the image URL below.</small>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ImageUrl" class="form-label">Or Image URL</label>
+        <input asp-for="ImageUrl" class="form-control" placeholder="https://..." />
+        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+    </div>
+</div>

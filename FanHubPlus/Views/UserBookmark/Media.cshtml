@@ -1,0 +1,47 @@
+﻿@model List<Bookmark>
+@{
+    ViewData["Title"] = "Bookmarked Media";
+}
+
+<section class="bookmarks-page">
+    <h1>Bookmarked Media</h1>
+
+    <div class="bookmark-tabs">
+        <a asp-action="Index">All</a>
+        <a asp-action="Content">Content</a>
+        <a asp-action="Characters">Characters</a>
+        <a asp-action="Media" class="active">Media</a>
+        <a asp-action="Merchandise">Merchandise</a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="card-grid">
+            @foreach (var bookmark in Model)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <span class="badge">@bookmark.MediaItem.MediaType</span>
+                        <h3>
+                            <a asp-controller="UserMedia" asp-action="Details" asp-route-id="@bookmark.MediaItem.MediaId">
+                                @bookmark.MediaItem.Title
+                            </a>
+                        </h3>
+                        @if (!string.IsNullOrEmpty(bookmark.NoteText))
+                        {
+                            <p class="text-muted">@bookmark.NoteText</p>
+                        }
+                        <form asp-action="Remove" asp-route-id="@bookmark.BookmarkId" method="post" class="inline-form">
+                            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No media bookmarked yet.</p>
+    }
+</section>

@@ -1,0 +1,39 @@
+﻿@model CharacterProfile
+
+@{
+    ViewData["Title"] = "Character Details";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid mt-4">
+    <h2>Character Details</h2>
+    <hr />
+    <div>
+        <dl class="row">
+            <dt class="col-sm-3">Name</dt>
+            <dd class="col-sm-9"><strong>@Model.Name</strong></dd>
+
+            <dt class="col-sm-3">Category</dt>
+            <dd class="col-sm-9">@Model.Category?.Name</dd>
+
+            <dt class="col-sm-3">Biography</dt>
+            <dd class="col-sm-9">@Model.Bio</dd>
+
+            <dt class="col-sm-3">Character Image</dt>
+            <dd class="col-sm-9">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" alt="Character Image" class="detail-image" />
+                }
+                else
+                {
+                    <span class="text-muted">No Image Available</span>
+                }
+            </dd>
+        </dl>
+    </div>
+    <div class="mt-3">
+        <a asp-action="Edit" asp-route-id="@Model?.CharacterId" class="btn btn-warning">Edit</a>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>

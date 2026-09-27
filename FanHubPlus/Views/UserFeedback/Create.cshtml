@@ -1,0 +1,38 @@
+﻿@model Feedback
+@{
+    ViewData["Title"] = "New Feedback";
+    Layout = "_DashboardLayout";
+}
+
+<section class="feedback-form-page">
+    <h1>Send Feedback</h1>
+    <p class="text-muted">Found a bug, have a suggestion, or a general question? Let us know.</p>
+
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="Type">Type</label>
+            <select asp-for="Type" class="form-control">
+                <option value="">-- Select a reason --</option>
+                <option value="bug">Report a Bug</option>
+                <option value="suggestion">Suggestion</option>
+                <option value="query">General Query</option>
+            </select>
+            <span asp-validation-for="Type" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Message"></label>
+            <textarea asp-for="Message" class="form-control" rows="6" placeholder="Tell us what's on your mind..."></textarea>
+            <span asp-validation-for="Message" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Send Feedback</button>
+        <a asp-action="Index" class="btn btn-link">Cancel</a>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

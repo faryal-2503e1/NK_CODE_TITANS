@@ -1,0 +1,107 @@
+@model PagedList<FeaturedArticle>
+
+@{
+    ViewData["Title"] = "Manage Articles";
+    Layout = "_AdminLayout";
+    var q = Context.Request.Query["q"].ToString();
+    var sort = Context.Request.Query["sort"].ToString();
+}
+
+<div class="container-fluid px-4 py-4 text-white">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1" style="color: #fff;">Featured Articles Management</h2>
+            <p class="text-muted small mb-0">Create, edit, and manage your platform's featured articles.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Featured" class="btn btn-outline-light btn-sm d-flex align-items-center gap-1 px-3">
+                <i class="bi bi-star"></i> Featured Feed
+            </a>
+            <a asp-action="Create" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3" style="background-color: #7b2cbf; border: none;">
+                <i class="bi bi-plus-lg"></i> Add New Article
+            </a>
+        </div>
+    </div>
+
+    <!-- Search and Filter Form -->
+    <form method="get" class="row g-2 mb-4 p-3 rounded shadow-sm" style="background-color: #12101e; border: 1px solid #2d2640;" role="search">
+        <div class="col-md-5">
+            <input type="search" name="q" value="@q" class="form-control bg-dark text-white border-secondary shadow-none" placeholder="Search title or text..." aria-label="Search articles" style="background-color: #1a162b !important; color: #fff !important; border-color: #3b3254 !important;" />
+        </div>
+        <div class="col-md-3">
+            <select name="sort" class="form-select bg-dark text-white border-secondary shadow-none" aria-label="Sort order" style="background-color: #1a162b !important; color: #fff !important; border-color: #3b3254 !important;">
+                <option value="" selected="@(sort == "")">Newest first</option>
+                <option value="oldest" selected="@(sort == "oldest")">Oldest first</option>
+                <option value="title" selected="@(sort == "title")">Title A-Z</option>
+            </select>
+        </div>
+        <div class="col-md-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary px-4" style="background-color: #7b2cbf; border: none;">Go</button>
+            <a asp-action="Index" class="btn btn-outline-secondary px-3">Reset</a>
+        </div>
+    </form>
+
+    <!-- Articles Table Card -->
+    <div class="card shadow-lg border-0 rounded overflow-hidden" style="background-color: #12101e; border: 1px solid #2d2640 !important;">
+        <div class="table-responsive mb-0">
+            <table class="table table-dark table-hover align-middle mb-0" style="background-color: transparent;">
+                <thead style="background-color: #1a162b; border-bottom: 2px solid #3b3254;">
+                    <tr>
+                        <th class="py-3 px-4" style="color: #a0aec0;">Title</th>
+                        <th class="py-3 px-4" style="color: #a0aec0;">Preview</th>
+                        <th class="py-3 px-4" style="color: #a0aec0;">Published At</th>
+                        <th class="py-3 px-4 text-center" style="color: #a0aec0;">Image</th>
+                        <th class="py-3 px-4 text-end" style="color: #a0aec0;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr style="border-bottom: 1px solid #1f1b32;">
+                            <td class="py-3 px-4 fw-semibold text-white">@item.Title</td>
+                            <td class="py-3 px-4 text-muted small">@RichText.ToPlainText(item.Content, 70)</td>
+                            <td class="py-3 px-4 text-muted small">@item.PublishedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td class="py-3 px-4 text-center">
+                                @if (string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <span class="badge bg-secondary text-dark px-2 py-1" style="font-size: 0.75rem;">No image</span>
+                                }
+                                else
+                                {
+                                    <span class="badge px-2 py-1" style="background-color: #2b1f3d; color: #d8b4fe; font-size: 0.75rem;">Yes</span>
+                                }
+                            </td>
+                            <td class="py-3 px-4 text-end">
+                                <div class="d-flex gap-1 justify-content-end">
+                                    <a asp-action="Details" asp-route-id="@item.ArticleId" class="btn btn-sm btn-secondary text-white" title="Details" style="background-color: #2a2438; border: 1px solid #3b3254;">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.ArticleId" class="btn btn-sm btn-primary" title="Edit" style="background-color: #0d6efd; border: none;">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.ArticleId" class="btn btn-sm btn-danger" title="Delete" style="background-color: #dc3545; border: none;">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-5">
+                                <i class="bi bi-search fs-3 d-block mb-2"></i>
+                                No articles found.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <partial name="_Pager" model="(IPagedList)Model" />
+    </div>
+</div>

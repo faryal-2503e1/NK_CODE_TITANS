@@ -1,0 +1,313 @@
+@using Microsoft.AspNetCore.Identity
+@using FanHubPlus.Data
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_DashboardLayout";
+    var recentActivity = ViewBag.RecentActivity as List<UserActivity>;
+    var recentNotes = ViewBag.RecentNotes as List<Note>;
+
+    var currentUser = await UserManager.GetUserAsync(User);
+    var displayName = !string.IsNullOrWhiteSpace(currentUser?.FullName) ? currentUser.FullName : User.Identity?.Name;
+}
+
+<div class="container-fluid px-4 py-4">
+    <!-- Top Section: Welcome Header & Date Card -->
+    <div class="row g-4 mb-4">
+        <!-- Welcome Hero Banner -->
+        <div class="col-lg-8">
+            <div class="card dash-card-hero shadow-lg border-0 rounded-4 p-4 position-relative overflow-hidden h-100">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+                    <div class="d-flex align-items-center gap-3">
+                        @if (!string.IsNullOrEmpty(currentUser?.ProfilePictureUrl))
+                        {
+                            <img src="@currentUser.ProfilePictureUrl" alt="@displayName" class="rounded-circle shadow-sm" style="width: 56px; height: 56px; object-fit: cover; border: 2px solid rgba(139, 92, 246, 0.4);" />
+                        }
+                        else
+                        {
+                            <div class="p-3 rounded-4 shadow-sm text-warning fs-3" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3);">
+                                <i class="fa-solid fa-user-astronaut"></i>
+                            </div>
+                        }
+                        <div>
+                            <div class="d-flex align-items-center gap-2">
+                                <h2 class="fw-extrabold mb-1 display-6 fs-3">Welcome back, @(displayName ?? "User")!</h2>
+                                <span class="badge bg-primary bg-opacity-20 text-primary rounded-pill px-3 py-1 text-uppercase fw-semibold" style="font-size: 0.75rem;">Member</span>
+                            </div>
+                            <p class="text-muted small mb-0">Same platform. Endless fandoms. Your world of interests, notes, and favorites — all in one place!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mt-3 pt-3 border-top border-secondary border-opacity-20">
+                    <span class="badge px-3 py-2 rounded-pill fw-normal dash-card-item">
+                        <i class="fa-solid fa-wand-magic-sparkles me-1 text-primary"></i> Anime
+                    </span>
+                    <span class="badge px-3 py-2 rounded-pill fw-normal dash-card-item">
+                        <i class="fa-solid fa-book-open me-1 text-success"></i> Comics
+                    </span>
+                    <span class="badge px-3 py-2 rounded-pill fw-normal dash-card-item">
+                        <i class="fa-solid fa-gamepad me-1 text-warning"></i> Games
+                    </span>
+                    <span class="badge px-3 py-2 rounded-pill fw-normal dash-card-item">
+                        <i class="fa-solid fa-book me-1 text-danger"></i> Books
+                    </span>
+                    <span class="badge px-3 py-2 rounded-pill fw-normal dash-card-item">
+                        <i class="fa-solid fa-film me-1 text-info"></i> Movies
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Date & Motivation Card -->
+        <div class="col-lg-4">
+            <div class="card dash-card-hero shadow-lg border-0 rounded-4 p-4 position-relative overflow-hidden h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold d-block tracking-wider">Today's Date</span>
+                            <span class="fw-bold d-block fs-4 text-body">@DateTime.Now.ToString("MMMM dd, yyyy")</span>
+                            <span class="text-muted small">@DateTime.Now.ToString("dddd")</span>
+                        </div>
+                        <div class="p-3 rounded-4 bg-primary bg-opacity-20 text-primary shadow-sm">
+                            <i class="fa-solid fa-calendar-days fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-3 border-top border-secondary border-opacity-20 text-end">
+                    <p class="fst-italic mb-0 fw-semibold" style="color: #8B5CF6; font-size: 0.95rem;">
+                        "Small steps build big dreams" <span class="text-warning">✨</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4 Premium Stat Cards Row -->
+    <div class="row g-4 mb-4">
+        <!-- Bookmarks Card -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card dash-card-stat-blue h-100 shadow-lg border-0 rounded-4 p-4 position-relative overflow-hidden">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="p-3 rounded-4 bg-primary bg-opacity-20 text-primary shadow-sm">
+                        <i class="fa-solid fa-bookmark fs-4"></i>
+                    </div>
+                    <span class="badge bg-primary bg-opacity-20 text-primary fw-semibold px-3 py-2 rounded-pill" style="font-size: 0.75rem;">
+                        <i class="fa-solid fa-layer-group me-1"></i> Saved Items
+                    </span>
+                </div>
+                <div class="mb-3">
+                    <span class="text-muted small text-uppercase fw-bold d-block tracking-wider">Bookmarks</span>
+                    <h3 class="stat-val-gradient mb-0">@ViewBag.BookmarkCount</h3>
+                </div>
+                <div class="pt-3 border-top border-secondary border-opacity-20 d-flex justify-content-between align-items-center">
+                    <a asp-action="Bookmarks" class="text-decoration-none small fw-bold text-primary hover-pink">
+                        View All Bookmarks <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes Card -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card dash-card-stat-green h-100 shadow-lg border-0 rounded-4 p-4 position-relative overflow-hidden">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="p-3 rounded-4 bg-success bg-opacity-20 text-success shadow-sm">
+                        <i class="fa-solid fa-note-sticky fs-4"></i>
+                    </div>
+                    <span class="badge bg-success bg-opacity-20 text-success fw-semibold px-3 py-2 rounded-pill" style="font-size: 0.75rem;">
+                        <i class="fa-solid fa-pen-to-square me-1"></i> Personal Records
+                    </span>
+                </div>
+                <div class="mb-3">
+                    <span class="text-muted small text-uppercase fw-bold d-block tracking-wider">Notes</span>
+                    <h3 class="stat-val-gradient mb-0">@ViewBag.NoteCount</h3>
+                </div>
+                <div class="pt-3 border-top border-secondary border-opacity-20 d-flex justify-content-between align-items-center">
+                    <a asp-action="Notes" class="text-decoration-none small fw-bold text-success hover-pink">
+                        View All Notes <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Favorite Categories Card -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card dash-card-stat-amber h-100 shadow-lg border-0 rounded-4 p-4 position-relative overflow-hidden">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="p-3 rounded-4 bg-warning bg-opacity-20 text-warning shadow-sm">
+                        <i class="fa-solid fa-heart fs-4"></i>
+                    </div>
+                    <span class="badge bg-warning bg-opacity-20 text-warning fw-semibold px-3 py-2 rounded-pill" style="font-size: 0.75rem;">
+                        <i class="fa-solid fa-star me-1"></i> Preferred Genres
+                    </span>
+                </div>
+                <div class="mb-3">
+                    <span class="text-muted small text-uppercase fw-bold d-block tracking-wider">Favorites</span>
+                    <h3 class="stat-val-gradient mb-0">@ViewBag.FavoriteCategoryCount</h3>
+                </div>
+                <div class="pt-3 border-top border-secondary border-opacity-20 d-flex justify-content-between align-items-center">
+                    <a asp-action="Favorites" class="text-decoration-none small fw-bold text-warning hover-pink">
+                        Manage Favorites <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Activity Card -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card dash-card-stat-purple h-100 shadow-lg border-0 rounded-4 p-4 position-relative overflow-hidden">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="p-3 rounded-4 shadow-sm" style="background-color: rgba(168, 85, 247, 0.2); color: #8B5CF6;">
+                        <i class="fa-solid fa-chart-line fs-4"></i>
+                    </div>
+                    <span class="badge fw-semibold px-3 py-2 rounded-pill" style="background-color: rgba(168, 85, 247, 0.2); color: #8B5CF6; font-size: 0.75rem;">
+                        <i class="fa-solid fa-bolt me-1"></i> This Week
+                    </span>
+                </div>
+                <div class="mb-3">
+                    <span class="text-muted small text-uppercase fw-bold d-block tracking-wider">Total Activity</span>
+                    <h3 class="stat-val-gradient mb-0">@(recentActivity?.Count ?? 0)</h3>
+                </div>
+                <div class="pt-3 border-top border-secondary border-opacity-20 d-flex justify-content-between align-items-center">
+                    <a asp-action="RecentActivity" class="text-decoration-none small fw-bold hover-pink" style="color: #8B5CF6;">
+                        View Activity Details <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Middle Section: Recent Activity & Quick Access -->
+    <div class="row g-4 mb-4">
+        <!-- Recent Activity Section -->
+        <div class="col-lg-7">
+            <div class="card dash-card-panel shadow-lg border-0 rounded-4 p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary border-opacity-20">
+                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i>Recent Activity</h5>
+                    <a asp-action="RecentActivity" class="text-decoration-none small text-primary fw-bold hover-pink">View All <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                </div>
+
+                @if (recentActivity != null && recentActivity.Any())
+                {
+                    <div class="d-flex flex-column gap-2 mt-2">
+                        @foreach (var activity in recentActivity)
+                        {
+                            <div class="dash-card-item p-3 rounded-3 d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="p-2 rounded-circle bg-primary bg-opacity-20 text-primary small">
+                                        <i class="fa-solid fa-bolt"></i>
+                                    </div>
+                                    <span class="fw-medium">@activity.ActionDescription</span>
+                                </div>
+                                <small class="text-muted badge bg-secondary bg-opacity-20 px-3 py-2 rounded-pill">@activity.Timestamp.ToString("dd MMM, hh:mm tt")</small>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <div class="fs-1 mb-3" style="color: #8B5CF6;"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                        <h5 class="fw-bold mb-1">No recent activity recorded</h5>
+                        <p class="text-muted small mb-4">Explore your favorite sections and start building your fandom collection!</p>
+                        <a asp-action="Bookmarks" class="btn btn-primary btn-sm px-4 py-2 rounded-pill fw-semibold shadow-sm">
+                            Explore Bookmarks <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Quick Access Section -->
+        <div class="col-lg-5">
+            <div class="card dash-card-panel shadow-lg border-0 rounded-4 p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary border-opacity-20">
+                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-bolt me-2 text-warning"></i>Quick Actions</h5>
+                    <span class="text-muted small">Instant shortcuts</span>
+                </div>
+
+                <div class="d-flex flex-column gap-3">
+                    <a asp-controller="UserBookmark" asp-action="Index" class="dash-card-item text-decoration-none p-3 rounded-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="p-3 rounded-3 bg-primary bg-opacity-20 text-primary">
+                                    <i class="fa-solid fa-bookmark fs-5"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Bookmarks</h6>
+                                    <span class="text-muted small">Your saved content & series</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-primary"></i>
+                        </div>
+                    </a>
+
+                    <a asp-controller="UserNote" asp-action="Index" class="dash-card-item text-decoration-none p-3 rounded-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="p-3 rounded-3 bg-success bg-opacity-20 text-success">
+                                    <i class="fa-solid fa-note-sticky fs-5"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">My Notes</h6>
+                                    <span class="text-muted small">Your personal fandom notes</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-success"></i>
+                        </div>
+                    </a>
+
+                    <a asp-controller="UserProfile" asp-action="Favorites" class="dash-card-item text-decoration-none p-3 rounded-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="p-3 rounded-3 bg-warning bg-opacity-20 text-warning">
+                                    <i class="fa-solid fa-heart fs-5"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Favorite Categories</h6>
+                                    <span class="text-muted small">Customize your top interests</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-warning"></i>
+                        </div>
+                    </a>
+
+                    <a asp-controller="UserDashboard" asp-action="RecentActivity" class="dash-card-item text-decoration-none p-3 rounded-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="p-3 rounded-3" style="background-color: rgba(168, 85, 247, 0.2); color: #8B5CF6;">
+                                    <i class="fa-solid fa-chart-line fs-5"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Activity Log</h6>
+                                    <span class="text-muted small">Track your activity history</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right" style="color: #8B5CF6;"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Brand Banner -->
+    <div class="card dash-card-hero shadow-lg border-0 rounded-4 p-4 position-relative overflow-hidden">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="p-3 rounded-circle bg-warning bg-opacity-15 text-warning fs-4 shadow-sm" style="border: 1px solid rgba(245, 158, 11, 0.3);">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold mb-1">FanHub Plus</h5>
+                    <p class="text-muted small mb-0">More Than a Website &bull; It's a Global Fandom Community</p>
+                </div>
+            </div>
+            <div>
+                <span class="fst-italic fw-semibold" style="color: #8B5CF6;">Different Fandoms, One Community <span class="text-warning">✨</span></span>
+            </div>
+        </div>
+    </div>
+</div>

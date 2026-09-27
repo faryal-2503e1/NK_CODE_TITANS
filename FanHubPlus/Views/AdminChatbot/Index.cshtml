@@ -1,0 +1,58 @@
+@model PagedList<ChatbotQuery>
+
+@{
+    ViewData["Title"] = "Chatbot Queries";
+    Layout = "_AdminLayout";
+    var users = ViewBag.Users as Dictionary<string, string> ?? new Dictionary<string, string>();
+    var q = Context.Request.Query["q"].ToString();
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>User Chatbot Queries</h2>
+        <div>
+            <a asp-action="FAQs" class="btn btn-secondary">Manage FAQs</a>
+            <a asp-action="KnowledgeBase" class="btn btn-dark">Knowledge Base</a>
+        </div>
+    </div>
+
+    <form method="get" class="row g-2 mb-3" role="search">
+        <div class="col-md-5">
+            <input type="search" name="q" value="@q" class="form-control" placeholder="Search messages and replies" aria-label="Search queries" />
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>User</th>
+                    <th>Message</th>
+                    <th>Response</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@(users.TryGetValue(item.UserId, out var u) ? u : "Unknown")</td>
+                        <td><strong>@item.Message</strong></td>
+                        <td class="text-muted">@item.Response</td>
+                        <td>@item.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="4" class="text-center text-muted py-4">No chatbot queries found.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <partial name="_Pager" model="(IPagedList)Model" />
+</div>

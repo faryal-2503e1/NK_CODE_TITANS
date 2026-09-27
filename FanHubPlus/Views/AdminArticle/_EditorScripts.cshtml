@@ -1,0 +1,36 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"></script>
+<script>
+    (function () {
+        var quill = new Quill('#article-editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: {
+                    container: [
+                        [{ header: [2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'blockquote'],
+                        [{ list: 'ordered' }, { list: 'bullet' }],
+                        ['link', 'image'],
+                        ['clean']
+                    ],
+                    handlers: {
+                        // Ask for an image link instead of embedding the file inside the article text
+                        image: function () {
+                            var url = window.prompt('Image URL (https://...)');
+                            if (url && /^https?:\/\//i.test(url)) {
+                                var range = quill.getSelection(true);
+                                quill.insertEmbed(range.index, 'image', url, 'user');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        var hidden = document.getElementById('Content');
+        hidden.closest('form').addEventListener('submit', function () {
+            var html = quill.root.innerHTML;
+            hidden.value = (quill.getText().trim().length === 0 && html.indexOf('<img') === -1) ? '' : html;
+        });
+    })();
+</script>

@@ -1,0 +1,45 @@
+@model IEnumerable<QuizAttempt>
+
+@{
+    ViewData["Title"] = "Leaderboard";
+    var userNames = (Dictionary<string, string>)ViewBag.UserNames;
+}
+
+<div class="container py-4">
+    <h2><i class="bi bi-trophy me-2"></i>@ViewBag.QuizTitle - Leaderboard</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info mt-3">Abhi tak koi attempt nahi hua.</div>
+    }
+    else
+    {
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>User</th>
+                    <th>Score</th>
+                    <th>Percentage</th>
+                    <th>Attempted On</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int rank = 1; }
+                @foreach (var attempt in Model)
+                {
+                    <tr>
+                        <td>@rank</td>
+                        <td>@(userNames.ContainsKey(attempt.UserId) ? userNames[attempt.UserId] : "Unknown")</td>
+                        <td>@attempt.Score / @attempt.TotalQuestions</td>
+                        <td>@attempt.PercentageScore%</td>
+                        <td>@attempt.AttemptedAt.ToString("dd MMM yyyy, hh:mm tt")</td>
+                    </tr>
+                    rank++;
+                }
+            </tbody>
+        </table>
+    }
+
+    <a asp-action="Index" class="btn btn-primary">Back to Quizzes</a>
+</div>

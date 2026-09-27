@@ -1,0 +1,84 @@
+@model List<(string MonthLabel, List<FeaturedArticle> Articles)>
+@{
+    ViewData["Title"] = "Article Timeline | FanHub+";
+}
+
+<main class="explore-page py-4">
+    <div class="container-fluid site-container">
+        <!-- BREADCRUMB -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb fanhub-breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index">Articles</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Timeline</li>
+            </ol>
+        </nav>
+
+        <!-- HEADER -->
+        <div class="explore-heading reveal mb-5">
+            <div>
+                <span class="section-label">FANDOM CHRONICLES & CHRONOLOGY</span>
+                <h1 class="display-4 text-white fw-extrabold" style="font-family: 'Manrope', sans-serif;">Article <span>Timeline</span></h1>
+                <p class="lead text-secondary">Browse stories, news updates, and lore releases organized chronologically by month.</p>
+            </div>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="timeline-container mb-5">
+                @foreach (var group in Model)
+                {
+                    <div class="mb-5 reveal">
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <span class="badge bg-primary bg-opacity-20 text-primary px-3 py-2 rounded-pill fs-6 fw-bold">
+                                <i class="bi bi-calendar-range me-1"></i> @group.MonthLabel
+                            </span>
+                            <hr class="flex-grow-1 border-secondary opacity-25 m-0" />
+                        </div>
+
+                        <div class="row g-4">
+                            @foreach (var article in group.Articles)
+                            {
+                                var imgUrl = !string.IsNullOrEmpty(article.ImageUrl) ? article.ImageUrl : "/images/explore/solo-leveling.png";
+
+                                <div class="col-lg-4 col-md-6">
+                                    <article class="cyber-nebula-card h-100 d-flex flex-column">
+                                        <div class="content-poster" style="height: 180px;">
+                                            <img src="@imgUrl" alt="@article.Title" class="w-100 h-100 object-fit-cover" />
+                                        </div>
+                                        <div class="p-4 d-flex flex-column flex-grow-1">
+                                            <small class="text-muted mb-2"><i class="bi bi-clock me-1"></i> @article.PublishedAt.ToString("dd MMM yyyy")</small>
+                                            <h3 class="h6 text-white fw-bold mb-3">
+                                                <a asp-action="Details" asp-route-id="@article.ArticleId" class="text-white text-decoration-none hover-pink">
+                                                    @article.Title
+                                                </a>
+                                            </h3>
+                                            <div class="mt-auto pt-3 border-top border-secondary border-opacity-20 d-flex justify-content-between align-items-center">
+                                                <a asp-action="Details" asp-route-id="@article.ArticleId" class="cyber-read-btn btn-sm">
+                                                    Read Story <i class="bi bi-arrow-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center text-muted py-5 bg-dark bg-opacity-50 rounded-4 mb-4">
+                <i class="bi bi-calendar-x display-1 d-block mb-3 opacity-50"></i>
+                <p>No article timeline entries recorded yet.</p>
+            </div>
+        }
+
+        <div>
+            <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="bi bi-arrow-left me-1"></i> View All Articles
+            </a>
+        </div>
+    </div>
+</main>

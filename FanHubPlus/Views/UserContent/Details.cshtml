@@ -1,0 +1,140 @@
+@model Content
+@{
+    ViewData["Title"] = Model.Title + " | FanHub+";
+    var isBookmarked = ViewBag.IsBookmarked as bool? ?? false;
+    var typeIcon = Model.Type?.ToLower() switch
+    {
+        "video" => "bi-play-circle",
+        "audio" => "bi-headphones",
+        "image" => "bi-image",
+        _ => "bi-file-earmark-text"
+    };
+}
+
+<main class="explore-page py-4">
+    <div class="container-fluid site-container">
+        <!-- BREADCRUMB -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb fanhub-breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index">Browse Content</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.Title</li>
+            </ol>
+        </nav>
+
+        <div class="mb-3">
+            <a asp-action="Index" class="btn btn-sm rounded-pill px-3 py-2 btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i> Back to Content
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <!-- MAIN CONTENT -->
+            <div class="col-lg-8">
+                <div class="p-4 rounded-4 shadow-sm border border-secondary border-opacity-20 dash-card-panel mb-4">
+                    <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-primary bg-opacity-20 text-primary px-3 py-2 rounded-pill fw-semibold">
+                                <i class="bi @typeIcon me-1"></i> @Model.Type
+                            </span>
+                            @if (Model.Category != null)
+                            {
+                                <a asp-controller="UserCategory" asp-action="Details" asp-route-id="@Model.Category.CategoryId"
+                                   class="badge bg-secondary bg-opacity-20 text-muted px-3 py-2 rounded-pill fw-semibold text-decoration-none">
+                                    @Model.Category.Name
+                                </a>
+                            }
+                        </div>
+                        <span class="text-muted small"><i class="bi bi-calendar3 me-1"></i> @Model.ReleaseDate.ToString("dd MMM yyyy")</span>
+                    </div>
+
+                    <h1 class="fw-bold mb-3">@Model.Title</h1>
+
+                    <!-- VIDEO TRAILER PLAYER -->
+                    <div class="ratio ratio-16x9 rounded-4 overflow-hidden mb-4 shadow-lg border border-secondary border-opacity-25 bg-black">
+                        <video controls class="w-100 h-100 object-fit-cover">
+                            <source src="/images/category_media/anime/videos/solo-leveling-s2-video-design.mp4" type="video/mp4">
+                            <source src="/images/category_media/anime/audio/playtime.mp4" type="video/mp4">
+                            Your browser does not support HTML5 video playback.
+                        </video>
+                    </div>
+
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Description))
+                    {
+                        <p class="text-body opacity-75 mb-0" style="white-space: pre-line;">@Model.Description</p>
+                    }
+                    else
+                    {
+                        <p class="text-muted fst-italic mb-0">No description has been added for this content yet.</p>
+                    }
+
+                    @if (Model.ContentTags != null && Model.ContentTags.Any())
+                    {
+                        <div class="d-flex flex-wrap gap-2 mt-4 pt-3 border-top border-secondary border-opacity-20">
+                            @foreach (var contentTag in Model.ContentTags)
+                            {
+                                if (contentTag.Tag != null)
+                                {
+                                    <span class="badge bg-dark bg-opacity-50 text-muted px-3 py-2 rounded-pill small">
+                                        <i class="bi bi-tag me-1"></i>@contentTag.Tag.Name
+                                    </span>
+                                }
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- SIDEBAR ACTIONS -->
+            <div class="col-lg-4">
+                <div class="p-4 rounded-4 shadow-sm border border-secondary border-opacity-20 dash-card-panel">
+                    <h6 class="fw-bold mb-3 text-uppercase small tracking-wider text-muted">Actions</h6>
+                    <div class="d-flex flex-column gap-2">
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <form asp-controller="UserBookmark" asp-action="Add" method="post">
+                                <input type="hidden" name="itemType" value="Content" />
+                                <input type="hidden" name="itemId" value="@Model.ContentId" />
+                                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                                @if (isBookmarked)
+                                {
+                                    <button type="submit" class="btn btn-primary w-100 rounded-pill" disabled>
+                                        <i class="bi bi-bookmark-fill me-1"></i> Bookmarked
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-outline-primary w-100 rounded-pill">
+                                        <i class="bi bi-bookmark me-1"></i> Bookmark
+                                    </button>
+                                }
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline-primary w-100 rounded-pill">
+                                <i class="bi bi-bookmark me-1"></i> Login to Bookmark
+                            </a>
+                        }
+
+                        <a asp-controller="UserShare" asp-action="Share"
+                           asp-route-title="@Model.Title"
+                           asp-route-url="@Url.Action("Details", "UserContent", new { id = Model.ContentId })"
+                           class="btn btn-outline-secondary w-100 rounded-pill">
+                            <i class="bi bi-share me-1"></i> Share
+                        </a>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top border-secondary border-opacity-20 small text-muted d-flex flex-column gap-2">
+                        <span><i class="bi bi-fire me-1"></i> Popularity score: @Model.PopularityScore</span>
+                        @if (Model.Category != null)
+                        {
+                            <span><i class="bi bi-collection me-1"></i> Category: @Model.Category.Name</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

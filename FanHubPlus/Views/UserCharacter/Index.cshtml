@@ -1,0 +1,103 @@
+@model IEnumerable<CharacterProfile>
+@{
+    ViewData["Title"] = "Character Codex";
+}
+
+<main class="explore-page">
+    <!-- CHARACTERS HERO -->
+    <section class="explore-hero">
+        <div class="container-fluid site-container">
+            <div class="explore-heading reveal">
+                <div>
+                    <span class="section-label">THE LEGENDS & ICONS</span>
+                    <h1>Character <span>Codex</span></h1>
+                    <p>Meet the icons behind every universe. Discover backstories, abilities, and lore.</p>
+                </div>
+                <div class="explore-heading-art">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <div class="explore-search-box reveal">
+                <i class="bi bi-search"></i>
+                <input type="search" id="exploreSearch" placeholder="Search Sung Jin-Woo, Luffy, Gojo, Batman..." autocomplete="off">
+                <button type="button" id="exploreSearchButton">Search</button>
+            </div>
+
+            <!-- Category Chips -->
+            <div class="category-chips reveal" id="categoryChips">
+                <button class="category-chip active" type="button" data-category="all">All</button>
+                <button class="category-chip" type="button" data-category="anime">Anime</button>
+                <button class="category-chip" type="button" data-category="gaming">Gaming</button>
+                <button class="category-chip" type="button" data-category="comics">Comics</button>
+                <button class="category-chip" type="button" data-category="movies">Movies</button>
+                <button class="category-chip" type="button" data-category="manga">Manga</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CHARACTER CODEX GRID -->
+    <section class="explorer-section py-5">
+        <div class="container-fluid site-container">
+            <div class="section-header reveal mb-4 text-center">
+                <span class="section-label d-block text-center">ICONIC HEROES</span>
+                <h2 class="text-white h3 fw-extrabold text-center">Fandom Character Roster</h2>
+            </div>
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="explore-content-grid" id="exploreContentGrid">
+                    @foreach (var character in Model)
+                    {
+                        var categoryName = character.Category?.Name ?? "Fandom";
+                        var categoryLower = categoryName.ToLower();
+                        var img = !string.IsNullOrEmpty(character.ImageUrl) ? character.ImageUrl : "/images/explore/solo-leveling.png";
+
+                        <article class="explore-content-card reveal" data-title="@character.Name" data-category="@categoryLower">
+                            <a asp-action="Details" asp-route-id="@character.CharacterId" class="explore-poster" style="background-image: url('@img'); background-size: cover; background-position: center; min-height: 280px; display: block; position: relative;">
+                                <span class="card-status">CODEX</span>
+                                <button class="card-bookmark" type="button" data-bookmark="@character.Name" aria-label="Bookmark @character.Name">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                                <div class="poster-play">
+                                    <i class="bi bi-person-lines-fill"></i>
+                                </div>
+                            </a>
+
+                            <div class="explore-card-content">
+                                <div class="explore-card-meta">
+                                    <span class="cyber-chip">@categoryName.ToUpper()</span>
+                                    <span class="rating">
+                                        <i class="bi bi-star-fill"></i> 4.9
+                                    </span>
+                                </div>
+
+                                <h3>
+                                    <a asp-action="Details" asp-route-id="@character.CharacterId">
+                                        @character.Name
+                                    </a>
+                                </h3>
+
+                                <p>
+                                    @(string.IsNullOrEmpty(character.Bio) ? "Curated FanHub+ experience with details, tags and lore actions." : character.Bio)
+                                </p>
+
+                                <div class="explore-card-footer mt-3 pt-3 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                                    <span class="text-secondary small"><i class="bi bi-shield-shaded me-1"></i>Iconic Hero</span>
+                                    <a asp-action="Details" asp-route-id="@character.CharacterId" class="cyber-read-btn">
+                                        View Codex <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                    }
+                </div>
+            }
+        </div>
+    </section>
+</main>
+
+@section Scripts {
+    <script src="~/js/explore.js" asp-append-version="true"></script>
+}

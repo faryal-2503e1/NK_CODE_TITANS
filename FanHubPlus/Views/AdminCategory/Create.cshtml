@@ -1,0 +1,42 @@
+@model Category
+
+@{
+    ViewData["Title"] = "Add New Category";
+    Layout = "_AdminLayout";
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-head-title"><i class="fa-solid fa-plus"></i> Add Category</h1>
+        <p class="page-head-subtitle">Create a new top-level fandom bucket.</p>
+    </div>
+</div>
+
+<div class="content-card form-card">
+    <div class="content-card-body">
+        <form asp-action="Create" method="post" novalidate>
+            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Name <span class="required-mark">*</span></label>
+                <input asp-for="Name" class="form-control" placeholder="e.g. Anime, K-Pop, Cosplay" />
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Description</label>
+                <textarea asp-for="Description" class="form-control" rows="4" placeholder="A short description shown to visitors browsing this category"></textarea>
+                <span asp-validation-for="Description" class="text-danger small"></span>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Create Category</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

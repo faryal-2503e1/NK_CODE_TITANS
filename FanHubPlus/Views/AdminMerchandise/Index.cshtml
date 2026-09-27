@@ -1,0 +1,101 @@
+@model PagedList<MerchandiseItem>
+
+@{
+    ViewData["Title"] = "Manage Merchandise";
+    Layout = "_AdminLayout";
+    var q = Context.Request.Query["q"].ToString();
+    var tag = Context.Request.Query["tag"].ToString();
+    var status = Context.Request.Query["status"].ToString();
+    var sort = Context.Request.Query["sort"].ToString();
+    var viewCounts = ViewBag.ViewCounts as Dictionary<int, int> ?? new Dictionary<int, int>();
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Merchandise Management</h2>
+        <a asp-action="Create" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Merchandise</a>
+    </div>
+
+    <form method="get" class="row g-2 mb-3" role="search">
+        <div class="col-md-3">
+            <input type="search" name="q" value="@q" class="form-control" placeholder="Search name" aria-label="Search merchandise" />
+        </div>
+        <div class="col-md-2">
+            <select name="categoryId" class="form-select" aria-label="Filter by category" asp-items="ViewBag.Categories">
+                <option value="">All categories</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="tag" class="form-select" aria-label="Filter by tag">
+                <option value="">All tags</option>
+                @foreach (var t in AdminOptions.MerchandiseTags)
+                {
+                    <option value="@t" selected="@(tag == t)">@t</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="status" class="form-select" aria-label="Filter by release status">
+                <option value="" selected="@(status == "")">Upcoming and released</option>
+                <option value="upcoming" selected="@(status == "upcoming")">Upcoming only</option>
+                <option value="released" selected="@(status == "released")">Released only</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="sort" class="form-select" aria-label="Sort order">
+                <option value="" selected="@(sort == "")">Newest added</option>
+                <option value="name" selected="@(sort == "name")">Name A-Z</option>
+                <option value="views" selected="@(sort == "views")">Most viewed</option>
+            </select>
+        </div>
+        <div class="col-md-1 d-grid">
+            <button type="submit" class="btn btn-primary">Go</button>
+        </div>
+        <div class="col-12">
+            <a asp-action="Index" class="btn btn-link btn-sm px-0">Reset filters</a>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Tag</th>
+                    <th>Status</th>
+                    <th>Views</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>@item.Name</strong></td>
+                        <td>@item.Category?.Name</td>
+                        <td>@if (!string.IsNullOrEmpty(item.Tag)) { <span class="badge bg-secondary">@item.Tag</span> }</td>
+                        <td>
+                            @if (item.IsUpcoming) { <span class="badge bg-info text-dark">Upcoming</span> }
+                            else { <span class="badge bg-success">Released</span> }
+                        </td>
+                        <td>@(viewCounts.TryGetValue(item.ItemId, out var v) ? v : 0)</td>
+                        <td class="text-end">
+                            <div class="d-flex flex-wrap gap-1 justify-content-end">
+                            <a asp-action="Edit" asp-route-id="@item.ItemId" class="btn btn-sm btn-warning">Edit</a>
+                            <a asp-action="Details" asp-route-id="@item.ItemId" class="btn btn-sm btn-info text-white">Details</a>
+                            <a asp-action="Delete" asp-route-id="@item.ItemId" class="btn btn-sm btn-danger">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="6" class="text-center text-muted py-4">No merchandise matches these filters.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <partial name="_Pager" model="(IPagedList)Model" />
+</div>

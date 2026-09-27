@@ -1,0 +1,69 @@
+﻿@model IEnumerable<Event>
+
+@{
+    ViewData["Title"] = "Upcoming Events";
+}
+
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-clock-history me-2 text-primary"></i>Upcoming Events Schedule</h2>
+            <p class="text-muted mb-0">Events scheduled from today onwards.</p>
+        </div>
+        <div class="btn-group" role="group">
+            <a asp-action="Index" class="btn btn-outline-primary"><i class="bi bi-grid-fill me-1"></i>All Events</a>
+            <a asp-action="Upcoming" class="btn btn-primary active"><i class="bi bi-clock-history me-1"></i>Upcoming</a>
+            <a asp-action="Nearby" class="btn btn-outline-primary"><i class="bi bi-geo-alt-fill me-1"></i>Nearby</a>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-secondary text-center p-5 rounded-3">
+            <i class="bi bi-calendar2-check display-4 d-block mb-3 text-muted"></i>
+            <h4>No Upcoming Events Scheduled</h4>
+            <p class="mb-0">Stay tuned! New events will be published soon.</p>
+        </div>
+    }
+    else
+    {
+        <div class="list-group shadow-sm border-0">
+            @foreach (var evt in Model)
+            {
+                <div class="list-group-item list-group-item-action p-3 mb-3 border rounded-3 shadow-sm">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 text-center border-end-md py-2">
+                            <div class="display-6 fw-bold text-primary">@evt.EventDate.ToString("dd")</div>
+                            <div class="text-uppercase fw-semibold text-dark">@evt.EventDate.ToString("MMM yyyy")</div>
+                            <small class="text-muted">@evt.EventDate.ToString("dddd, hh:mm tt")</small>
+                        </div>
+                        <div class="col-md-6 py-2">
+                            <span class="badge bg-info text-dark mb-1"><i class="bi bi-geo-alt me-1"></i>@(string.IsNullOrEmpty(evt.City) ? "Online" : evt.City)</span>
+                            <h4 class="fw-bold mb-1">@evt.Title</h4>
+                            <p class="text-muted small mb-2 text-truncate">@evt.Description</p>
+                            @if (evt.EventCategories != null)
+                            {
+                                @foreach (var ec in evt.EventCategories)
+                                {
+                                    <span class="badge bg-secondary me-1">#@ec.Category?.Name</span>
+                                }
+                            }
+                        </div>
+                        <div class="col-md-3 text-md-end py-2">
+                            <a asp-action="Details" asp-route-id="@evt.EventId" class="btn btn-primary w-100 mb-2">
+                                <i class="bi bi-eye me-1"></i>View Details
+                            </a>
+                            @if (evt.EventTicketLinks != null && evt.EventTicketLinks.Any())
+                            {
+                                <span class="badge bg-success-subtle text-success w-100 p-2">
+                                    <i class="bi bi-ticket me-1"></i>Tickets Available
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

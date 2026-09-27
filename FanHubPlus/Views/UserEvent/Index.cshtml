@@ -1,0 +1,201 @@
+@model IEnumerable<Event>
+@{
+    ViewData["Title"] = "Events & Expos | FanHub+";
+    var cities = ViewBag.Cities as List<string> ?? new List<string>();
+}
+
+<main class="events-page">
+    <!-- HERO -->
+    <section class="events-hero" style="background: linear-gradient(180deg, rgba(7, 7, 20, 0.75) 0%, rgba(13, 11, 33, 0.95) 100%), url('/images/category_media/anime/images/pic1.jpg'); background-size: cover; background-position: center; border-bottom: 1px solid rgba(168, 85, 247, 0.25); border-radius: 0 0 30px 30px; padding: 10px 0 25px 0;">
+        <div class="container-fluid site-container">
+            <div class="events-hero-layout">
+                <div class="events-hero-content reveal">
+                    <span class="section-label">FAN EVENTS & EXPOS</span>
+                    <h1>Find Your Next <span>Fan Experience.</span></h1>
+                    <p>Discover conventions, gaming tournaments, cosplay meetups, screenings and fandom gatherings happening around you.</p>
+
+                    <!-- Search & Location -->
+                    <div class="events-main-search">
+                        <div class="events-search-field">
+                            <i class="bi bi-search"></i>
+                            <input type="search" id="eventSearch" placeholder="Search events, fandoms or venues..." aria-label="Search events">
+                        </div>
+                        <div class="events-location-field">
+                            <i class="bi bi-geo-alt"></i>
+                            <select id="eventCityFilter" aria-label="Select city">
+                                <option value="all">All Cities</option>
+                                @if (cities != null && cities.Any())
+                                {
+                                    @foreach (var c in cities)
+                                    {
+                                        <option value="@c.ToLower()">@c</option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option value="karachi">Karachi</option>
+                                    <option value="lahore">Lahore</option>
+                                    <option value="islamabad">Islamabad</option>
+                                }
+                            </select>
+                        </div>
+                        <button type="button" id="eventSearchButton" class="events-search-button">
+                            Search <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="events-hero-art reveal text-center flex-grow-1">
+                    <img src="/images/explore/event-hero-convention.jpg" alt="Fan Event Expo Experience" class="img-fluid rounded-4 shadow-lg border border-purple w-100" style="height: 440px; max-height: 440px; object-fit: cover; filter: drop-shadow(0 20px 40px rgba(168, 85, 247, 0.5)); border-color: rgba(168, 85, 247, 0.6) !important;" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DISCOVERY SECTION -->
+    <section class="events-discovery section-space py-5">
+        <div class="container-fluid site-container">
+            <div class="events-section-heading reveal">
+                <div>
+                    <span class="section-label">DISCOVER</span>
+                    <h2>Upcoming Events</h2>
+                    <p>Browse events by category, city or date.</p>
+                </div>
+            </div>
+
+            <!-- Chips -->
+            <div class="event-category-chips reveal mb-4" id="eventCategoryChips">
+                <button type="button" class="event-category-chip active" data-event-category="all">All Events</button>
+                <button type="button" class="event-category-chip" data-event-category="anime">Anime</button>
+                <button type="button" class="event-category-chip" data-event-category="gaming">Gaming</button>
+                <button type="button" class="event-category-chip" data-event-category="cosplay">Cosplay</button>
+                <button type="button" class="event-category-chip" data-event-category="movies">Movies</button>
+                <button type="button" class="event-category-chip" data-event-category="kpop">K-Pop</button>
+                <button type="button" class="event-category-chip" data-event-category="comics">Comics</button>
+            </div>
+
+            <!-- EVENT GRID -->
+            @if (Model != null && Model.Any())
+            {
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="eventsGrid">
+                    @foreach (var evt in Model)
+                    {
+                        var titleLower = evt.Title.ToLower();
+                        var categoryBadge = "CONVENTION";
+                        var iconClass = "bi-calendar-event";
+                        var tag1 = "#Expo";
+                        var tag2 = "#FanGathering";
+
+                        if (titleLower.Contains("game") || titleLower.Contains("gaming")) { categoryBadge = "TOURNAMENT"; iconClass = "bi-controller"; tag1 = "#Gaming"; tag2 = "#Tournament"; }
+                        else if (titleLower.Contains("cosplay")) { categoryBadge = "MEETUP"; iconClass = "bi-person-arms-up"; tag1 = "#Cosplay"; tag2 = "#Championship"; }
+                        else if (titleLower.Contains("movie") || titleLower.Contains("film")) { categoryBadge = "SCREENING"; iconClass = "bi-film"; tag1 = "#Movie"; tag2 = "#Screening"; }
+                        else if (titleLower.Contains("anime")) { iconClass = "bi-stars"; tag1 = "#AnimeExpo"; tag2 = "#Tokyo2026"; }
+
+                        var cityValue = (string.IsNullOrEmpty(evt.City) ? "karachi" : evt.City).ToLower();
+
+                        <div class="col reveal event-card-col" data-title="@titleLower" data-category="@categoryBadge.ToLower()" data-city="@cityValue">
+                            <article class="cyber-nebula-card">
+                                <div>
+                                    <div class="cyber-hud-cover">
+                                        <div class="cyber-hud-placeholder">
+                                            <i class="bi @iconClass"></i>
+                                            <span class="cyber-hud-tag">@categoryBadge &bull; @evt.EventDate.ToString("MMM dd").ToUpper()</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="cyber-chip-group">
+                                        <span class="cyber-chip">@tag1</span>
+                                        <span class="cyber-chip">@tag2</span>
+                                        <span class="cyber-chip">#@(string.IsNullOrEmpty(evt.City) ? "Karachi" : evt.City)</span>
+                                    </div>
+
+                                    <h3>
+                                        <a asp-action="Details" asp-route-id="@evt.EventId">@evt.Title</a>
+                                    </h3>
+                                    <p class="mb-2"><i class="bi bi-geo-alt text-warning me-1"></i> @(string.IsNullOrEmpty(evt.City) ? "Expo Centre, Karachi" : evt.City)</p>
+                                    <p class="small text-muted mb-0"><i class="bi bi-clock me-1"></i> @evt.EventDate.ToString("hh:mm tt") &bull; <i class="bi bi-people me-1"></i> 1,200 Attending</p>
+                                </div>
+
+                                <div class="cyber-action-bar">
+                                    <button class="cyber-meta-btn" type="button">
+                                        <i class="bi bi-bookmark"></i> Save
+                                    </button>
+                                    <a asp-action="Details" asp-route-id="@evt.EventId" class="cyber-read-btn">
+                                        View Details <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </article>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <p class="lead text-muted">No events listed right now. Check back soon for upcoming conventions and expos!</p>
+                </div>
+            }
+        </div>
+    </section>
+</main>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('eventSearch');
+            const citySelect = document.getElementById('eventCityFilter');
+            const searchBtn = document.getElementById('eventSearchButton');
+            const chips = document.querySelectorAll('#eventCategoryChips .event-category-chip');
+            const cards = document.querySelectorAll('#eventsGrid .event-card-col');
+
+            function performFilter() {
+                const searchVal = searchInput ? searchInput.value.toLowerCase().trim() : '';
+                const cityVal = citySelect ? citySelect.value.toLowerCase().trim() : 'all';
+                const activeChip = document.querySelector('#eventCategoryChips .event-category-chip.active');
+                const catVal = activeChip ? activeChip.getAttribute('data-event-category').toLowerCase() : 'all';
+
+                cards.forEach(card => {
+                    const title = card.getAttribute('data-title') || '';
+                    const city = card.getAttribute('data-city') || '';
+                    const cat = card.getAttribute('data-category') || '';
+                    const fullText = card.textContent.toLowerCase();
+
+                    const matchSearch = !searchVal || title.includes(searchVal) || fullText.includes(searchVal);
+                    const matchCity = (cityVal === 'all' || city.includes(cityVal) || cityVal.includes(city));
+                    const matchCat = (catVal === 'all' || cat.includes(catVal) || title.includes(catVal) || fullText.includes(catVal));
+
+                    if (matchSearch && matchCity && matchCat) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            // Category Chips click handler
+            chips.forEach(chip => {
+                chip.addEventListener('click', function () {
+                    chips.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    performFilter();
+                });
+            });
+
+            // Input handlers
+            if (searchInput) {
+                searchInput.addEventListener('input', performFilter);
+                searchInput.addEventListener('keyup', performFilter);
+            }
+
+            // City Select handler
+            if (citySelect) {
+                citySelect.addEventListener('change', performFilter);
+            }
+
+            // Search button handler
+            if (searchBtn) {
+                searchBtn.addEventListener('click', performFilter);
+            }
+        });
+    </script>
+}

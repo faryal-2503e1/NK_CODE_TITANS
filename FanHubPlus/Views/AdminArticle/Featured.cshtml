@@ -1,0 +1,32 @@
+﻿@model IEnumerable<FeaturedArticle>
+
+@{
+    ViewData["Title"] = "Featured Articles Feed";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid mt-4">
+    <h2>Special Featured Articles Feed</h2>
+    <hr />
+    <div class="row">
+        @foreach (var article in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    @if (!string.IsNullOrEmpty(article.ImageUrl))
+                    {
+                        <img src="@article.ImageUrl" class="card-img-top" alt="Article Image" style="height: 200px; object-fit: cover;">
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@article.Title</h5>
+                        <p class="card-text text-muted">@RichText.ToPlainText(article.Content, 100)</p>
+                    </div>
+                    <div class="card-footer bg-transparent d-flex justify-content-between align-items-center">
+                        <small class="text-muted">@article.PublishedAt.ToString("MMM dd, yyyy")</small>
+                        <a asp-action="Details" asp-route-id="@article.ArticleId" class="btn btn-sm btn-outline-primary">Read More</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

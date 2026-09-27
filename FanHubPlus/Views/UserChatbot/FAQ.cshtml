@@ -1,0 +1,28 @@
+﻿@model List<ChatbotFaq>
+@{
+    ViewData["Title"] = "Frequently Asked Questions";
+}
+
+<section class="faq-page">
+    <div class="page-header">
+        <h1>Frequently Asked Questions</h1>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Ask FanBot Instead</a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="faq-list">
+            @foreach (var faq in Model)
+            {
+                <details class="faq-item">
+                    <summary>@faq.Question</summary>
+                    <p>@faq.Answer</p>
+                </details>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No FAQs have been added yet.</p>
+    }
+</section>

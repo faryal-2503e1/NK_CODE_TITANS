@@ -1,0 +1,52 @@
+﻿@model FanSubmission
+
+@{
+    ViewData["Title"] = "Submission Details";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid mt-4">
+    <h2>Submission Details</h2>
+    <hr />
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Title</dt>
+                <dd class="col-sm-9"><strong>@Model.Title</strong></dd>
+
+                <dt class="col-sm-3">Submitted By (ID)</dt>
+                <dd class="col-sm-9">@ViewBag.SubmitterName (@Model.UserId)</dd>
+
+                <dt class="col-sm-3">Status</dt>
+                <dd class="col-sm-9">
+                    <span class="badge @(Model.Status == "Approved" ? "bg-success" : Model.Status == "Rejected" ? "bg-danger" : "bg-warning text-dark")">
+                        @Model.Status
+                    </span>
+                </dd>
+
+                <dt class="col-sm-3">Submitted At</dt>
+                <dd class="col-sm-9">@Model.SubmittedAt</dd>
+
+                <dt class="col-sm-3">Media URL</dt>
+                <dd class="col-sm-9">
+                    @if (!string.IsNullOrEmpty(Model.MediaUrl))
+                    {
+                        <a href="@Model.MediaUrl" target="_blank" rel="noopener noreferrer" class="text-decoration-underline">View Attached Media</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No media attached</span>
+                    }
+                </dd>
+
+                <dt class="col-sm-3">Content / Description</dt>
+                <dd class="col-sm-9 p-3 bg-light rounded border">@Model.Content</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Review" asp-route-id="@Model.SubmissionId" class="btn btn-primary">Review Submission</a>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>

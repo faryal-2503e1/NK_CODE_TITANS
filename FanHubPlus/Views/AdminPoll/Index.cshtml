@@ -1,0 +1,67 @@
+@model IEnumerable<Poll>
+
+@{
+    ViewData["Title"] = "Manage Polls";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Live Polls Management</h2>
+        <a asp-action="Create" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Create New Poll</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    <table class="table table-striped align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Options</th>
+                <th>Total Votes</th>
+                <th>Status</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var poll in Model)
+            {
+                <tr>
+                    <td><strong>@poll.Title</strong></td>
+                    <td>@(poll.Category?.Name ?? "General")</td>
+                    <td>@string.Join(", ", poll.Options.Select(o => o.OptionText))</td>
+                    <td>@poll.Options.Sum(o => o.Votes.Count)</td>
+                    <td>
+                        @if (poll.IsActive)
+                        {
+                            <span class="badge bg-success">Live</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Closed</span>
+                        }
+                    </td>
+                    <td class="text-end">
+                        <div class="d-flex flex-wrap gap-1 justify-content-end">
+                            <form asp-action="ToggleActive" asp-route-id="@poll.PollId" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-warning">@(poll.IsActive ? "Close" : "Reopen")</button>
+                            </form>
+                            <form asp-action="Delete" asp-route-id="@poll.PollId" method="post" class="d-inline" onsubmit="return confirm('Delete this poll?');">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (!Model.Any())
+    {
+        <p class="text-muted">Abhi koi poll nahi bana.</p>
+    }
+</div>

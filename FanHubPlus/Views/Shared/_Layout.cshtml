@@ -1,0 +1,399 @@
+@using Microsoft.AspNetCore.Identity
+@using FanHubPlus.Data
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    var controllerName = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var actionName = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    var areaName = ViewContext.RouteData.Values["area"]?.ToString() ?? "";
+    var isSignedIn = SignInManager.IsSignedIn(User);
+
+    string NavClass(string ctrl, string act = null) {
+        if (act == null) return controllerName == ctrl ? "active" : "";
+        return (controllerName == ctrl && actionName == act) ? "active" : "";
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FanHub+ | Where Every Fandom Finds a Home</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Nothing+You+Could+Do&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/redesign.css" asp-append-version="true" />
+</head>
+<body>
+    <partial name="_ThemeInit" />
+
+    <!-- PAGE LOADER -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-logo">
+            <span class="brand-icon">
+                <i class="bi bi-headphones"></i>
+            </span>
+            <span>FanHub<b>+</b></span>
+        </div>
+        <div class="loader-progress">
+            <span></span>
+        </div>
+    </div>
+
+    <!-- BACKGROUND EFFECTS -->
+    <div class="background-effects" aria-hidden="true">
+        <div class="background-grid"></div>
+        <span class="glow glow-one"></span>
+        <span class="glow glow-two"></span>
+        <span class="glow glow-three"></span>
+        <div id="particles"></div>
+    </div>
+
+    <!-- MOUSE GLOW -->
+    <div class="mouse-glow" id="mouseGlow"></div>
+
+    <!-- NAVBAR -->
+    <header class="main-header" id="mainHeader">
+        <nav class="navbar navbar-expand-xl">
+            <div class="container-fluid site-container">
+
+                <!-- Logo -->
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <span class="brand-icon">
+                        <i class="bi bi-headphones"></i>
+                    </span>
+                    <span class="brand-name">
+                        FanHub<b>+</b>
+                    </span>
+                </a>
+
+                <!-- Mobile Toggle -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation">
+                    <i class="bi bi-list"></i>
+                </button>
+
+                <div class="collapse navbar-collapse" id="mainNavigation">
+                    <ul class="navbar-nav mx-auto align-items-center gap-1">
+                        <li class="nav-item">
+                            <a class="nav-link @NavClass("Home")" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-door me-1 small"></i> Home
+                            </a>
+                        </li>
+
+                        <!-- EXPLORE DROPDOWN -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle @(controllerName == "UserCategory" || controllerName == "UserContent" || controllerName == "UserCharacter" || controllerName == "UserArticle" || controllerName == "UserEvent" || controllerName == "UserMerchandise" || controllerName == "UserMedia" ? "active" : "")" href="#" id="exploreDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-compass me-1 small"></i> Explore <i class="bi bi-chevron-down ms-1 small opacity-75"></i>
+                            </a>
+                            <ul class="dropdown-menu user-nav-menu shadow-lg border border-secondary border-opacity-25" aria-labelledby="exploreDropdown">
+                                <li>
+                                    <a class="dropdown-item @NavClass("UserCategory") py-2" asp-area="" asp-controller="UserCategory" asp-action="Index">
+                                        <i class="bi bi-grid-fill text-primary me-2"></i> Categories
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item @NavClass("UserContent") py-2" asp-area="" asp-controller="UserContent" asp-action="Index">
+                                        <i class="bi bi-film text-danger me-2"></i> Content & Movies
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item @NavClass("UserCharacter") py-2" asp-area="" asp-controller="UserCharacter" asp-action="Index">
+                                        <i class="bi bi-people-fill text-warning me-2"></i> Characters
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item @NavClass("UserArticle") py-2" asp-area="" asp-controller="UserArticle" asp-action="Index">
+                                        <i class="bi bi-journal-text text-info me-2"></i> Articles & News
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item @NavClass("UserEvent") py-2" asp-area="" asp-controller="UserEvent" asp-action="Index">
+                                        <i class="bi bi-calendar-event text-success me-2"></i> Events & Expos
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item @NavClass("UserMerchandise") py-2" asp-area="" asp-controller="UserMerchandise" asp-action="Index">
+                                        <i class="bi bi-bag-check-fill text-purple me-2"></i> Shop & Merch
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider bg-secondary opacity-25" /></li>
+                                <li>
+                                    <a class="dropdown-item @NavClass("UserMedia") py-2" asp-area="" asp-controller="UserMedia" asp-action="Index">
+                                        <i class="bi bi-play-circle-fill text-danger me-2"></i> Media Hub
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- INTERACTIVE DROPDOWN -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle @(controllerName == "UserPoll" || controllerName == "UserQuiz" || controllerName == "UserChatbot" ? "active" : "")" href="#" id="interactiveDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-controller me-1 small"></i> Interactive <i class="bi bi-chevron-down ms-1 small opacity-75"></i>
+                            </a>
+                            <ul class="dropdown-menu user-nav-menu shadow-lg border border-secondary border-opacity-25" aria-labelledby="interactiveDropdown">
+                                <li>
+                                    <a class="dropdown-item @NavClass("UserPoll") py-2" asp-area="" asp-controller="UserPoll" asp-action="Index">
+                                        <i class="bi bi-bar-chart-line-fill text-info me-2"></i> Live Polls
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item @NavClass("UserQuiz") py-2" asp-area="" asp-controller="UserQuiz" asp-action="Index">
+                                        <i class="bi bi-question-square-fill text-warning me-2"></i> Fan Quizzes
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item @NavClass("UserChatbot") py-2" asp-area="" asp-controller="UserChatbot" asp-action="Index">
+                                        <i class="bi bi-robot text-primary me-2"></i> FanBot AI
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- COMMUNITY -->
+                        <li class="nav-item">
+                            <a class="nav-link @NavClass("UserDashboard")" asp-area="" asp-controller="UserDashboard" asp-action="Index">
+                                <i class="bi bi-people me-1 small"></i> Community
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- Right Actions -->
+                    <div class="nav-actions">
+                        <!-- Font size -->
+                        <button class="nav-icon-button" id="fontSizeButton" type="button" title="Change font size">
+                            <i class="bi bi-type"></i>
+                        </button>
+
+                        <!-- Theme -->
+                        <button class="nav-icon-button" id="themeButton" type="button" title="Change theme">
+                            <i class="bi bi-moon-stars"></i>
+                        </button>
+
+                        <!-- Notification -->
+                        @if (isSignedIn)
+                        {
+                            <button class="nav-icon-button notification-button" type="button" title="Notifications">
+                                <i class="bi bi-bell"></i>
+                                <span></span>
+                            </button>
+                        }
+
+                        <div class="dropdown d-inline-block user-nav-dropdown ms-1">
+                            <button class="nav-icon-button dropdown-toggle border-0" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Account Menu">
+                                <i class="bi bi-person-circle fs-5"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end user-nav-menu shadow-lg" aria-labelledby="userMenuDropdown">
+                                @if (isSignedIn)
+                                {
+                                    <li class="px-3 py-2 border-bottom border-secondary border-opacity-25 mb-1">
+                                        <span class="d-block small text-muted">Signed in as</span>
+                                        <strong class="text-truncate d-block" style="max-width: 180px;">@User.Identity?.Name</strong>
+                                    </li>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" asp-area="" asp-controller="AdminDashboard" asp-action="Index">
+                                                <i class="bi bi-shield-lock-fill text-danger me-2"></i> Admin Panel
+                                            </a>
+                                        </li>
+                                    }
+                                    <li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="UserDashboard" asp-action="Index">
+                                            <i class="bi bi-speedometer2 text-primary me-2"></i> User Dashboard
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider bg-secondary opacity-25" /></li>
+                                    <li>
+                                        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" class="w-100">
+                                            <button type="submit" class="dropdown-item text-danger border-0 bg-transparent w-100 text-start">
+                                                <i class="bi bi-box-arrow-right me-2"></i> Log Out
+                                            </button>
+                                        </form>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Login">
+                                            <i class="bi bi-box-arrow-in-right text-primary me-2"></i> Log In
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register">
+                                            <i class="bi bi-person-plus-fill text-danger me-2"></i> Sign Up
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content" role="main" class="@(areaName == "Identity" ? "identity-area-content" : "")">
+        <partial name="_StatusMessages" />
+        @RenderBody()
+    </main>
+
+    <!-- TOAST NOTIFICATION STACK -->
+    @if (isSignedIn)
+    {
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1080" id="categoryNotificationContainer" aria-live="polite" aria-atomic="true"></div>
+    }
+
+    <!-- FOOTER -->
+    <!-- FOOTER -->
+    <footer class="main-footer py-5 mt-auto">
+        <div class="container site-container">
+            <div class="row g-4 mb-4">
+                <!-- Brand Column -->
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <a href="/" class="brand-link d-inline-flex align-items-center gap-2 mb-3 text-decoration-none">
+                        <span class="brand-icon d-inline-flex align-items-center justify-content-center rounded-3 p-2" style="background: linear-gradient(135deg, #ff2e93, #8b5cf6); color: #fff;">
+                            <i class="bi bi-headphones fs-4"></i>
+                        </span>
+                        <span class="brand-name fs-4 fw-bold" style="font-family: 'Manrope', sans-serif;">
+                            FanHub<b>+</b>
+                        </span>
+                    </a>
+                    <p class="footer-desc small text-muted pe-lg-3">
+                        Where Every Fandom Finds a Home. Discover news, characters, events, and merchandise across your favorite universes.
+                    </p>
+                    <div class="d-flex align-items-center gap-2 mt-3">
+                        <span class="badge rounded-pill px-3 py-2" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6; border: 1px solid rgba(139, 92, 246, 0.3);">
+                            ✨ Fandom Community
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Column 2: Explore -->
+                <div class="col-lg-3 col-6 mb-3">
+                    <h6 class="footer-heading fw-bold mb-3 small text-uppercase tracking-wider">Explore</h6>
+                    <ul class="list-unstyled footer-nav-links mb-0">
+                        <li class="mb-2"><a asp-controller="UserCategory" asp-action="Index" class="footer-link"><i class="bi bi-chevron-right small opacity-50 me-1"></i> Categories</a></li>
+                        <li class="mb-2"><a asp-controller="UserCharacter" asp-action="Index" class="footer-link"><i class="bi bi-chevron-right small opacity-50 me-1"></i> Characters</a></li>
+                        <li class="mb-2"><a asp-controller="UserEvent" asp-action="Index" class="footer-link"><i class="bi bi-chevron-right small opacity-50 me-1"></i> Events</a></li>
+                        <li class="mb-2"><a asp-controller="UserMerchandise" asp-action="Index" class="footer-link"><i class="bi bi-chevron-right small opacity-50 me-1"></i> Shop & Merch</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Community -->
+                <div class="col-lg-3 col-6 mb-3">
+                    <h6 class="footer-heading fw-bold mb-3 small text-uppercase tracking-wider">Community</h6>
+                    <ul class="list-unstyled footer-nav-links mb-0">
+                        <li class="mb-2"><a asp-controller="UserPoll" asp-action="Index" class="footer-link"><i class="bi bi-chevron-right small opacity-50 me-1"></i> Live Polls</a></li>
+                        <li class="mb-2"><a asp-controller="UserQuiz" asp-action="Index" class="footer-link"><i class="bi bi-chevron-right small opacity-50 me-1"></i> Fan Quizzes</a></li>
+                        <li class="mb-2"><a asp-controller="UserChatbot" asp-action="Index" class="footer-link"><i class="bi bi-chevron-right small opacity-50 me-1"></i> FanBot AI</a></li>
+                        <li class="mb-2"><a asp-controller="Leaderboard" asp-action="Index" class="footer-link"><i class="bi bi-chevron-right small opacity-50 me-1"></i> Leaderboard</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4: Quick Links -->
+                <div class="col-lg-2 col-12 mb-3">
+                    <h6 class="footer-heading fw-bold mb-3 small text-uppercase tracking-wider">Quick Space</h6>
+                    <ul class="list-unstyled footer-nav-links mb-0">
+                        <li class="mb-2"><a asp-controller="UserArticle" asp-action="Index" class="footer-link"><i class="bi bi-chevron-right small opacity-50 me-1"></i> Articles</a></li>
+                        <li class="mb-2"><a asp-controller="UserMedia" asp-action="Index" class="footer-link"><i class="bi bi-chevron-right small opacity-50 me-1"></i> Media Center</a></li>
+                        <li class="mb-2"><a asp-controller="UserFanSubmission" asp-action="Index" class="footer-link"><i class="bi bi-chevron-right small opacity-50 me-1"></i> Submissions</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Sub Footer -->
+            <div class="pt-3 mt-3 border-top border-secondary border-opacity-25 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 small text-muted">
+                <p class="mb-0">&copy; 2026 FanHub+. All rights reserved.</p>
+                <div class="d-flex align-items-center gap-3">
+                    <a asp-controller="Home" asp-action="About" class="footer-sub-link">About</a>
+                    <a asp-controller="Home" asp-action="Privacy" class="footer-sub-link">Privacy Policy</a>
+                    <a asp-controller="Home" asp-action="Sitemap" class="footer-sub-link">Sitemap</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- TRAILER MODAL -->
+    <div class="modal fade" id="trailerModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content trailer-modal bg-dark border border-purple rounded-4 overflow-hidden p-0">
+                <div class="modal-header border-0 pb-0 justify-content-end position-relative" style="z-index: 10;">
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-2 p-md-3">
+                    <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-lg bg-black">
+                        <video controls class="w-100 h-100 object-fit-cover rounded-4" poster="/images/explore/solo-leveling.png">
+                            <source src="/images/category_media/anime/videos/solo-leveling-s2-video-design.mp4" type="video/mp4" />
+                            <source src="/images/category_media/anime/audio/playtime.mp4" type="video/mp4" />
+                            Your browser does not support video playback.
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/app.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @if (isSignedIn)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@8.0.0/dist/browser/signalr.min.js"></script>
+        <script>
+            (function () {
+                const toastContainer = document.getElementById('categoryNotificationContainer');
+                if (!toastContainer) return;
+
+                const connection = new signalR.HubConnectionBuilder()
+                    .withUrl("/hubs/notifications")
+                    .withAutomaticReconnect()
+                    .build();
+
+                connection.on("NewContentPublished", function (data) {
+                    const toastEl = document.createElement('div');
+                    toastEl.className = 'toast align-items-center border-0 shadow mb-2';
+                    toastEl.setAttribute('role', 'alert');
+
+                    const typeLabel = (data.type || 'content').replace(/\b\w/g, c => c.toUpperCase());
+
+                    toastEl.innerHTML =
+                        '<div class="d-flex">' +
+                        '<div class="toast-body">' +
+                        '<i class="bi bi-bell-fill text-primary me-1"></i>' +
+                        '<strong>New ' + typeLabel + ' in ' + data.categoryName + '</strong>' +
+                        '<div class="small mt-1">' + data.title + '</div>' +
+                        (data.url ? '<a href="' + data.url + '" class="small">View now &rarr;</a>' : '') +
+                        '</div>' +
+                        '<button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>' +
+                        '</div>';
+
+                    toastContainer.appendChild(toastEl);
+                    const bsToast = new bootstrap.Toast(toastEl, { delay: 8000 });
+                    bsToast.show();
+                    toastEl.addEventListener('hidden.bs.toast', function () { toastEl.remove(); });
+                });
+
+                connection.start().catch(function (err) { console.error('Notification hub error:', err); });
+            })();
+        </script>
+    }
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

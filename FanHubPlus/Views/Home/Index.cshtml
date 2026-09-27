@@ -1,0 +1,431 @@
+@model List<Content>
+@{
+    ViewData["Title"] = "Where Every Fandom Finds a Home";
+    var featuredArticles = ViewBag.FeaturedArticles as List<FeaturedArticle>;
+    var upcomingEvents = ViewBag.UpcomingEvents as List<Event>;
+    var trendingMerch = ViewBag.TrendingMerchandise as List<MerchandiseItem>;
+}
+
+<!-- =========================
+     MAIN HERO BANNER
+========================== -->
+<section class="hero-section">
+    <div class="hero-background-image"></div>
+    <div class="hero-overlay"></div>
+
+    <div class="container-fluid site-container p-0" style="padding-top: 68px !important;">
+        <div class="row align-items-center">
+            <!-- LEFT -->
+            <div class="col-xl-6 col-lg-7">
+                <div class="hero-content">
+                    <div class="hero-eyebrow reveal">
+                        <span>CONNECT</span> <i class="bi bi-stars"></i>
+                        <span>EXPLORE</span> <i class="bi bi-stars"></i>
+                        <span>SHARE</span> <i class="bi bi-stars"></i>
+                        <span>BELONG</span>
+                    </div>
+
+                    <h1 class="hero-logo-text reveal">Fan<span>Hub+</span></h1>
+
+                    <h2 class="hero-heading reveal">
+                        Where Every Fandom <br> Finds a <span style="font-family: 'Manrope', sans-serif; background: linear-gradient(135deg, #ff2e93, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Home</span>
+                    </h2>
+
+                    <p class="hero-description reveal">
+                        Explore anime, games, movies, K-Pop, comics, manga, cosplay and more.<br>
+                        Join a passionate community, discover new worlds and share what you love.
+                    </p>
+
+                    <div class="hero-search-area mb-4 reveal">
+                        <div class="global-search">
+                            <i class="bi bi-search"></i>
+                            <input type="text" id="globalSearch" placeholder="Search anime, games, movies, characters...">
+                            <span class="search-shortcut">Ctrl K</span>
+                        </div>
+                    </div>
+
+                    <div class="hero-buttons reveal">
+                        <a asp-controller="UserCategory" asp-action="Index" class="primary-button">
+                            Explore Now <i class="bi bi-arrow-up-right"></i>
+                        </a>
+                        <button class="outline-button" type="button" data-bs-toggle="modal" data-bs-target="#trailerModal">
+                            <i class="bi bi-play-circle"></i> Watch Trailer
+                        </button>
+                    </div>
+
+                    <div class="hero-stats reveal">
+                        <div class="hero-stat">
+                            <span class="stat-icon"><i class="bi bi-people-fill"></i></span>
+                            <div><strong><span class="counter" data-target="250">250</span>K+</strong><small>Active Fans</small></div>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="stat-icon"><i class="bi bi-trophy-fill"></i></span>
+                            <div><strong><span class="counter" data-target="8">8</span></strong><small>Fandom Worlds</small></div>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="stat-icon"><i class="bi bi-chat-heart-fill"></i></span>
+                            <div><strong><span class="counter" data-target="50">50</span>K+</strong><small>Discussions</small></div>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="stat-icon"><i class="bi bi-calendar-event-fill"></i></span>
+                            <div><strong><span class="counter" data-target="100">100</span>+</strong><small>Events Globally</small></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT -->
+            <div class="col-xl-6 col-lg-5">
+                <div class="hero-visual reveal text-center">
+                    <div class="hero-character-image position-relative d-inline-block">
+                        <img src="/images/home/home-hero-art.png" alt="FanHub+ Character Art" class="img-fluid" style="max-height: 480px; filter: drop-shadow(0 15px 30px rgba(168, 85, 247, 0.4));" />
+                    </div>
+
+
+
+                    <button class="hero-play-button" type="button" data-bs-toggle="modal" data-bs-target="#trailerModal">
+                        <i class="bi bi-play-fill"></i>
+                    </button>
+
+                    <div class="hero-trending-card">
+                        <span class="trending-label">Trending Now</span>
+                        <div class="hero-trending-content">
+                            <div class="trending-thumb"><i class="bi bi-lightning-charge-fill"></i></div>
+                            <div>
+                                <strong>Solo Leveling</strong>
+                                <small>Season 2 Arise</small>
+                            </div>
+                            <a asp-controller="UserContent" asp-action="Index"><i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- =========================
+     CHARACTER HERO SHOWCASE SLIDER
+========================== -->
+<section class="character-hero-slider-section" id="characterHeroSlider" aria-label="Fandom Character Showcase">
+
+    <div class="slider-cosmic-bg" aria-hidden="true">
+        <div class="slider-nebula nebula-pink"></div>
+        <div class="slider-nebula nebula-purple"></div>
+        <div class="slider-nebula nebula-cyan"></div>
+        <div class="slider-cosmic-stars"></div>
+        <div class="slider-grid-mesh"></div>
+    </div>
+
+    <div class="slider-top-badge reveal">
+        <span class="cyber-pill">
+            <i class="bi bi-stars"></i>
+            CYBER KAWAII • COSMIC FANDOM UNIVERSE
+            <i class="bi bi-stars"></i>
+        </span>
+    </div>
+
+    <!-- Slides Stage -->
+    <div class="character-slider-stage">
+        <!-- 1. Comics -->
+        <article class="character-slide active" data-slide-index="0" data-category="Comics" aria-hidden="false">
+            <div class="slide-bg-typography" aria-hidden="true">COMICS</div>
+            <div class="slide-aura-ring"></div>
+            <div class="slide-character-wrap">
+                <img src="~/assets/images/hero/comics-hero.png" alt="Comics Hero" class="character-cutout-img floating-hero-char">
+            </div>
+            <div class="slide-info-overlay">
+                <span class="slide-category-pill"><i class="bi bi-book-half"></i> Comics Universe</span>
+                <h2 class="slide-title">Unleash Heroic Legends</h2>
+                <p class="slide-desc">Step into epic graphic novels, comic multiverse storylines and superhero sagas.</p>
+            </div>
+        </article>
+
+        <!-- 2. Cosplay -->
+        <article class="character-slide" data-slide-index="1" data-category="Cosplay" aria-hidden="true">
+            <div class="slide-bg-typography" aria-hidden="true">COSPLAY</div>
+            <div class="slide-aura-ring"></div>
+            <div class="slide-character-wrap">
+                <img src="~/assets/images/hero/cosplay-hero.png" alt="Cosplay Anime Character" class="character-cutout-img floating-hero-char">
+            </div>
+            <div class="slide-info-overlay">
+                <span class="slide-category-pill"><i class="bi bi-stars"></i> Cyber Kawaii Cosplay</span>
+                <h2 class="slide-title">Craft Reality Into Art</h2>
+                <p class="slide-desc">Celebrate costume masterpieces, glowing accessories and convention creations.</p>
+            </div>
+        </article>
+
+        <!-- 3. Badminton -->
+        <article class="character-slide" data-slide-index="2" data-category="Badminton" aria-hidden="true">
+            <div class="slide-bg-typography" aria-hidden="true">BADMINTON</div>
+            <div class="slide-aura-ring"></div>
+            <div class="slide-character-wrap">
+                <img src="~/assets/images/hero/badminton-hero.png" alt="Badminton Athlete" class="character-cutout-img floating-hero-char">
+            </div>
+            <div class="slide-info-overlay">
+                <span class="slide-category-pill"><i class="bi bi-lightning-charge-fill"></i> Sports & Velocity</span>
+                <h2 class="slide-title">Smash Beyond Limits</h2>
+                <p class="slide-desc">Feel the thunder of high-speed rallies, athletic passion, and tournament energy.</p>
+            </div>
+        </article>
+
+        <!-- 4. Anime -->
+        <article class="character-slide" data-slide-index="3" data-category="Anime" aria-hidden="true">
+            <div class="slide-bg-typography" aria-hidden="true">ANIME</div>
+            <div class="slide-aura-ring"></div>
+            <div class="slide-character-wrap">
+                <img src="~/assets/images/hero/anime-hero.png" alt="Anime Shadow Hero" class="character-cutout-img floating-hero-char">
+            </div>
+            <div class="slide-info-overlay">
+                <span class="slide-category-pill"><i class="bi bi-fire"></i> Supreme Anime Saga</span>
+                <h2 class="slide-title">Power, Magic & Destiny</h2>
+                <p class="slide-desc">Explore the greatest shonen battles, supernatural powers, and emotional journeys.</p>
+            </div>
+        </article>
+
+        <!-- 5. TV Shows -->
+        <article class="character-slide" data-slide-index="4" data-category="TV Shows" aria-hidden="true">
+            <div class="slide-bg-typography" aria-hidden="true">TV SHOWS</div>
+            <div class="slide-aura-ring"></div>
+            <div class="slide-character-wrap">
+                <img src="~/assets/images/hero/tvshows-hero.png" alt="TV Shows Hero" class="character-cutout-img floating-hero-char">
+            </div>
+            <div class="slide-info-overlay">
+                <span class="slide-category-pill"><i class="bi bi-tv-fill"></i> Cinematic Series & Sagas</span>
+                <h2 class="slide-title">Explore Iconic Worlds</h2>
+                <p class="slide-desc">Stream trending sci-fi thrillers, fantasy franchises, drama series and fan episodes.</p>
+            </div>
+        </article>
+    </div>
+
+    <!-- Controls -->
+    <div class="slider-controls-container">
+        <div class="slider-nav-tabs" role="tablist">
+            <button type="button" class="slider-tab active" data-slide-to="0"><span class="tab-progress-bar"></span><i class="bi bi-book"></i><span>Comics</span></button>
+            <button type="button" class="slider-tab" data-slide-to="1"><span class="tab-progress-bar"></span><i class="bi bi-person-arms-up"></i><span>Cosplay</span></button>
+            <button type="button" class="slider-tab" data-slide-to="2"><span class="tab-progress-bar"></span><i class="bi bi-lightning-charge"></i><span>Badminton</span></button>
+            <button type="button" class="slider-tab" data-slide-to="3"><span class="tab-progress-bar"></span><i class="bi bi-fire"></i><span>Anime</span></button>
+            <button type="button" class="slider-tab" data-slide-to="4"><span class="tab-progress-bar"></span><i class="bi bi-tv"></i><span>TV Shows</span></button>
+        </div>
+        <div class="slider-arrow-controls">
+            <button type="button" class="slider-arrow-btn prev-btn" id="heroPrevBtn"><i class="bi bi-chevron-left"></i></button>
+            <button type="button" class="slider-arrow-btn next-btn" id="heroNextBtn"><i class="bi bi-chevron-right"></i></button>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- =========================
+     NEBULA BLOOM • DARK MODE • CURATED CONTENT CARDS (REF IMAGE 2)
+========================== -->
+<section class="section-space py-5" style="position: relative; z-index: 2;">
+    <div class="container-fluid site-container">
+
+        <div class="text-center mb-5">
+            <h2 class="display-3 fw-extrabold text-white mb-2" style="font-family: 'Manrope', sans-serif; letter-spacing: -1px;">
+                Fan Hub <span style="background: linear-gradient(135deg, #ff2e93, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Plus</span>
+            </h2>
+            <p class="lead text-uppercase tracking-wider fw-bold" style="color: #ff65b2; font-size: 0.9rem; letter-spacing: 2px;">
+                Nebula Bloom • Dark Mode • Curated Content Cards for the Fandom
+            </p>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="row g-4 justify-content-center">
+                @foreach (var item in Model)
+                {
+                    string poster = "/images/content/content-hero-solo-leveling.png";
+                    if (item.Title.ToLower().Contains("one piece")) poster = "/images/explore/one-piece.png";
+                    else if (item.Title.ToLower().Contains("genshin")) poster = "/images/explore/genshin-impact.png";
+                    else if (item.Title.ToLower().Contains("blackpink")) poster = "/images/explore/blackpink.png";
+                    else if (item.Title.ToLower().Contains("jujutsu")) poster = "/images/explore/jujutsu-kaisen.png";
+                    else if (item.Title.ToLower().Contains("demon")) poster = "/images/explore/demon-slayer.png";
+
+                    <div class="col-md-6 col-lg-4">
+                        <article class="cyber-nebula-card reveal">
+
+                            <div>
+                                <!-- Tech HUD Image Cover -->
+                                <div class="cyber-hud-cover">
+                                    <img src="@poster" alt="@item.Title" />
+                                </div>
+
+                                <h3>
+                                    <a asp-controller="UserContent" asp-action="Details" asp-route-id="@item.ContentId">@item.Title</a>
+                                </h3>
+                                <p>
+                                    @(string.IsNullOrEmpty(item.Description) ? "Exploring how mecha anime and shonen sagas return with stunning visuals, deep storytelling, and a new generation of fans." : item.Description)
+                                </p>
+
+                                <!-- Cyber Tags -->
+                                <div class="cyber-chip-group">
+                                    <span class="cyber-chip">#@(item.Category?.Name ?? "Fandom")</span>
+                                    <span class="cyber-chip">#@item.Type</span>
+                                    <span class="cyber-chip">#Trending</span>
+                                </div>
+                            </div>
+
+                            <!-- Action Bar -->
+                            <div class="cyber-action-bar">
+                                <div class="d-flex align-items-center gap-2">
+                                    <button type="button" class="cyber-meta-btn">
+                                        <i class="bi bi-heart-fill"></i> @((item.PopularityScore * 35) > 1000 ? ((item.PopularityScore * 35) / 1000.0).ToString("0.0") + "k" : (item.PopularityScore * 35).ToString())
+                                    </button>
+                                    <a asp-controller="UserBookmark" asp-action="Index" class="cyber-meta-btn">
+                                        <i class="bi bi-bookmark"></i> Save
+                                    </a>
+                                </div>
+                                <a asp-controller="UserContent" asp-action="Details" asp-route-id="@item.ContentId" class="cyber-read-btn">
+                                    Read <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+
+                        </article>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</section>
+
+
+<!-- =========================
+     FANDOM WORLDS (8 CATEGORY CARDS)
+========================== -->
+<section class="fandom-section py-5">
+    <div class="container-fluid site-container">
+        <div class="section-header reveal mb-4 text-center">
+            <span class="section-label" style="color: #ff65b2; font-weight: 800; letter-spacing: 2px;">FANDOM WORLDS</span>
+           <h2 class="text-white h1 fw-extrabold text-center">Explore Category Hubs</h2>
+        </div>
+
+        <div class="fandom-grid">
+            <a asp-controller="UserCategory" asp-action="Index" asp-route-selected="Anime" class="fandom-card reveal">
+                <div class="fandom-image anime-cover"><i class="bi bi-lightning-charge-fill"></i></div>
+                <div class="fandom-info"><span>Anime</span><i class="bi bi-box-arrow-up-right"></i></div>
+            </a>
+            <a asp-controller="UserCategory" asp-action="Index" asp-route-selected="Gaming" class="fandom-card reveal">
+                <div class="fandom-image gaming-cover"><i class="bi bi-controller"></i></div>
+                <div class="fandom-info"><span>Gaming</span><i class="bi bi-box-arrow-up-right"></i></div>
+            </a>
+            <a asp-controller="UserCategory" asp-action="Index" asp-route-selected="Movies" class="fandom-card reveal">
+                <div class="fandom-image movie-cover"><i class="bi bi-film"></i></div>
+                <div class="fandom-info"><span>Movies</span><i class="bi bi-box-arrow-up-right"></i></div>
+            </a>
+            <a asp-controller="UserCategory" asp-action="Index" asp-route-selected="TV Shows" class="fandom-card reveal">
+                <div class="fandom-image tv-cover"><i class="bi bi-tv-fill"></i></div>
+                <div class="fandom-info"><span>TV Shows</span><i class="bi bi-box-arrow-up-right"></i></div>
+            </a>
+            <a asp-controller="UserCategory" asp-action="Index" asp-route-selected="K-Pop" class="fandom-card reveal">
+                <div class="fandom-image kpop-cover"><i class="bi bi-music-note-beamed"></i></div>
+                <div class="fandom-info"><span>K-Pop</span><i class="bi bi-box-arrow-up-right"></i></div>
+            </a>
+            <a asp-controller="UserCategory" asp-action="Index" asp-route-selected="Comics" class="fandom-card reveal">
+                <div class="fandom-image comic-cover"><i class="bi bi-book-fill"></i></div>
+                <div class="fandom-info"><span>Comics</span><i class="bi bi-box-arrow-up-right"></i></div>
+            </a>
+            <a asp-controller="UserCategory" asp-action="Index" asp-route-selected="Manga" class="fandom-card reveal">
+                <div class="fandom-image manga-cover"><i class="bi bi-journal-richtext"></i></div>
+                <div class="fandom-info"><span>Manga</span><i class="bi bi-box-arrow-up-right"></i></div>
+            </a>
+            <a asp-controller="UserCategory" asp-action="Index" asp-route-selected="Cosplay" class="fandom-card reveal">
+                <div class="fandom-image cosplay-cover"><i class="bi bi-person-arms-up"></i></div>
+                <div class="fandom-info"><span>Cosplay</span><i class="bi bi-box-arrow-up-right"></i></div>
+            </a>
+        </div>
+    </div>
+</section>
+
+
+<!-- =========================
+     UPCOMING EVENTS & SHOP
+========================== -->
+@if (upcomingEvents != null && upcomingEvents.Any())
+{
+    <section class="events-section py-5">
+        <div class="container site-container">
+            <div class="section-header d-flex justify-content-between align-items-end mb-4">
+                <div>
+                    <h2 class="section-title text-white h3 mb-1">Upcoming Conventions & Events</h2>
+                    <p class="text-secondary small mb-0">Join live meetups, watch parties, and fandom expos</p>
+                </div>
+                <a asp-controller="UserEvent" asp-action="Index" class="view-all-link">All Events &rarr;</a>
+            </div>
+
+            <div class="row g-4">
+                @foreach (var ev in upcomingEvents)
+                {
+                    <div class="col-md-6 col-lg-3">
+                        <article class="cyber-nebula-card reveal">
+                            <div>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="text-white text-center rounded-3 p-2 me-3" style="min-width: 50px; background: linear-gradient(135deg, #ff2e93, #8b5cf6);">
+                                        <span class="d-block h5 mb-0 fw-bold">@ev.EventDate.ToString("dd")</span>
+                                        <span class="d-block text-uppercase small">@ev.EventDate.ToString("MMM")</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="h6 mb-1">@ev.Title</h3>
+                                        <span class="text-secondary small"><i class="bi bi-geo-alt me-1"></i>@ev.City</span>
+                                    </div>
+                                </div>
+                                <p>@ev.Description</p>
+                            </div>
+                            <a asp-action="Details" asp-controller="UserEvent" asp-route-id="@ev.EventId" class="cyber-read-btn w-100 text-center justify-content-center">
+                                View Event Details
+                            </a>
+                        </article>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@if (trendingMerch != null && trendingMerch.Any())
+{
+    <section class="merch-section py-5">
+        <div class="container site-container">
+            <div class="section-header d-flex justify-content-between align-items-end mb-4">
+                <div>
+                    <h2 class="section-title text-white h3 mb-1">Fandom Shop & Collectibles</h2>
+                    <p class="text-secondary small mb-0">Exclusive apparel, figures, and limited edition items</p>
+                </div>
+                <a asp-controller="UserMerchandise" asp-action="Index" class="view-all-link">Visit Shop &rarr;</a>
+            </div>
+
+            <div class="row g-4">
+                @foreach (var merch in trendingMerch)
+                {
+                    <div class="col-6 col-md-3">
+                        <article class="cyber-nebula-card reveal">
+                            <div>
+                                @if (!string.IsNullOrEmpty(merch.ImageUrl))
+                                {
+                                    <div class="cyber-hud-cover" style="height: 180px;">
+                                        <img src="@merch.ImageUrl" alt="@merch.Name" />
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(merch.Tag))
+                                {
+                                    <div class="cyber-chip-group">
+                                        <span class="cyber-chip">@merch.Tag</span>
+                                    </div>
+                                }
+                                <h3 class="h6">@merch.Name</h3>
+                            </div>
+                            <div class="cyber-action-bar mt-auto">
+                                <span class="text-primary fw-bold h5 mb-0">$49.99</span>
+                                <a asp-controller="UserMerchandise" asp-action="Index" class="cyber-read-btn">
+                                    Buy Now
+                                </a>
+                            </div>
+                        </article>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}

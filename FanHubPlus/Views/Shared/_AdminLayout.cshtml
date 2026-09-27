@@ -1,0 +1,195 @@
+@using Microsoft.AspNetCore.Identity
+@using FanHubPlus.Data
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var controllerName = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var actionName = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+
+    var currentAdmin = await UserManager.GetUserAsync(User);
+    var adminDisplayName = !string.IsNullOrWhiteSpace(currentAdmin?.FullName) ? currentAdmin.FullName : User.Identity?.Name;
+
+    var sectionLabels = new Dictionary<string, string>
+    {
+        ["AdminDashboard"] = "Dashboard",
+        ["AdminCategory"] = "Categories",
+        ["AdminContent"] = "Fandom Content",
+        ["AdminTag"] = "Tags",
+        ["AdminCharacter"] = "Character Profiles",
+        ["AdminArticle"] = "Featured Articles",
+        ["AdminMedia"] = "Multimedia",
+        ["AdminMerchandise"] = "Merchandise",
+        ["AdminEvent"] = "Events",
+        ["AdminPoll"] = "Live Polls",
+        ["AdminQuiz"] = "Fan Quiz",
+        ["AdminFanSubmission"] = "Fan Submissions",
+        ["AdminFeedback"] = "User Feedback",
+        ["AdminChatbot"] = "Chatbot & FAQs",
+        ["AdminAnalytics"] = "Analytics & Reports",
+        ["AdminUser"] = "Users"
+    };
+    sectionLabels.TryGetValue(controllerName, out var sectionLabel);
+    var actionLabel = System.Text.RegularExpressions.Regex.Replace(actionName, "(?<=[a-z])(?=[A-Z])", " ");
+
+    string NavClass(string name) => controllerName == name ? "active" : "";
+    string NavCurrent(string name) => controllerName == name ? "page" : null;
+
+    // Nav groups: each admin module appears in exactly one logical section
+    // instead of one long flat list, so the sidebar reads as an information
+    // architecture rather than a menu dump.
+    var navGroups = new (string Label, (string Controller, string Icon, string Text)[] Items)[]
+    {
+        ("Overview", new[]
+        {
+            ("AdminDashboard", "fa-solid fa-gauge-high", "Dashboard"),
+        }),
+        ("Content Library", new[]
+        {
+            ("AdminCategory", "fa-solid fa-list", "Categories"),
+            ("AdminContent", "fa-solid fa-film", "Fandom Content"),
+            ("AdminCharacter", "fa-solid fa-user-astronaut", "Character Profiles"),
+            ("AdminArticle", "fa-solid fa-newspaper", "Featured Articles"),
+            ("AdminMedia", "fa-solid fa-photo-film", "Multimedia"),
+            ("AdminMerchandise", "fa-solid fa-store", "Merchandise"),
+            ("AdminTag", "fa-solid fa-tags", "Tags"),
+        }),
+        ("Community & Live", new[]
+        {
+            ("AdminEvent", "fa-solid fa-calendar-days", "Events"),
+            ("AdminPoll", "fa-solid fa-square-poll-vertical", "Live Polls"),
+            ("AdminQuiz", "fa-solid fa-clipboard-question", "Fan Quiz"),
+            ("AdminFanSubmission", "fa-solid fa-file-pen", "Fan Submissions"),
+            ("AdminFeedback", "fa-solid fa-comments", "User Feedback"),
+            ("AdminChatbot", "fa-solid fa-robot", "Chatbot & FAQs"),
+        }),
+        ("Insights & People", new[]
+        {
+            ("AdminAnalytics", "fa-solid fa-chart-pie", "Analytics & Reports"),
+            ("AdminUser", "fa-solid fa-users", "Users"),
+        }),
+    };
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Panel | FanHub Plus</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/css/redesign.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/user-pages.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <partial name="_ThemeInit" />
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <partial name="_PageLoader" />
+
+    <nav id="sidebar" aria-label="Admin navigation">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-gauge-high text-primary"></i> FanHub Admin
+        </div>
+
+        <div class="sidebar-scroll">
+            @foreach (var group in navGroups)
+            {
+                <p class="nav-section-label">@group.Label</p>
+                <ul class="list-unstyled components">
+                    @foreach (var item in group.Items)
+                    {
+                        <li class="@NavClass(item.Controller)">
+                            <a asp-controller="@item.Controller" asp-action="Index" aria-current="@NavCurrent(item.Controller)">
+                                <i class="@item.Icon"></i> @item.Text
+                            </a>
+                        </li>
+                    }
+                </ul>
+            }
+            <ul class="list-unstyled components">
+                <li>
+                    <a asp-controller="Home" asp-action="Index" target="_blank" rel="noopener">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Visit Website
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            @{
+                var logoutReturnUrl = Url.Action("Index", "Home", new { area = "" });
+            }
+            <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@logoutReturnUrl">
+                <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <div id="content">
+        <nav class="navbar-admin">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" id="sidebar-toggle" class="btn btn-outline-secondary btn-sm d-md-none" aria-label="Toggle navigation menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <nav aria-label="breadcrumb" class="d-none d-sm-block">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a asp-controller="AdminDashboard" asp-action="Index">Admin</a></li>
+                            @if (sectionLabel != null && controllerName != "AdminDashboard")
+                            {
+                                if (actionName == "Index")
+                                {
+                                    <li class="breadcrumb-item active" aria-current="page">@sectionLabel</li>
+                                }
+                                else
+                                {
+                                    <li class="breadcrumb-item"><a asp-controller="@controllerName" asp-action="Index">@sectionLabel</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">@actionLabel</li>
+                                }
+                            }
+                            else if (controllerName == "AdminDashboard")
+                            {
+                                if (actionName == "Index")
+                                {
+                                    <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                                }
+                                else
+                                {
+                                    <li class="breadcrumb-item"><a asp-controller="AdminDashboard" asp-action="Index">Dashboard</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">@actionLabel</li>
+                                }
+                            }
+                        </ol>
+                    </nav>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <partial name="_DisplayControls" />
+                    <span class="navbar-text ms-2 d-none d-lg-inline">
+                        <i class="fa-solid fa-user-shield"></i> <strong>@(adminDisplayName ?? "Admin")</strong>
+                    </span>
+                    <a asp-controller="UserProfile" asp-action="Edit" class="btn btn-sm btn-outline-light rounded-circle ms-1" title="Edit Profile" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-user-pen"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <main id="main-content" class="admin-page" tabindex="-1">
+            <partial name="_StatusMessages" />
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/ui-preferences.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

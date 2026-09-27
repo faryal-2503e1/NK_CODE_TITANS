@@ -1,0 +1,107 @@
+@model PagedList<Event>
+
+@{
+    ViewData["Title"] = "Manage Events";
+    Layout = "_AdminLayout";
+    var q = Context.Request.Query["q"].ToString();
+    var city = Context.Request.Query["city"].ToString();
+    var when = Context.Request.Query["when"].ToString();
+    var sort = Context.Request.Query["sort"].ToString();
+    var cities = ViewBag.Cities as List<string> ?? new List<string>();
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <h2>Events Management</h2>
+        <div>
+            <a asp-action="Categories" class="btn btn-secondary me-2">Event Categories</a>
+            <a asp-action="TicketLinks" class="btn btn-secondary me-2">Ticket Links</a>
+            <a asp-action="Create" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Event</a>
+        </div>
+    </div>
+
+    <form method="get" class="row g-2 mb-3" role="search">
+        <div class="col-md-3">
+            <input type="search" name="q" value="@q" class="form-control" placeholder="Search title or description" aria-label="Search events" />
+        </div>
+        <div class="col-md-2">
+            <select name="city" class="form-select" aria-label="Filter by city">
+                <option value="">All cities</option>
+                @foreach (var c in cities)
+                {
+                    <option value="@c" selected="@(city == c)">@c</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="categoryId" class="form-select" aria-label="Filter by category" asp-items="ViewBag.Categories">
+                <option value="">All categories</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="when" class="form-select" aria-label="Filter by date">
+                <option value="" selected="@(when == "")">Past and upcoming</option>
+                <option value="upcoming" selected="@(when == "upcoming")">Upcoming</option>
+                <option value="past" selected="@(when == "past")">Past</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="sort" class="form-select" aria-label="Sort order">
+                <option value="" selected="@(sort == "")">Soonest first</option>
+                <option value="date_desc" selected="@(sort == "date_desc")">Latest first</option>
+                <option value="title" selected="@(sort == "title")">Title A-Z</option>
+            </select>
+        </div>
+        <div class="col-md-1 d-grid">
+            <button type="submit" class="btn btn-primary">Go</button>
+        </div>
+        <div class="col-12">
+            <a asp-action="Index" class="btn btn-link btn-sm px-0">Reset filters</a>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Title</th>
+                    <th>City</th>
+                    <th>Categories</th>
+                    <th>Tickets</th>
+                    <th>Event Date</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>@item.Title</strong></td>
+                        <td>@item.City</td>
+                        <td>
+                            @foreach (var ec in item.EventCategories)
+                            {
+                                <span class="badge bg-secondary me-1">@ec.Category?.Name</span>
+                            }
+                        </td>
+                        <td>@item.EventTicketLinks.Count link(s)</td>
+                        <td>@item.EventDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td class="text-end">
+                            <div class="d-flex flex-wrap gap-1 justify-content-end">
+                            <a asp-action="Edit" asp-route-id="@item.EventId" class="btn btn-sm btn-warning">Edit</a>
+                            <a asp-action="Details" asp-route-id="@item.EventId" class="btn btn-sm btn-info text-white">Details</a>
+                            <a asp-action="Delete" asp-route-id="@item.EventId" class="btn btn-sm btn-danger">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="6" class="text-center text-muted py-4">No events match these filters.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <partial name="_Pager" model="(IPagedList)Model" />
+</div>

@@ -1,0 +1,60 @@
+@model PagedList<ChatbotKnowledgeBaseEntry>
+
+@{
+    ViewData["Title"] = "Knowledge Base";
+    Layout = "_AdminLayout";
+    var q = Context.Request.Query["q"].ToString();
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Chatbot Knowledge Base</h2>
+        <div>
+            <a asp-action="CreateKnowledge" class="btn btn-primary">Add Entry</a>
+            <a asp-action="Index" class="btn btn-secondary">Back to Queries</a>
+        </div>
+    </div>
+
+    <form method="get" class="row g-2 mb-3" role="search">
+        <div class="col-md-5">
+            <input type="search" name="q" value="@q" class="form-control" placeholder="Search topics and content" aria-label="Search knowledge base" />
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a asp-action="KnowledgeBase" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Topic</th>
+                    <th>Content</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>@item.Topic</strong></td>
+                        <td>@item.Content</td>
+                        <td class="text-end">
+                            <a asp-action="EditKnowledge" asp-route-id="@item.EntryId" class="btn btn-sm btn-warning">Edit</a>
+                            <form asp-action="DeleteKnowledge" asp-route-id="@item.EntryId" method="post" class="d-inline" onsubmit="return confirm('Are you sure?');">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="3" class="text-center text-muted py-4">No knowledge base entries found.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <partial name="_Pager" model="(IPagedList)Model" />
+</div>

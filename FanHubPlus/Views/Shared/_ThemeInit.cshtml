@@ -1,0 +1,30 @@
+<script>
+    // Apply the saved theme and font size to <body> immediately (this partial
+    // must be placed as the very first thing inside <body>, before any visible
+    // markup) so the page never flashes the wrong theme and every page/layout
+    // (public site, dashboard, admin) stays perfectly in sync.
+    //
+    // IMPORTANT: these are the SAME localStorage keys and the SAME body classes
+    // used by wwwroot/js/app.js (initializeTheme / initializeFontSize) and by
+    // wwwroot/js/ui-preferences.js. Keep all three in sync if you change this.
+    (function () {
+        try {
+            var theme = localStorage.getItem('fanhub-theme');
+            var fontSize = localStorage.getItem('fanhub-font-size');
+
+            document.documentElement.setAttribute('data-bs-theme', theme === 'light' ? 'light' : 'dark');
+
+            if (theme === 'light') {
+                document.body.classList.add('light-theme');
+            } else {
+                document.body.classList.remove('light-theme');
+            }
+
+            if (fontSize === 'large') {
+                document.body.classList.add('large-text');
+            } else {
+                document.body.classList.remove('large-text');
+            }
+        } catch (e) { }
+    })();
+</script>

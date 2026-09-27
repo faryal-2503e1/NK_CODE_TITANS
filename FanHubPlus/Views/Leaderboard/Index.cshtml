@@ -1,0 +1,120 @@
+@using FanHubPlus.Controllers
+@model List<LeaderboardEntry>
+
+@{
+    ViewData["Title"] = "Leaderboard";
+    string? currentUserId = ViewBag.CurrentUserId;
+
+    string BadgeStyle(string badge) => badge switch
+    {
+        "Quiz Master" => "background-color: #f59e0b; color: #1a1425;",
+        "Super Voter" => "background-color: #3b82f6; color: #fff;",
+        "Social Fan" => "background-color: #10b981; color: #1a1425;",
+        _ => "background-color: #444; color: #fff;"
+    };
+
+    string BadgeIcon(string badge) => badge switch
+    {
+        "Quiz Master" => "🧠",
+        "Super Voter" => "🗳️",
+        "Social Fan" => "💬",
+        _ => "🏅"
+    };
+
+    string BadgeDescription(string badge) => badge switch
+    {
+        "Quiz Master" => "10 ya usse zyada quiz attempts",
+        "Super Voter" => "5 ya usse zyada poll votes",
+        "Social Fan" => "Live event chat mein active",
+        _ => ""
+    };
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold mb-1" style="color: #fff;"><i class="bi bi-trophy me-2 text-warning"></i>Top Active Fans</h2>
+        <p class="text-muted">Quiz attempts, poll votes, aur live event chat participation se points milte hain.</p>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert text-center py-4 rounded shadow-sm" style="background-color: #12101e; border: 1px solid #2d2640; color: #a0aec0;">
+            <i class="bi bi-info-circle fs-4 d-block mb-2"></i>
+            Abhi tak koi activity nahi hui.
+        </div>
+    }
+    else
+    {
+        <div class="d-flex justify-content-center flex-wrap gap-3 mb-4 small" style="color: #a0aec0;">
+            <span>🧠 <strong>Quiz Master</strong> &mdash; 10+ quiz attempts</span>
+            <span>🗳️ <strong>Super Voter</strong> &mdash; 5+ poll votes</span>
+            <span>💬 <strong>Social Fan</strong> &mdash; active in live chat</span>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card shadow-lg border-0 rounded overflow-hidden" style="background-color: #12101e; border: 1px solid #2d2640 !important;">
+                    <div class="table-responsive mb-0">
+                        <table class="table table-dark table-hover align-middle mb-0" style="background-color: transparent;">
+                            <thead style="background-color: #1a162b; border-bottom: 2px solid #3b3254;">
+                                <tr>
+                                    <th class="py-3 px-4 text-center" style="width: 80px; color: #a0aec0;">Rank</th>
+                                    <th class="py-3 px-4" style="color: #a0aec0;">Fan</th>
+                                    <th class="py-3 px-4 text-end" style="color: #a0aec0;">Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int rank = 1;
+                                }
+                                @foreach (var entry in Model)
+                                {
+                                    bool isCurrentUser = entry.UserId == currentUserId;
+                                    <tr style="@(isCurrentUser ? "background-color: rgba(123, 44, 191, 0.2) !important;" : "") border-bottom: 1px solid #1f1b32;">
+                                        <td class="text-center fw-bold py-3 px-4">
+                                            @if (rank == 1)
+                                            {
+                                                <span class="fs-5">🥇</span>
+                                            }
+                                            else if (rank == 2)
+                                            {
+                                                <span class="fs-5">🥈</span>
+                                            }
+                                            else if (rank == 3)
+                                            {
+                                                <span class="fs-5">🥉</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">@rank</span>
+                                            }
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <div class="d-flex align-items-center flex-wrap gap-2">
+                                                <span class="text-white fw-semibold">@entry.DisplayName</span>
+                                                @if (isCurrentUser)
+                                                {
+                                                    <span class="badge px-2 py-1" style="background-color: #7b2cbf; color: #fff; font-size: 0.75rem;">You</span>
+                                                }
+                                                @foreach (var badge in entry.Badges)
+                                                {
+                                                    <span class="badge px-2 py-1" style="@BadgeStyle(badge) font-size: 0.72rem;" title="@BadgeDescription(badge)">
+                                                        @BadgeIcon(badge) @badge
+                                                    </span>
+                                                }
+                                            </div>
+                                        </td>
+                                        <td class="text-end py-3 px-4">
+                                            <span class="fw-bold fs-6" style="color: #d8b4fe;">@entry.Points pts</span>
+                                        </td>
+                                    </tr>
+                                    rank++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

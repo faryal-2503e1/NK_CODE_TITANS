@@ -1,0 +1,82 @@
+@model Event
+
+@{
+    // Watch Party Countdown: Event.EventDate tak ka live countdown dikhata hai.
+    // Isko Event Details aur Live Chat, dono pages par include kiya ja sakta hai.
+    var elementId = "watchPartyCountdown-" + Model.EventId;
+}
+
+<div class="card border-0 shadow-sm mb-3 watch-party-countdown"
+     id="@elementId"
+     data-event-date="@Model.EventDate.ToString("o")">
+    <div class="card-body text-center py-3">
+        <div class="countdown-live d-none">
+            <span class="badge bg-danger fs-6 px-3 py-2">
+                <i class="bi bi-broadcast me-1"></i> LIVE NOW &mdash; join the watch party chat!
+            </span>
+        </div>
+        <div class="countdown-pending">
+            <div class="text-muted small mb-2"><i class="bi bi-stopwatch me-1"></i>Watch party starts in</div>
+            <div class="d-flex justify-content-center gap-3">
+                <div>
+                    <div class="fs-4 fw-bold countdown-days">--</div>
+                    <div class="small text-muted">Days</div>
+                </div>
+                <div>
+                    <div class="fs-4 fw-bold countdown-hours">--</div>
+                    <div class="small text-muted">Hours</div>
+                </div>
+                <div>
+                    <div class="fs-4 fw-bold countdown-minutes">--</div>
+                    <div class="small text-muted">Min</div>
+                </div>
+                <div>
+                    <div class="fs-4 fw-bold countdown-seconds">--</div>
+                    <div class="small text-muted">Sec</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        function pad(n) { return n.toString().padStart(2, '0'); }
+
+        function tick(box) {
+            var targetDate = new Date(box.getAttribute('data-event-date'));
+            var pendingEl = box.querySelector('.countdown-pending');
+            var liveEl = box.querySelector('.countdown-live');
+            var diff = targetDate.getTime() - Date.now();
+
+            if (diff <= 0) {
+                pendingEl.classList.add('d-none');
+                liveEl.classList.remove('d-none');
+                return false; // stop ticking, event is live
+            }
+
+            var totalSeconds = Math.floor(diff / 1000);
+            var days = Math.floor(totalSeconds / 86400);
+            var hours = Math.floor((totalSeconds % 86400) / 3600);
+            var minutes = Math.floor((totalSeconds % 3600) / 60);
+            var seconds = totalSeconds % 60;
+
+            box.querySelector('.countdown-days').textContent = days;
+            box.querySelector('.countdown-hours').textContent = pad(hours);
+            box.querySelector('.countdown-minutes').textContent = pad(minutes);
+            box.querySelector('.countdown-seconds').textContent = pad(seconds);
+            return true;
+        }
+
+        document.querySelectorAll('.watch-party-countdown[data-event-date]').forEach(function (box) {
+            if (box.dataset.countdownInit) return; // partial 2 baar render ho to double timer na bane
+            box.dataset.countdownInit = "1";
+
+            if (!tick(box)) return;
+
+            var timerId = setInterval(function () {
+                if (!tick(box)) clearInterval(timerId);
+            }, 1000);
+        });
+    })();
+</script>

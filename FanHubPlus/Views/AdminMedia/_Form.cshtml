@@ -1,0 +1,83 @@
+@model MediaItem
+
+@{
+    var allTags = ViewBag.AllTags as List<Tag> ?? new List<Tag>();
+    var selectedTags = ViewBag.SelectedTags as HashSet<int> ?? new HashSet<int>();
+}
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+@if (Model.MediaId > 0)
+{
+    <input type="hidden" asp-for="MediaId" />
+    <input type="hidden" asp-for="UploadedAt" />
+}
+
+<div class="field-grid">
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="MediaType" class="form-label">Media Type</label>
+        <select asp-for="MediaType" class="form-select">
+            <option value="">Select a type</option>
+            @foreach (var t in AdminOptions.WithCurrent(AdminOptions.MediaTypes, Model.MediaType))
+            {
+                <option value="@t" selected="@(Model.MediaType == t)">@t</option>
+            }
+        </select>
+        <span asp-validation-for="MediaType" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CategoryId" class="form-label">Category</label>
+        <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories">
+            <option value="">No category</option>
+        </select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3 field-full">
+        <label for="mediaFile" class="form-label">Upload file</label>
+        <input type="file" id="mediaFile" name="mediaFile" class="form-control"
+               accept=".mp4,.webm,.ogv,.mp3,.wav,.ogg,.m4a,.jpg,.jpeg,.png,.gif,.webp" />
+        <div class="form-text">
+            Video/Trailer: MP4, WebM, OGV. Audio: MP3, WAV, OGG, M4A. Gallery image: JPG, PNG, GIF, WebP.
+            Maximum 100 MB. The file is stored on this website and plays here.
+        </div>
+        @Html.ValidationMessage("mediaFile", new { @class = "text-danger" })
+    </div>
+
+    <div class="mb-3 field-full">
+        <label asp-for="FileUrl" class="form-label">Or media link</label>
+        <input asp-for="FileUrl" class="form-control" placeholder="https://www.youtube.com/watch?v=..." />
+        <div class="form-text">
+            A YouTube or Vimeo link (video, trailer, explainer) plays in the site's own player, or use a direct file link.
+            When editing, leave this as it is to keep the current file. If you choose a file above, this link is ignored.
+        </div>
+        <span asp-validation-for="FileUrl" class="text-danger"></span>
+    </div>
+
+    <fieldset class="mb-3">
+        <legend class="form-label fs-6">Tags</legend>
+        @if (allTags.Count == 0)
+        {
+            <p class="text-muted small mb-0">No tags yet. <a asp-controller="AdminTag" asp-action="Create">Create one</a>.</p>
+        }
+        else
+        {
+            <div class="d-flex flex-wrap gap-3">
+                @foreach (var tag in allTags)
+                {
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="selectedTags" value="@tag.TagId" id="tag-@tag.TagId" checked="@selectedTags.Contains(tag.TagId)" />
+                        <label class="form-check-label" for="tag-@tag.TagId">@tag.Name</label>
+                    </div>
+                }
+            </div>
+        }
+    </fieldset>
+</div>

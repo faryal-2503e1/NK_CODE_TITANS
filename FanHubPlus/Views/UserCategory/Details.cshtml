@@ -1,0 +1,154 @@
+@model Category
+@{
+    ViewData["Title"] = Model.Name + " - Fandom Hub";
+}
+
+<main class="explore-page py-5">
+    <div class="container-fluid site-container">
+        <!-- BREADCRUMB -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb fanhub-breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-controller="UserCategory" asp-action="Index">Categories</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
+            </ol>
+        </nav>
+
+        <!-- CATEGORY HEADER -->
+        <div class="explore-heading reveal mb-5">
+            <div>
+                <span class="section-label">FANDOM CATEGORY HUB</span>
+                <h1 class="display-3 text-white fw-extrabold" style="font-family: 'Manrope', sans-serif;">@Model.Name</h1>
+                <p class="lead text-secondary">@(string.IsNullOrEmpty(Model.Description) ? "Explore " + Model.Name + " lore, content, characters, and merchandise." : Model.Description)</p>
+            </div>
+        </div>
+
+        <!-- CONTENT SECTION -->
+        @if (Model.Contents != null && Model.Contents.Any())
+        {
+            <div class="section-header reveal mb-4">
+                <span class="section-label">CURATED CONTENT</span>
+                <h2 class="text-white h3 fw-extrabold">@Model.Name Stories & Media</h2>
+            </div>
+            <div class="trending-grid mb-5">
+                @foreach (var content in Model.Contents)
+                {
+                    var imgUrl = "/images/explore/solo-leveling.png";
+                    var tLower = content.Title.ToLower();
+                    if (tLower.Contains("jujutsu")) imgUrl = "/images/explore/jujutsu-kaisen.png";
+                    else if (tLower.Contains("spider")) imgUrl = "/images/explore/spider-man.png";
+                    else if (tLower.Contains("genshin")) imgUrl = "/images/explore/genshin-impact.png";
+                    else if (tLower.Contains("stranger")) imgUrl = "/images/explore/stranger-things.png";
+                    else if (tLower.Contains("one piece") || tLower.Contains("luffy")) imgUrl = "/images/explore/one-piece.png";
+                    else if (tLower.Contains("blackpink")) imgUrl = "/images/explore/blackpink.png";
+
+                    <article class="content-card reveal" data-category="@content.Type.ToLower()">
+                        <a asp-controller="UserContent" asp-action="Details" asp-route-id="@content.ContentId" class="content-poster">
+                            <img src="@imgUrl" alt="@content.Title" class="w-100 h-100 object-fit-cover" />
+                            <span class="trending-badge">#@Model.Name</span>
+                            <button class="card-bookmark" type="button" data-bookmark="@content.Title">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </a>
+                        <div class="content-card-body">
+                            <div class="content-card-top">
+                                <span>@content.Type</span>
+                                <span class="rating"><i class="bi bi-star-fill"></i> 4.9</span>
+                            </div>
+                            <h3>
+                                <a asp-controller="UserContent" asp-action="Details" asp-route-id="@content.ContentId">
+                                    @content.Title
+                                </a>
+                            </h3>
+                            <small>@content.Type • @content.ReleaseDate.ToString("dd MMM yyyy")</small>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+
+        <!-- CHARACTERS SECTION -->
+        @if (Model.CharacterProfiles != null && Model.CharacterProfiles.Any())
+        {
+            <div class="section-header reveal mb-4">
+                <span class="section-label">CHARACTER CODEX</span>
+                <h2 class="text-white h3 fw-extrabold">@Model.Name Characters</h2>
+            </div>
+            <div class="row g-4 mb-5">
+                @foreach (var character in Model.CharacterProfiles)
+                {
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <article class="cyber-nebula-card reveal">
+                            <div>
+                                <div class="cyber-hud-cover" style="height: 220px;">
+                                    @if (!string.IsNullOrEmpty(character.ImageUrl))
+                                    {
+                                        <img src="@character.ImageUrl" alt="@character.Name" />
+                                    }
+                                    else
+                                    {
+                                        <div class="cyber-hud-placeholder">
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                    }
+                                </div>
+                                <h3 class="h5">@character.Name</h3>
+                                <p>@character.Bio</p>
+                            </div>
+                            <a asp-controller="UserCharacter" asp-action="Details" asp-route-id="@character.CharacterId" class="cyber-read-btn w-100 text-center justify-content-center mt-auto">
+                                View Character <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </article>
+                    </div>
+                }
+            </div>
+        }
+
+        <!-- MERCHANDISE SECTION -->
+        @if (Model.MerchandiseItems != null && Model.MerchandiseItems.Any())
+        {
+            <div class="section-header reveal mb-4">
+                <span class="section-label">OFFICIAL SHOP</span>
+                <h2 class="text-white h3 fw-extrabold">@Model.Name Collectibles</h2>
+            </div>
+            <div class="row g-4 mb-5">
+                @foreach (var merch in Model.MerchandiseItems)
+                {
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <article class="cyber-nebula-card reveal">
+                            <div>
+                                @if (!string.IsNullOrEmpty(merch.ImageUrl))
+                                {
+                                    <div class="cyber-hud-cover" style="height: 200px;">
+                                        <img src="@merch.ImageUrl" alt="@merch.Name" />
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(merch.Tag))
+                                {
+                                    <div class="cyber-chip-group">
+                                        <span class="cyber-chip">@merch.Tag</span>
+                                    </div>
+                                }
+                                <h3 class="h6">@merch.Name</h3>
+                            </div>
+                            <div class="cyber-action-bar mt-auto">
+                                <span class="text-primary fw-bold h5 mb-0">$49.99</span>
+                                <a asp-controller="UserMerchandise" asp-action="Index" class="cyber-read-btn">Buy Now</a>
+                            </div>
+                        </article>
+                    </div>
+                }
+            </div>
+        }
+
+        @if ((Model.Contents == null || !Model.Contents.Any())
+            && (Model.CharacterProfiles == null || !Model.CharacterProfiles.Any())
+            && (Model.MerchandiseItems == null || !Model.MerchandiseItems.Any()))
+        {
+            <div class="text-center text-secondary py-5 bg-dark rounded-4">
+                <i class="bi bi-box-open display-1 d-block mb-3"></i>
+                <p>Nothing has been added to this category yet.</p>
+            </div>
+        }
+    </div>
+</main>

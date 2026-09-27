@@ -1,0 +1,65 @@
+﻿@model List<Bookmark>
+@{
+    ViewData["Title"] = "Recent Bookmarks";
+    Layout = "_DashboardLayout";
+}
+
+<section class="dashboard-page">
+    <div class="page-header">
+        <h1>Recent Bookmarks</h1>
+        <a asp-controller="UserBookmark" asp-action="Index" class="btn btn-outline-secondary btn-sm">View All Bookmarks</a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="card-grid">
+            @foreach (var bookmark in Model)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <span class="badge">@bookmark.ItemType</span>
+
+                        @if (bookmark.ItemType == "Content" && bookmark.Content != null)
+                        {
+                            <h3>
+                                <a asp-controller="UserContent" asp-action="Details" asp-route-id="@bookmark.Content.ContentId">
+                                    @bookmark.Content.Title
+                                </a>
+                            </h3>
+                        }
+                        else if (bookmark.ItemType == "Character" && bookmark.Character != null)
+                        {
+                            <h3>
+                                <a asp-controller="UserCharacter" asp-action="Details" asp-route-id="@bookmark.Character.CharacterId">
+                                    @bookmark.Character.Name
+                                </a>
+                            </h3>
+                        }
+                        else if (bookmark.ItemType == "Media" && bookmark.MediaItem != null)
+                        {
+                            <h3>
+                                <a asp-controller="UserMedia" asp-action="Details" asp-route-id="@bookmark.MediaItem.MediaId">
+                                    @bookmark.MediaItem.Title
+                                </a>
+                            </h3>
+                        }
+                        else if (bookmark.ItemType == "Merchandise" && bookmark.MerchandiseItem != null)
+                        {
+                            <h3>
+                                <a asp-controller="UserMerchandise" asp-action="Details" asp-route-id="@bookmark.MerchandiseItem.ItemId">
+                                    @bookmark.MerchandiseItem.Name
+                                </a>
+                            </h3>
+                        }
+
+                        <span class="text-muted">Saved @bookmark.CreatedAt.ToString("dd MMM yyyy")</span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>You haven't bookmarked anything yet.</p>
+    }
+</section>

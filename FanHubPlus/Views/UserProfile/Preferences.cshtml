@@ -1,0 +1,43 @@
+﻿@model UserPreference
+@{
+    ViewData["Title"] = "Preferences";
+}
+
+<section class="preferences-page">
+    <h1>Preferences</h1>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    <form asp-action="Preferences" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="ThemeMode">Theme</label>
+            <select asp-for="ThemeMode" class="form-control">
+                <option value="Light">Light</option>
+                <option value="Dark">Dark</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="FontSize">Font Size</label>
+            <select asp-for="FontSize" class="form-control">
+                <option value="Small">Small</option>
+                <option value="Medium">Medium</option>
+                <option value="Large">Large</option>
+            </select>
+        </div>
+
+        <div class="form-group form-check">
+            <input asp-for="EmailNotifications" class="form-check-input" />
+            <label asp-for="EmailNotifications" class="form-check-label">
+                Send me email notifications
+            </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Preferences</button>
+    </form>
+</section>

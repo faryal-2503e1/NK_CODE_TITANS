@@ -1,0 +1,59 @@
+@model MediaItem
+
+@* Plays a media item inside the site. Use on any page with: <partial name="_MediaPlayer" model="item" /> *@
+@{
+    var player = MediaPlayback.Resolve(Model.FileUrl, Model.MediaType);
+}
+
+@if (player.Kind == PlayerKind.Audio)
+{
+    <audio class="w-100" controls preload="metadata" aria-label="@Model.Title">
+        <source src="@player.Url" type="@player.MimeType" />
+        Your browser does not support audio playback.
+    </audio>
+}
+else if (player.Kind == PlayerKind.Unsupported)
+{
+    <div class="alert alert-warning mb-0" role="alert">
+        This media cannot be played inside the site. Edit the item and upload the file or use a YouTube/Vimeo link.
+    </div>
+}
+else
+{
+    <div class="media-player position-relative">
+        @if (player.Kind == PlayerKind.Embed)
+        {
+            <div class="ratio ratio-16x9">
+                <iframe src="@player.Url" title="@Model.Title" loading="lazy" allowfullscreen
+                        allow="fullscreen; picture-in-picture; encrypted-media"
+                        referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            </div>
+        }
+        else if (player.Kind == PlayerKind.Video)
+        {
+            <video class="w-100 rounded" controls playsinline preload="metadata" aria-label="@Model.Title">
+                <source src="@player.Url" type="@player.MimeType" />
+                Your browser does not support video playback.
+            </video>
+        }
+        else
+        {
+            <img src="@player.Url" alt="@Model.Title" class="img-fluid rounded" loading="lazy" />
+        }
+        <div class="media-spinner position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="pointer-events:none" aria-hidden="true">
+            <div class="spinner-border text-secondary" role="status"><span class="visually-hidden">Loading media...</span></div>
+        </div>
+    </div>
+    <script>
+        (function () {
+            var box = document.currentScript.previousElementSibling;
+            var media = box.querySelector('video, img, iframe');
+            var spinner = box.querySelector('.media-spinner');
+            function hide() { if (spinner) { spinner.remove(); spinner = null; } }
+            if (!media) { hide(); return; }
+            if (media.tagName === 'VIDEO') { media.addEventListener('loadeddata', hide); media.addEventListener('error', hide); }
+            else if (media.tagName === 'IMG' && media.complete) { hide(); }
+            else { media.addEventListener('load', hide); media.addEventListener('error', hide); }
+        })();
+    </script>
+}

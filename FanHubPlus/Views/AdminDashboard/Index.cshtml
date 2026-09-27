@@ -1,0 +1,285 @@
+@using Microsoft.AspNetCore.Identity
+@using FanHubPlus.Data
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "_AdminLayout";
+
+    var currentAdmin = await UserManager.GetUserAsync(User);
+    var adminDisplayName = !string.IsNullOrWhiteSpace(currentAdmin?.FullName) ? currentAdmin.FullName : User.Identity?.Name;
+}
+
+<div class="container-fluid px-4 py-4">
+    <!-- Header Section -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary border-opacity-20">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <h1 class="fw-extrabold mb-0 display-6 fs-3"><i class="fa-solid fa-gauge-high text-primary me-2"></i>Welcome back, @(adminDisplayName ?? "Admin")!</h1>
+                <span class="badge bg-danger bg-opacity-20 text-danger rounded-pill px-3 py-1 text-uppercase fw-semibold" style="font-size: 0.75rem;"><i class="fa-solid fa-shield-halved me-1"></i> System Admin</span>
+            </div>
+            <p class="text-muted small mb-0">Platform Overview & Key Performance Indicators across FanHub Plus.</p>
+        </div>
+        <div class="mt-3 mt-md-0">
+            <div class="px-3 py-2 rounded-pill d-flex align-items-center gap-2 shadow-sm dash-card-item" style="font-size: 0.85rem;">
+                <i class="fa-solid fa-calendar text-primary"></i>
+                <span class="fw-semibold">@DateTime.Now.ToString("MMMM dd, yyyy") <span class="text-muted small">@DateTime.Now.ToString("dddd")</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4 KPI Cards Row -->
+    <div class="row g-4 mb-4">
+        <!-- Total Users Card -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card dash-card-stat-blue h-100 shadow-lg border-0 rounded-4 p-4 position-relative overflow-hidden">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="p-3 rounded-4 bg-primary bg-opacity-20 text-primary shadow-sm">
+                        <i class="fa-solid fa-users fs-4"></i>
+                    </div>
+                    <span class="badge bg-success bg-opacity-20 text-success fw-semibold px-3 py-2 rounded-pill" style="font-size: 0.75rem;">
+                        <i class="fa-solid fa-arrow-up me-1"></i> +50% this week
+                    </span>
+                </div>
+                <div class="mb-3">
+                    <span class="text-muted small text-uppercase fw-bold d-block tracking-wider">Total Users</span>
+                    <h3 class="stat-val-gradient mb-0">@ViewBag.TotalUsers</h3>
+                </div>
+                <div class="pt-2 border-top border-secondary border-opacity-20">
+                    <svg class="w-100" height="32" viewBox="0 0 100 32" preserveAspectRatio="none">
+                        <path d="M0,25 Q25,5 50,20 T100,10" fill="none" stroke="#3b82f6" stroke-width="2.5" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Views Card -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card dash-card-stat-green h-100 shadow-lg border-0 rounded-4 p-4 position-relative overflow-hidden">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="p-3 rounded-4 bg-success bg-opacity-20 text-success shadow-sm">
+                        <i class="fa-solid fa-eye fs-4"></i>
+                    </div>
+                    <span class="badge bg-secondary bg-opacity-20 text-muted fw-semibold px-3 py-2 rounded-pill" style="font-size: 0.75rem;">
+                        <i class="fa-solid fa-minus me-1"></i> Stable
+                    </span>
+                </div>
+                <div class="mb-3">
+                    <span class="text-muted small text-uppercase fw-bold d-block tracking-wider">Content Views</span>
+                    <h3 class="stat-val-gradient mb-0">@ViewBag.TotalViews</h3>
+                </div>
+                <div class="pt-2 border-top border-secondary border-opacity-20">
+                    <svg class="w-100" height="32" viewBox="0 0 100 32" preserveAspectRatio="none">
+                        <path d="M0,20 Q30,25 60,10 T100,15" fill="none" stroke="#10b981" stroke-width="2.5" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Merchandise Views Card -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card dash-card-stat-amber h-100 shadow-lg border-0 rounded-4 p-4 position-relative overflow-hidden">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="p-3 rounded-4 bg-warning bg-opacity-20 text-warning shadow-sm">
+                        <i class="fa-solid fa-box-open fs-4"></i>
+                    </div>
+                    <span class="badge bg-secondary bg-opacity-20 text-muted fw-semibold px-3 py-2 rounded-pill" style="font-size: 0.75rem;">
+                        <i class="fa-solid fa-minus me-1"></i> Stable
+                    </span>
+                </div>
+                <div class="mb-3">
+                    <span class="text-muted small text-uppercase fw-bold d-block tracking-wider">Store Visits</span>
+                    <h3 class="stat-val-gradient mb-0">@ViewBag.TotalMerchViews</h3>
+                </div>
+                <div class="pt-2 border-top border-secondary border-opacity-20">
+                    <svg class="w-100" height="32" viewBox="0 0 100 32" preserveAspectRatio="none">
+                        <path d="M0,15 Q40,30 70,10 T100,20" fill="none" stroke="#f59e0b" stroke-width="2.5" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chatbot Queries Card -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card dash-card-stat-purple h-100 shadow-lg border-0 rounded-4 p-4 position-relative overflow-hidden">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="p-3 rounded-4 shadow-sm" style="background-color: rgba(168, 85, 247, 0.2); color: #8B5CF6;">
+                        <i class="fa-solid fa-robot fs-4"></i>
+                    </div>
+                    <span class="badge fw-semibold px-3 py-2 rounded-pill" style="background-color: rgba(168, 85, 247, 0.2); color: #8B5CF6; font-size: 0.75rem;">
+                        <i class="fa-solid fa-arrow-up me-1"></i> +30% active
+                    </span>
+                </div>
+                <div class="mb-3">
+                    <span class="text-muted small text-uppercase fw-bold d-block tracking-wider">FanBot Queries</span>
+                    <h3 class="stat-val-gradient mb-0">@ViewBag.TotalChatbotQueries</h3>
+                </div>
+                <div class="pt-2 border-top border-secondary border-opacity-20">
+                    <svg class="w-100" height="32" viewBox="0 0 100 32" preserveAspectRatio="none">
+                        <path d="M0,10 Q30,20 60,5 T100,15" fill="none" stroke="#a855f7" stroke-width="2.5" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Middle Section: Activity Overview, Quick Analytics & Content Distribution -->
+    <div class="row g-4 mb-4">
+        <!-- Website Activity Overview Graph Section -->
+        <div class="col-xl-6">
+            <div class="card dash-card-panel shadow-lg border-0 rounded-4 p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="fw-bold mb-1"><i class="fa-solid fa-chart-line text-primary me-2"></i>Engagement & Traffic Overview</h5>
+                        <p class="text-muted small mb-0">Live community engagement and interaction metrics over time.</p>
+                    </div>
+                    <span class="badge bg-secondary bg-opacity-20 text-muted px-3 py-2 rounded-pill" style="font-size: 0.75rem;">Last 7 Days <i class="fa-solid fa-chevron-down ms-1"></i></span>
+                </div>
+                
+                <!-- Multi-line Chart -->
+                <div class="py-3 px-2 mt-2 rounded-3 dash-card-item">
+                    <div class="d-flex justify-content-between text-muted small px-2 mb-2" style="font-size: 0.7rem;">
+                        <span>100</span><span>80</span><span>60</span><span>40</span><span>20</span><span>0</span>
+                    </div>
+                    <svg class="w-100" height="140" viewBox="0 0 300 140" preserveAspectRatio="none">
+                        <line x1="0" y1="20" x2="300" y2="20" stroke="#322D54" stroke-dasharray="3,3" />
+                        <line x1="0" y1="50" x2="300" y2="50" stroke="#322D54" stroke-dasharray="3,3" />
+                        <line x1="0" y1="80" x2="300" y2="80" stroke="#322D54" stroke-dasharray="3,3" />
+                        <line x1="0" y1="110" x2="300" y2="110" stroke="#322D54" stroke-dasharray="3,3" />
+
+                        <path d="M 0,90 Q 50,40 100,70 T 200,30 T 300,60" fill="none" stroke="#a855f7" stroke-width="3" />
+                        <path d="M 0,105 Q 50,70 100,90 T 200,50 T 300,80" fill="none" stroke="#10b981" stroke-width="3" />
+                        <path d="M 0,115 Q 50,90 100,100 T 200,70 T 300,95" fill="none" stroke="#3b82f6" stroke-width="3" />
+                    </svg>
+                    <div class="d-flex justify-content-between text-muted mt-2 px-2" style="font-size: 0.7rem;">
+                        <span>Day 1</span><span>Day 2</span><span>Day 3</span><span>Day 4</span><span>Day 5</span><span>Day 6</span><span>Today</span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center gap-4 mt-3 small fw-semibold">
+                    <span><span class="badge rounded-circle p-1 me-1" style="background-color: #a855f7;">&nbsp;</span> Users</span>
+                    <span><span class="badge rounded-circle p-1 me-1" style="background-color: #10b981;">&nbsp;</span> Content Views</span>
+                    <span><span class="badge rounded-circle p-1 me-1" style="background-color: #3b82f6;">&nbsp;</span> Chatbot Queries</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Analytics Progress Section -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card dash-card-panel shadow-lg border-0 rounded-4 p-4 h-100">
+                <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-pie text-warning me-2"></i>Metrics Progress</h5>
+                
+                <div class="d-flex flex-column gap-3">
+                    <div class="p-3 rounded-3 dash-card-item">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small fw-semibold">User Registrations</span>
+                            <span class="text-success small fw-bold">+50%</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small">Total: @ViewBag.TotalUsers</span>
+                        </div>
+                        <div class="progress rounded-pill" style="height: 6px; background-color: rgba(124, 58, 237, 0.15);">
+                            <div class="progress-bar rounded-pill bg-primary" style="width: 75%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded-3 dash-card-item">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small fw-semibold">Content Views</span>
+                            <span class="text-muted small fw-semibold">Active</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small">Total: @ViewBag.TotalViews</span>
+                        </div>
+                        <div class="progress rounded-pill" style="height: 6px; background-color: rgba(124, 58, 237, 0.15);">
+                            <div class="progress-bar rounded-pill bg-success" style="width: 45%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded-3 dash-card-item">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small fw-semibold">Store Catalog Visits</span>
+                            <span class="text-muted small fw-semibold">Active</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small">Total: @ViewBag.TotalMerchViews</span>
+                        </div>
+                        <div class="progress rounded-pill" style="height: 6px; background-color: rgba(124, 58, 237, 0.15);">
+                            <div class="progress-bar rounded-pill bg-warning" style="width: 55%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded-3 dash-card-item">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small fw-semibold">FanBot Activity</span>
+                            <span class="text-success small fw-bold">+30%</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small">Total: @ViewBag.TotalChatbotQueries</span>
+                        </div>
+                        <div class="progress rounded-pill" style="height: 6px; background-color: rgba(124, 58, 237, 0.15);">
+                            <div class="progress-bar rounded-pill" style="width: 65%; background-color: #a855f7;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Distribution Donut Card -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card dash-card-panel shadow-lg border-0 rounded-4 p-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <h5 class="fw-bold mb-1">Content Share</h5>
+                    <p class="text-muted small mb-3">Distribution across active categories</p>
+                </div>
+
+                <div class="text-center position-relative my-2">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-5 border-info position-relative shadow-lg" style="width: 135px; height: 135px; background: rgba(255,255,255,0.03);">
+                        <div class="text-center">
+                            <span class="text-muted small d-block" style="font-size: 0.72rem;">Total Items</span>
+                            <h4 class="fw-extrabold mb-0">@ViewBag.TotalContents</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column gap-2 mt-2" style="font-size: 0.82rem;">
+                    <div class="d-flex justify-content-between align-items-center text-muted">
+                        <span><span class="badge rounded-circle p-1 me-1 bg-primary">&nbsp;</span> Anime</span>
+                        <span class="fw-semibold">1 (25%)</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center text-muted">
+                        <span><span class="badge rounded-circle p-1 me-1 bg-success">&nbsp;</span> Comics</span>
+                        <span class="fw-semibold">1 (25%)</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center text-muted">
+                        <span><span class="badge rounded-circle p-1 me-1 bg-info">&nbsp;</span> Cosplay</span>
+                        <span class="fw-semibold">1 (25%)</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center text-muted">
+                        <span><span class="badge rounded-circle p-1 me-1 bg-warning">&nbsp;</span> Games</span>
+                        <span class="fw-semibold">1 (25%)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Insights & Highlights Banner -->
+    <div class="card dash-card-hero shadow-lg border-0 rounded-4 p-4 position-relative overflow-hidden">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="p-3 rounded-circle bg-warning bg-opacity-15 text-warning fs-4 shadow-sm" style="border: 1px solid rgba(245, 158, 11, 0.3);">
+                    <i class="fa-solid fa-lightbulb"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold mb-1">System Insights & Performance</h5>
+                    <p class="text-muted small mb-0">Platform performance is optimal. Total user activity increased by +50% this week.</p>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <a asp-action="Overview" class="btn btn-outline-primary btn-sm px-3 rounded-pill fw-semibold">Category Overview</a>
+                <a asp-action="Statistics" class="btn btn-primary btn-sm px-3 rounded-pill fw-semibold">Full Analytics</a>
+            </div>
+        </div>
+    </div>
+</div>

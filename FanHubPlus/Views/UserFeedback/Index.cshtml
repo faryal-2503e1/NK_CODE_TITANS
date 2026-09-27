@@ -1,0 +1,38 @@
+﻿@model List<Feedback>
+@{
+    ViewData["Title"] = "My Feedback";
+    Layout = "_DashboardLayout";
+}
+
+<section class="feedback-page">
+    <div class="page-header">
+        <h1>My Feedback</h1>
+        <a asp-action="Create" class="btn btn-primary">+ New Feedback</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="card-grid">
+            @foreach (var feedback in Model)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <span class="badge">@feedback.Type</span>
+                        <h3><a asp-action="Details" asp-route-id="@feedback.FeedbackId">@(feedback.Message.Length > 60 ? feedback.Message.Substring(0, 60) + "..." : feedback.Message)</a></h3>
+                        <p class="text-muted">@feedback.CreatedAt.ToString("dd MMM yyyy")</p>
+                        <span class="badge">@feedback.Status</span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>You haven't sent any feedback yet.</p>
+    }
+</section>

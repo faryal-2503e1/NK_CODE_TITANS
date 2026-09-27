@@ -1,0 +1,59 @@
+﻿@model ProfileEditViewModel
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+
+<div class="container-fluid px-4 py-4">
+    <div class="row g-4 justify-content-center">
+        <div class="col-lg-7">
+            <div class="card dash-card-panel shadow-lg border-0 rounded-4 p-4">
+                <h1 class="fw-bold mb-4 fs-3"><i class="bi bi-pencil-square me-2 text-primary"></i>Edit Profile</h1>
+
+                <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Profile Picture</label>
+                        @if (!string.IsNullOrEmpty(Model.CurrentProfilePictureUrl))
+                        {
+                            <div class="mb-2">
+                                <img src="@Model.CurrentProfilePictureUrl" alt="Current profile picture"
+                                     class="rounded-circle" style="width: 90px; height: 90px; object-fit: cover; border: 2px solid rgba(139, 92, 246, 0.4);" />
+                            </div>
+                        }
+                        <input type="file" name="profilePicture" accept=".jpg,.jpeg,.png,.webp" class="form-control" />
+                        <small class="text-muted">JPG, PNG or WEBP, max 2 MB.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="form-label fw-semibold"></label>
+                        <input asp-for="FullName" class="form-control" placeholder="Your full name" />
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Address" class="form-label fw-semibold"></label>
+                        <input asp-for="Address" class="form-control" placeholder="Your address" />
+                        <span asp-validation-for="Address" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2 pt-3 border-top border-secondary border-opacity-20">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">
+                            <i class="bi bi-check2 me-1"></i> Save Changes
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">Cancel</a>
+                    </div>
+                </form>
+
+                <p class="text-muted small mt-4 mb-0">
+                    Want to change your email or password? Head to your
+                    <a asp-area="Identity" asp-page="/Account/Manage/Index">account settings</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

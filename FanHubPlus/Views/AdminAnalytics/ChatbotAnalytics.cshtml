@@ -1,0 +1,107 @@
+@using FanHubPlus.ViewModels
+@model ChatbotAnalyticsViewModel
+
+@{
+    ViewData["Title"] = "Chatbot Analytics";
+    Layout = "_AdminLayout";
+    var q = Context.Request.Query["q"].ToString();
+    var maxDaily = Math.Max(1, Model.Daily.Max(d => d.Count));
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Chatbot Interaction Volume</h2>
+        <div class="d-flex gap-2">
+            <a asp-controller="AdminChatbot" asp-action="Index" class="btn btn-outline-secondary">Manage chatbot</a>
+            <a asp-action="Index" class="btn btn-secondary">Back to Analytics</a>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md"><div class="card shadow-sm"><div class="card-body"><div class="text-muted">All time</div><h3 class="mb-0">@Model.Total</h3></div></div></div>
+        <div class="col-6 col-md"><div class="card shadow-sm"><div class="card-body"><div class="text-muted">Today</div><h3 class="mb-0">@Model.Today</h3></div></div></div>
+        <div class="col-6 col-md"><div class="card shadow-sm"><div class="card-body"><div class="text-muted">Last 7 days</div><h3 class="mb-0">@Model.Last7Days</h3></div></div></div>
+        <div class="col-6 col-md"><div class="card shadow-sm"><div class="card-body"><div class="text-muted">Last 30 days</div><h3 class="mb-0">@Model.Last30Days</h3></div></div></div>
+        <div class="col-6 col-md"><div class="card shadow-sm"><div class="card-body"><div class="text-muted">Users (30 days)</div><h3 class="mb-0">@Model.UniqueUsers30Days</h3></div></div></div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-7">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">Queries per day (last 14 days)</div>
+                <div class="card-body">
+                    @foreach (var d in Model.Daily)
+                    {
+                        var pct = (int)Math.Round(100.0 * d.Count / maxDaily);
+                        var dayLabel = d.Day.ToString("dd MMM");
+                        <div class="d-flex align-items-center mb-1">
+                            <span class="me-2 text-muted" style="width:70px">@dayLabel</span>
+                            <div class="progress flex-grow-1" role="progressbar" aria-label="@dayLabel queries" aria-valuenow="@d.Count" aria-valuemin="0" aria-valuemax="@maxDaily">
+                                <div class="progress-bar" style="width:@(pct)%"></div>
+                            </div>
+                            <span class="ms-2" style="width:32px">@d.Count</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">Most asked questions</div>
+                <ul class="list-group list-group-flush">
+                    @foreach (var t in Model.TopQuestions)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-start gap-2">
+                            <span class="text-break">@t.Message</span>
+                            <span class="badge bg-dark rounded-pill">@t.Count</span>
+                        </li>
+                    }
+                    @if (!Model.TopQuestions.Any())
+                    {
+                        <li class="list-group-item text-muted">No queries yet.</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <form method="get" class="row g-2 mb-3" role="search">
+        <div class="col-md-5">
+            <input type="search" name="q" value="@q" class="form-control" placeholder="Search messages and replies" aria-label="Search queries" />
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a asp-action="ChatbotAnalytics" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>User</th>
+                    <th>Query</th>
+                    <th>Bot Response</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Recent)
+                {
+                    <tr>
+                        <td>@(Model.Users.TryGetValue(item.UserId, out var u) ? u : "Unknown User")</td>
+                        <td><strong>@item.Message</strong></td>
+                        <td class="text-muted">@item.Response</td>
+                        <td>@item.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    </tr>
+                }
+                @if (!Model.Recent.Any())
+                {
+                    <tr><td colspan="4" class="text-center text-muted py-4">No chatbot queries found.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <partial name="_Pager" model="(IPagedList)Model.Recent" />
+</div>

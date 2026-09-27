@@ -1,0 +1,97 @@
+@model PagedList<FanSubmission>
+
+@{
+    ViewData["Title"] = "Fan Submissions";
+    Layout = "_AdminLayout";
+    var users = ViewBag.Users as Dictionary<string, string> ?? new Dictionary<string, string>();
+    var status = Context.Request.Query["status"].ToString();
+    var q = Context.Request.Query["q"].ToString();
+    var sort = Context.Request.Query["sort"].ToString();
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Fan Submissions Management</h2>
+    </div>
+
+    <form method="get" class="row g-2 mb-3" role="search">
+        <div class="col-md-4">
+            <input type="search" name="q" value="@q" class="form-control" placeholder="Search title or text" aria-label="Search submissions" />
+        </div>
+        <div class="col-md-2">
+            <select name="status" class="form-select" aria-label="Filter by status">
+                <option value="">All statuses</option>
+                @foreach (var s in AdminOptions.SubmissionStatuses)
+                {
+                    <option value="@s" selected="@(status == s)">@s</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="sort" class="form-select" aria-label="Sort order">
+                <option value="" selected="@(sort == "")">Newest first</option>
+                <option value="oldest" selected="@(sort == "oldest")">Oldest first</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Title</th>
+                    <th>Submitted By</th>
+                    <th>Status</th>
+                    <th>Submitted At</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var userName = users.TryGetValue(item.UserId, out var u) ? u : "Unknown";
+                    <tr>
+                        <td><strong>@item.Title</strong></td>
+                        <td>@userName</td>
+                        <td>
+                            @if (item.Status == "Approved")
+                            {
+                                <span class="badge bg-success">Approved</span>
+                            }
+                            else if (item.Status == "Rejected")
+                            {
+                                <span class="badge bg-danger">Rejected</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                        </td>
+                        <td>@item.SubmittedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td class="text-end">
+                            <div class="d-flex flex-wrap gap-1 justify-content-end">
+                            <a asp-action="Details" asp-route-id="@item.SubmissionId" class="btn btn-sm btn-info text-white">Details</a>
+                            @if (item.Status == "Pending")
+                            {
+                                <a asp-action="Review" asp-route-id="@item.SubmissionId" class="btn btn-sm btn-primary">Review</a>
+                                <a asp-action="Approve" asp-route-id="@item.SubmissionId" class="btn btn-sm btn-success">Approve</a>
+                                <a asp-action="Reject" asp-route-id="@item.SubmissionId" class="btn btn-sm btn-danger">Reject</a>
+                            }
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="5" class="text-center text-muted py-4">No submissions match these filters.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <partial name="_Pager" model="(IPagedList)Model" />
+</div>

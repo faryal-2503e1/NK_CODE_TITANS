@@ -1,0 +1,81 @@
+﻿@* Site Map — required by the SRS (Section 1.9) to be shown on the home page,
+   giving visitors/users/admins a quick overview of every area of the app. *@
+<section id="sitemap" class="sitemap-section mt-5 pt-4 border-top">
+    <h2 class="mb-4"><i class="bi bi-diagram-3 me-2"></i>Site Map</h2>
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-header bg-primary text-white fw-bold">
+                    <i class="bi bi-person me-1"></i> Visitor
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="list-group-item"><a asp-controller="UserCategory" asp-action="Index">Categories</a></li>
+                    <li class="list-group-item"><a asp-controller="UserContent" asp-action="Index">Content Explorer</a></li>
+                    <li class="list-group-item"><a asp-controller="UserContent" asp-action="Search">Search Content</a></li>
+                    <li class="list-group-item"><a asp-controller="UserCharacter" asp-action="Index">Character Profiles</a></li>
+                    <li class="list-group-item"><a asp-controller="UserArticle" asp-action="Index">Featured Articles</a></li>
+                    <li class="list-group-item"><a asp-controller="UserMedia" asp-action="Index">Media Center</a></li>
+                    <li class="list-group-item"><a asp-controller="UserMerchandise" asp-action="Index">Merchandise Showcase</a></li>
+                    <li class="list-group-item"><a asp-controller="UserEvent" asp-action="Index">Events</a></li>
+                    <li class="list-group-item"><a asp-controller="UserCalendar" asp-action="Index">Event Calendar</a></li>
+                    <li class="list-group-item"><a asp-controller="UserChatbot" asp-action="Index">FanBot Chat Assistant</a></li>
+                    <li class="list-group-item"><a asp-controller="Home" asp-action="About">About</a></li>
+                    <li class="list-group-item"><a asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    <li class="list-group-item"><a asp-area="Identity" asp-page="/Account/Register">Register</a></li>
+                    <li class="list-group-item"><a asp-area="Identity" asp-page="/Account/Login">Login</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-header bg-success text-white fw-bold">
+                    <i class="bi bi-person-check me-1"></i> Registered User
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><a asp-controller="UserDashboard" asp-action="Index">My Dashboard</a></li>
+                    <li class="list-group-item"><a asp-controller="UserDashboard" asp-action="Favorites">Favorite Fandoms</a></li>
+                    <li class="list-group-item"><a asp-controller="UserDashboard" asp-action="RecentActivity">Recent Activity</a></li>
+                    <li class="list-group-item"><a asp-controller="UserProfile" asp-action="Index">My Profile</a></li>
+                    <li class="list-group-item"><a asp-controller="UserProfile" asp-action="Edit">Edit Profile / Avatar</a></li>
+                    <li class="list-group-item"><a asp-controller="UserBookmark" asp-action="Index">Bookmarks</a></li>
+                    <li class="list-group-item"><a asp-controller="UserNote" asp-action="Index">My Notes</a></li>
+                    <li class="list-group-item"><a asp-controller="UserFanSubmission" asp-action="Create">Submit Fan Content</a></li>
+                    <li class="list-group-item"><a asp-controller="UserFanSubmission" asp-action="MySubmissions">My Submissions</a></li>
+                    <li class="list-group-item"><a asp-controller="UserFeedback" asp-action="Create">Submit Feedback</a></li>
+                    <li class="list-group-item"><a asp-controller="UserEvent" asp-action="Nearby">Nearby Events (GPS)</a></li>
+                    <li class="list-group-item"><a asp-controller="UserChatbot" asp-action="History">Chat History</a></li>
+                    <li class="list-group-item"><a asp-area="Identity" asp-page="/Account/Manage/Index">Account Settings</a></li>
+                    <li class="list-group-item"><a asp-area="Identity" asp-page="/Account/ForgotPassword">Forgot Password</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-header bg-dark text-white fw-bold">
+                    <i class="bi bi-shield-lock me-1"></i> Admin
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><a asp-controller="AdminDashboard" asp-action="Index">Admin Dashboard</a></li>
+                    <li class="list-group-item"><a asp-controller="AdminCategory" asp-action="Index">Manage Categories</a></li>
+                    <li class="list-group-item"><a asp-controller="AdminContent" asp-action="Index">Manage Content</a></li>
+                    <li class="list-group-item"><a asp-controller="AdminCharacter" asp-action="Index">Manage Characters</a></li>
+                    <li class="list-group-item"><a asp-controller="AdminArticle" asp-action="Index">Manage Articles</a></li>
+                    <li class="list-group-item"><a asp-controller="AdminMedia" asp-action="Index">Manage Media</a></li>
+                    <li class="list-group-item"><a asp-controller="AdminMerchandise" asp-action="Index">Manage Merchandise</a></li>
+                    <li class="list-group-item"><a asp-controller="AdminEvent" asp-action="Index">Manage Events</a></li>
+                    <li class="list-group-item"><a asp-controller="AdminTag" asp-action="Index">Manage Tags</a></li>
+                    <li class="list-group-item"><a asp-controller="AdminChatbot" asp-action="Index">Chatbot FAQ / Knowledge Base</a></li>
+                    <li class="list-group-item"><a asp-controller="AdminFanSubmission" asp-action="Index">Review Fan Submissions</a></li>
+                    <li class="list-group-item"><a asp-controller="AdminFeedback" asp-action="Index">User Feedback</a></li>
+                    <li class="list-group-item"><a asp-controller="AdminUser" asp-action="Index">Manage Users</a></li>
+                    <li class="list-group-item"><a asp-controller="AdminAnalytics" asp-action="Index">Usage Analytics</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</section>

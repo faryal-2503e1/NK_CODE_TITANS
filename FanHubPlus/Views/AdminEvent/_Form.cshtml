@@ -1,0 +1,59 @@
+@model Event
+
+@{
+    var allCategories = ViewBag.AllCategories as List<Category> ?? new List<Category>();
+    var selected = ViewBag.SelectedCategories as HashSet<int> ?? new HashSet<int>();
+}
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+@if (Model.EventId > 0)
+{
+    <input type="hidden" asp-for="EventId" />
+}
+
+<div class="field-grid">
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="EventDate" class="form-label">Event Date</label>
+        <input asp-for="EventDate" class="form-control" />
+        <span asp-validation-for="EventDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="City" class="form-label"></label>
+        <input asp-for="City" class="form-control" />
+        <span asp-validation-for="City" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="LocationCoordinates" class="form-label">GPS Coordinates (lat,lng)</label>
+        <input asp-for="LocationCoordinates" class="form-control" placeholder="e.g. 24.8607,67.0011" />
+        <div class="form-text">Required in this exact "lat,lng" format for the event to show up in GPS-based Nearby Events search and on the map.</div>
+        <span asp-validation-for="LocationCoordinates" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3 field-full">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <fieldset class="mb-3">
+        <legend class="form-label fs-6">Fandom categories</legend>
+        <div class="d-flex flex-wrap gap-3">
+            @foreach (var cat in allCategories)
+            {
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="selectedCategories" value="@cat.CategoryId" id="cat-@cat.CategoryId" checked="@selected.Contains(cat.CategoryId)" />
+                    <label class="form-check-label" for="cat-@cat.CategoryId">@cat.Name</label>
+                </div>
+            }
+        </div>
+    </fieldset>
+</div>

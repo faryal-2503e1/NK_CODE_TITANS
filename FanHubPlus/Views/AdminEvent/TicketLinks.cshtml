@@ -1,0 +1,62 @@
+@model PagedList<EventTicketLink>
+
+@{
+    ViewData["Title"] = "Event Ticket Links";
+    Layout = "_AdminLayout";
+    var q = Context.Request.Query["q"].ToString();
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Event Ticket Links</h2>
+        <a asp-action="Index" class="btn btn-secondary">Back to Events List</a>
+    </div>
+
+    <p class="text-muted">To add a link, open an event and use "Add Ticket Link" on its details page.</p>
+
+    <form method="get" class="row g-2 mb-3" role="search">
+        <div class="col-md-4">
+            <input type="search" name="q" value="@q" class="form-control" placeholder="Search event or platform" aria-label="Search ticket links" />
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a asp-action="TicketLinks" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Event Title</th>
+                    <th>Platform</th>
+                    <th>Ticket URL</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><a asp-action="Details" asp-route-id="@item.EventId"><strong>@item.Event?.Title</strong></a></td>
+                        <td>@item.PlatformName</td>
+                        <td><a href="@item.Url" target="_blank" rel="noopener">@item.Url</a></td>
+                        <td class="text-end">
+                            <a asp-action="EditTicketLink" asp-route-id="@item.TicketLinkId" class="btn btn-sm btn-warning">Edit</a>
+                            <form asp-action="DeleteTicketLink" asp-route-id="@item.TicketLinkId" method="post" class="d-inline"
+                                  onsubmit="return confirm('Delete this ticket link?');">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="4" class="text-center text-muted py-4">No ticket links found.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <partial name="_Pager" model="(IPagedList)Model" />
+</div>

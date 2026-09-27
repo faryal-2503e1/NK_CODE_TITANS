@@ -1,0 +1,44 @@
+@model Category
+
+@{
+    ViewData["Title"] = "Category Details";
+    Layout = "_AdminLayout";
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-head-title"><i class="fa-solid fa-list"></i> @Model.Name</h1>
+        <p class="page-head-subtitle">Category details and linked record counts.</p>
+    </div>
+    <div class="page-head-actions">
+        <a asp-action="Edit" asp-route-id="@Model.CategoryId" class="btn btn-outline-primary">
+            <i class="fa-solid fa-pen"></i> Edit
+        </a>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<div class="content-card">
+    <div class="content-card-body">
+        <div class="detail-grid">
+            <div>
+                <div class="detail-field-label">Description</div>
+                <div class="detail-field-value">@(string.IsNullOrWhiteSpace(Model.Description) ? "—" : Model.Description)</div>
+            </div>
+            <div>
+                <div class="detail-field-label">Content Items</div>
+                <div class="detail-field-value"><span class="count-pill">@(Model.Contents?.Count ?? 0)</span></div>
+            </div>
+            <div>
+                <div class="detail-field-label">Character Profiles</div>
+                <div class="detail-field-value"><span class="count-pill">@(Model.CharacterProfiles?.Count ?? 0)</span></div>
+            </div>
+            <div>
+                <div class="detail-field-label">Merchandise Items</div>
+                <div class="detail-field-value"><span class="count-pill">@(Model.MerchandiseItems?.Count ?? 0)</span></div>
+            </div>
+        </div>
+    </div>
+</div>

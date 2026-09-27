@@ -1,0 +1,81 @@
+@model IEnumerable<MediaItem>
+@{
+    ViewData["Title"] = "Trailers & Teasers | FanHub+";
+
+    string GetPoster(MediaItem item)
+    {
+        if (!string.IsNullOrEmpty(item.FileUrl) && (item.FileUrl.EndsWith(".png") || item.FileUrl.EndsWith(".jpg") || item.FileUrl.EndsWith(".jpeg") || item.FileUrl.EndsWith(".webp"))) return item.FileUrl;
+        var title = (item.Title ?? "").ToLower();
+        var cat = (item.Category?.Name ?? "").ToLower();
+        if (title.Contains("stranger")) return "/images/explore/stranger-things.png";
+        if (title.Contains("blackpink")) return "/images/explore/blackpink.png";
+        if (title.Contains("batman") || title.Contains("spider") || cat.Contains("comic")) return "/images/explore/spider-man.png";
+        if (title.Contains("solo") || title.Contains("leveling")) return "/images/explore/solo-leveling.png";
+        if (title.Contains("one piece") || title.Contains("luffy") || cat.Contains("manga")) return "/images/explore/one-piece.png";
+        if (title.Contains("genshin") || cat.Contains("game")) return "/images/explore/genshin-impact.png";
+        if (title.Contains("jujutsu") || title.Contains("demon") || cat.Contains("anime")) return "/images/explore/jujutsu-kaisen.png";
+        return "/images/explore/event-hero-convention.jpg";
+    }
+}
+
+<main class="explore-page py-4">
+    <div class="container-fluid site-container">
+        <!-- BREADCRUMB -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb fanhub-breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index">Media Hub</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Trailers</li>
+            </ol>
+        </nav>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <span class="section-label">EXCLUSIVES & TEASERS</span>
+                <h1 class="h2 fw-extrabold text-white mb-0" style="font-family: 'Manrope', sans-serif;">Fandom Trailers</h1>
+            </div>
+            <a asp-action="Index" class="cyber-meta-btn"><i class="bi bi-arrow-left me-1"></i> All Media</a>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="cyber-nebula-card p-5 text-center rounded-4">
+                <i class="bi bi-play-btn display-1 text-primary mb-3"></i>
+                <h4 class="text-white">No trailers available right now</h4>
+            </div>
+        }
+        else
+        {
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                @foreach (var item in Model)
+                {
+                    var posterUrl = GetPoster(item);
+                    <div class="col reveal">
+                        <article class="cyber-nebula-card p-0 rounded-4 overflow-hidden h-100 d-flex flex-column shadow-lg">
+                            <div class="position-relative overflow-hidden" style="height: 165px; background-image: url('@posterUrl'); background-size: cover; background-position: center;">
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(7, 7, 20, 0.5); backdrop-filter: blur(1px);">
+                                    <a asp-action="Details" asp-route-id="@item.MediaId" class="btn rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; background: linear-gradient(135deg, #ff2e93, #8b5cf6); box-shadow: 0 0 20px rgba(255, 46, 147, 0.6);">
+                                        <i class="bi bi-play-fill fs-3 ms-1"></i>
+                                    </a>
+                                </div>
+                                <span class="badge position-absolute top-0 end-0 m-2 px-2.5 py-1 rounded-pill text-uppercase fw-bold shadow-sm" style="background: linear-gradient(135deg, #ec4899, #f43f5e); color: #ffffff; font-size: 0.65rem;">Trailer</span>
+                            </div>
+
+                            <div class="p-3 d-flex flex-column flex-grow-1">
+                                <h3 class="h6 fw-bold text-white mb-1 text-truncate" title="@item.Title">
+                                    <a asp-action="Details" asp-route-id="@item.MediaId" class="text-white text-decoration-none">@item.Title</a>
+                                </h3>
+                                <div class="mt-auto pt-2 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                                    <small class="text-muted" style="font-size: 0.75rem;"><i class="bi bi-clock me-1"></i> @item.UploadedAt.ToString("MMM dd, yyyy")</small>
+                                    <a asp-action="Details" asp-route-id="@item.MediaId" class="cyber-read-btn py-1 px-3 fs-6" style="font-size: 0.8rem !important;">
+                                        Watch Trailer <i class="bi bi-play-fill ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</main>

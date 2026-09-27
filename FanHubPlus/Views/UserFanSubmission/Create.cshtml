@@ -1,0 +1,39 @@
+﻿@model FanSubmission
+@{
+    ViewData["Title"] = "Submit Your Work";
+    Layout = "_DashboardLayout";
+}
+
+<section class="submission-form-page">
+    <h1>Submit Your Work</h1>
+    <p class="text-muted">Share your fan art or story with the community. Every submission is reviewed before it goes public.</p>
+
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="Title"></label>
+            <input asp-for="Title" class="form-control" placeholder="Give your work a title" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Content">Description / Story</label>
+            <textarea asp-for="Content" class="form-control" rows="8" placeholder="Tell us about your work..."></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Image or Media File (optional)</label>
+            <input type="file" name="mediaFile" accept=".jpg,.jpeg,.png,.webp" class="form-control" />
+            <small class="text-muted">JPG, PNG or WEBP, max 2 MB.</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit for Review</button>
+        <a asp-action="MySubmissions" class="btn btn-link">Cancel</a>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

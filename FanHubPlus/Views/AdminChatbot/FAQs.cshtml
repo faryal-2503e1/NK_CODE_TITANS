@@ -1,0 +1,85 @@
+@model PagedList<ChatbotFaq>
+
+@{
+    ViewData["Title"] = "Manage FAQs";
+    Layout = "_AdminLayout";
+    var q = Context.Request.Query["q"].ToString();
+}
+
+<div class="container-fluid px-4 py-4 text-white">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1" style="color: #fff;"><i class="bi bi-question-circle me-2 text-primary"></i>Chatbot FAQs</h2>
+            <p class="text-muted small mb-0">Manage automated responses and frequently asked questions for the chatbot.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="CreateFaq" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3" style="background-color: #7b2cbf; border: none;">
+                <i class="bi bi-plus-lg"></i> Add New FAQ
+            </a>
+            <a asp-action="Index" class="btn btn-outline-light btn-sm d-flex align-items-center gap-1 px-3">
+                <i class="bi bi-arrow-left"></i> Back to Queries
+            </a>
+        </div>
+    </div>
+
+    <!-- Search and Filter Form -->
+    <form method="get" class="row g-2 mb-4 p-3 rounded shadow-sm" style="background-color: #12101e; border: 1px solid #2d2640;" role="search">
+        <div class="col-md-5">
+            <input type="search" name="q" value="@q" class="form-control bg-dark text-white border-secondary shadow-none" placeholder="Search questions and answers..." aria-label="Search FAQs" style="background-color: #1a162b !important; color: #fff !important; border-color: #3b3254 !important;" />
+        </div>
+        <div class="col-auto d-flex gap-2">
+            <button type="submit" class="btn btn-primary px-4" style="background-color: #7b2cbf; border: none;">Search</button>
+            <a asp-action="FAQs" class="btn btn-outline-secondary px-3">Reset</a>
+        </div>
+    </form>
+
+    <!-- FAQs Table Card -->
+    <div class="card shadow-lg border-0 rounded overflow-hidden" style="background-color: #12101e; border: 1px solid #2d2640 !important;">
+        <div class="table-responsive mb-0">
+            <table class="table table-dark table-hover align-middle mb-0" style="background-color: transparent;">
+                <thead style="background-color: #1a162b; border-bottom: 2px solid #3b3254;">
+                    <tr>
+                        <th class="py-3 px-4" style="color: #a0aec0; width: 35%;">Question</th>
+                        <th class="py-3 px-4" style="color: #a0aec0; width: 50%;">Answer</th>
+                        <th class="py-3 px-4 text-end" style="color: #a0aec0; width: 15%;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr style="border-bottom: 1px solid #1f1b32;">
+                            <td class="py-3 px-4 fw-semibold text-white">@item.Question</td>
+                            <td class="py-3 px-4 text-muted small">@item.Answer</td>
+                            <td class="py-3 px-4 text-end">
+                                <div class="d-flex gap-1 justify-content-end">
+                                    <a asp-action="EditFaq" asp-route-id="@item.FaqId" class="btn btn-sm btn-primary" title="Edit" style="background-color: #0d6efd; border: none;">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="DeleteFaq" asp-route-id="@item.FaqId" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this FAQ?');">
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete" style="background-color: #dc3545; border: none;">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center text-muted py-5">
+                                <i class="bi bi-search fs-3 d-block mb-2"></i>
+                                No FAQs found.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <partial name="_Pager" model="(IPagedList)Model" />
+    </div>
+</div>

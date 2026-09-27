@@ -1,0 +1,44 @@
+@model PagedList<MerchandiseViews>
+
+@{
+    ViewData["Title"] = "Merchandise View Log";
+    Layout = "_AdminLayout";
+    var users = ViewBag.Users as Dictionary<string, string> ?? new Dictionary<string, string>();
+    string? itemTitle = ViewBag.ItemTitle;
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Merchandise View Log@(itemTitle != null ? $": {itemTitle}" : "")</h2>
+        <a asp-action="MerchandiseViews" class="btn btn-secondary">Back to Merchandise Views</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Merchandise Item</th>
+                    <th>Viewed By</th>
+                    <th>Viewed At</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var userName = !string.IsNullOrEmpty(item.UserId) && users.TryGetValue(item.UserId, out var u) ? u : "Anonymous/Guest";
+                    <tr>
+                        <td><strong>@(item.MerchandiseItem?.Name ?? "Deleted Item")</strong></td>
+                        <td>@userName</td>
+                        <td>@item.ViewedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="3" class="text-center text-muted py-4">No views recorded yet.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <partial name="_Pager" model="(IPagedList)Model" />
+</div>

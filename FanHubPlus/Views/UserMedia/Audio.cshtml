@@ -1,0 +1,34 @@
+﻿@model IEnumerable<MediaItem>
+
+@{
+    ViewData["Title"] = "Audio Tracks";
+}
+
+<div class="container py-4">
+    <h2 class="mb-4"><i class="bi bi-music-note-be me-2"></i>Audio Tracks</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-secondary text-center">No audio files found.</div>
+    }
+    else
+    {
+        <div class="list-group shadow-sm">
+            @foreach (var item in Model)
+            {
+                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary text-white rounded-circle p-3 me-3">
+                            <i class="bi bi-music-note fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">@item.Title</h5>
+                            <small class="text-muted">Category: @(item.Category?.Name ?? "Uncategorized") | Uploaded: @item.UploadedAt.ToString("MMM dd, yyyy")</small>
+                        </div>
+                    </div>
+                    <a asp-action="Details" asp-route-id="@item.MediaId" class="btn btn-outline-primary btn-sm">Listen Now</a>
+                </div>
+            }
+        </div>
+    }
+</div>

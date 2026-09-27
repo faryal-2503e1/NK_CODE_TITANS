@@ -1,0 +1,42 @@
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Create New Poll";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid mt-4">
+    <h2>Create New Poll</h2>
+    <hr />
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Create" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Poll Title</label>
+                    <input type="text" name="title" class="form-control" placeholder="e.g. Best Anime of the Season" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Category (optional)</label>
+                    <select name="categoryId" class="form-select" asp-items="@(new SelectList(ViewBag.Categories, "CategoryId", "Name"))">
+                        <option value="">-- General --</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Options (comma se separate karein)</label>
+                    <input type="text" name="optionsCsv" class="form-control" placeholder="e.g. Naruto, One Piece, Demon Slayer, Jujutsu Kaisen" required />
+                    <div class="form-text">Kam az kam 2 options daalein, comma se alag karke.</div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Create Poll</button>
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

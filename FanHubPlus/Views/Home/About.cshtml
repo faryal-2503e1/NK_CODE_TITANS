@@ -1,0 +1,97 @@
+@{
+    ViewData["Title"] = "About Us | FanHub+";
+}
+
+<main class="explore-page py-4">
+    <div class="container-fluid site-container">
+        <!-- BREADCRUMB -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb fanhub-breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">About Us</li>
+            </ol>
+        </nav>
+
+        <!-- ABOUT HERO HEADER -->
+        <div class="explore-heading reveal mb-5">
+            <div>
+                <span class="section-label">OUR MISSION & VISION</span>
+                <h1 class="display-4 text-white fw-extrabold" style="font-family: 'Manrope', sans-serif;">Where Every Fandom <span>Finds a Home</span></h1>
+                <p class="lead text-secondary">Empowering fans worldwide to connect, discover, and celebrate the series, characters, and stories they love.</p>
+            </div>
+        </div>
+
+        <!-- ABOUT CARDS GRID -->
+        <div class="row g-4 mb-5">
+            <div class="col-lg-6">
+                <div class="cyber-nebula-card p-4 p-md-5 rounded-4 h-100 reveal">
+                    <div class="p-3 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 56px; height: 56px; background: rgba(255, 46, 147, 0.2); color: #FF4D8D;">
+                        <i class="bi bi-heart-fill fs-3"></i>
+                    </div>
+                    <h2 class="h3 text-white fw-bold mb-3" style="font-family: 'Manrope', sans-serif;">Built for Fans, by Fans</h2>
+                    <p class="text-secondary leading-relaxed">
+                        FanHub+ started as a passionate community project and grew into an all-in-one digital sanctuary where pop culture enthusiasts, anime lovers, gamers, and comic fans explore rich lore, track character archives, and follow live events.
+                    </p>
+                    <p class="text-secondary leading-relaxed mb-0">
+                        Whether you are here for in-depth article breakdowns, multimedia galleries, fan quizzes, or merchandise drops, we have built this platform to make staying in the loop effortless and exciting.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="cyber-nebula-card p-4 p-md-5 rounded-4 h-100 reveal">
+                    <div class="p-3 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 56px; height: 56px; background: rgba(139, 92, 246, 0.2); color: #8B5CF6;">
+                        <i class="bi bi-stars fs-3"></i>
+                    </div>
+                    <h2 class="h3 text-white fw-bold mb-3" style="font-family: 'Manrope', sans-serif;">What We Offer</h2>
+                    <ul class="list-unstyled d-flex flex-column gap-3 mb-0 text-secondary">
+                        <li class="d-flex align-items-start gap-2">
+                            <i class="bi bi-check-circle-fill text-primary mt-1"></i>
+                            <span><strong>Curated Fandom Worlds:</strong> Detailed hubs for Anime, Gaming, Movies, Comics, K-Pop, and Cosplay.</span>
+                        </li>
+                        <li class="d-flex align-items-start gap-2">
+                            <i class="bi bi-check-circle-fill text-primary mt-1"></i>
+                            <span><strong>Event Calendar & Expos:</strong> Live conventions, tournaments, and fan screening updates.</span>
+                        </li>
+                        <li class="d-flex align-items-start gap-2">
+                            <i class="bi bi-check-circle-fill text-primary mt-1"></i>
+                            <span><strong>Personal Fan Space:</strong> Bookmarks, personal notes, and custom favorite collections.</span>
+                        </li>
+                        <li class="d-flex align-items-start gap-2">
+                            <i class="bi bi-check-circle-fill text-primary mt-1"></i>
+                            <span><strong>FanBot AI & Interactive Quizzes:</strong> Instant fandom assistance, trivia, and polls.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATS BADGES -->
+        <div class="row g-4 mb-5">
+            <div class="col-6 col-md-3">
+                <div class="cyber-nebula-card p-4 text-center reveal">
+                    <h3 class="display-6 fw-bold text-primary mb-1">250K+</h3>
+                    <small class="text-muted text-uppercase tracking-wider">Active Fans</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="cyber-nebula-card p-4 text-center reveal">
+                    <h3 class="display-6 fw-bold text-warning mb-1">8</h3>
+                    <small class="text-muted text-uppercase tracking-wider">Fandom Worlds</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="cyber-nebula-card p-4 text-center reveal">
+                    <h3 class="display-6 fw-bold text-danger mb-1">50K+</h3>
+                    <small class="text-muted text-uppercase tracking-wider">Discussions</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="cyber-nebula-card p-4 text-center reveal">
+                    <h3 class="display-6 fw-bold text-info mb-1">100+</h3>
+                    <small class="text-muted text-uppercase tracking-wider">Global Events</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

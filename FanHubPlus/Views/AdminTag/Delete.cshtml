@@ -1,0 +1,36 @@
+@model Tag
+
+@{
+    ViewData["Title"] = "Delete Tag";
+    Layout = "_AdminLayout";
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-head-title"><i class="fa-solid fa-trash text-danger"></i> Delete Tag</h1>
+        <p class="page-head-subtitle">This action cannot be undone.</p>
+    </div>
+</div>
+
+<div class="content-card confirm-card">
+    <div class="content-card-header">
+        <strong>Confirm deletion</strong>
+    </div>
+    <div class="content-card-body">
+        <p>Are you sure you want to delete <strong>@Model.Name</strong>?</p>
+
+        @if ((int)ViewBag.ContentCount + (int)ViewBag.MediaCount > 0)
+        {
+            <div class="alert alert-warning mb-3">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                This tag is used by @ViewBag.ContentCount content item(s) and @ViewBag.MediaCount media item(s).
+                It will be removed from them, but they will not be deleted.
+            </div>
+        }
+
+        <form asp-action="Delete" asp-route-id="@Model.TagId" method="post" class="form-actions">
+            <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Delete Tag</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,75 @@
+@model IEnumerable<Category>
+
+@{
+    ViewData["Title"] = "Manage Categories";
+    Layout = "_AdminLayout";
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-head-title"><i class="fa-solid fa-list"></i> Fandom Categories</h1>
+        <p class="page-head-subtitle">The top-level buckets (Anime, Gaming, K-Pop, etc.) every piece of content is filed under.</p>
+    </div>
+    <div class="page-head-actions">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Add Category
+        </a>
+    </div>
+</div>
+
+<div class="content-card">
+    <div class="content-card-body p-0">
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <i class="fa-solid fa-list"></i>
+                <p>No categories yet — add your first one to start organizing content.</p>
+                <a asp-action="Create" class="btn btn-primary btn-sm">
+                    <i class="fa-solid fa-plus"></i> Add Category
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table admin-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Content</th>
+                            <th>Characters</th>
+                            <th>Merchandise</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var category in Model)
+                        {
+                            <tr>
+                                <td data-label="Name"><strong>@category.Name</strong></td>
+                                <td data-label="Description">@(string.IsNullOrWhiteSpace(category.Description) ? "—" : category.Description)</td>
+                                <td data-label="Content"><span class="count-pill">@(category.Contents?.Count ?? 0)</span></td>
+                                <td data-label="Characters"><span class="count-pill">@(category.CharacterProfiles?.Count ?? 0)</span></td>
+                                <td data-label="Merchandise"><span class="count-pill">@(category.MerchandiseItems?.Count ?? 0)</span></td>
+                                <td data-label="Actions">
+                                    <div class="row-actions">
+                                        <a asp-action="Details" asp-route-id="@category.CategoryId" class="btn btn-sm btn-outline-secondary" title="View details">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@category.CategoryId" class="btn btn-sm btn-outline-primary" title="Edit">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@category.CategoryId" class="btn btn-sm btn-outline-danger" title="Delete">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

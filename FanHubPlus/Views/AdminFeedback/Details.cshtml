@@ -1,0 +1,38 @@
+﻿@model Feedback
+
+@{
+    ViewData["Title"] = "Feedback Details";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid mt-4">
+    <h2>Feedback Details</h2>
+    <hr />
+    <div class="card shadow-sm col-md-8">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Feedback Type</dt>
+                <dd class="col-sm-9"><strong>@Model.Type</strong></dd>
+
+                <dt class="col-sm-3">Submitted By</dt>
+                <dd class="col-sm-9">@ViewBag.SubmitterName (@Model.UserId)</dd>
+
+                <dt class="col-sm-3">Status</dt>
+                <dd class="col-sm-9">
+                    <span class="badge bg-secondary">@Model.Status</span>
+                </dd>
+
+                <dt class="col-sm-3">Created At</dt>
+                <dd class="col-sm-9">@Model.CreatedAt</dd>
+
+                <dt class="col-sm-3">Message</dt>
+                <dd class="col-sm-9 p-3 bg-light rounded border">@Model.Message</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="UpdateStatus" asp-route-id="@Model.FeedbackId" class="btn btn-warning">Update Status</a>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>

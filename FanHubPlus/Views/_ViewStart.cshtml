@@ -1,0 +1,21 @@
+@{
+    // One place that decides which shell a page is rendered in:
+    //   Admin*                        -> admin panel
+    //   User* + signed in             -> member dashboard (sidebar)
+    //   everything else (visitors)    -> public site
+    var controllerName = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var isSignedIn = User.Identity?.IsAuthenticated == true;
+
+    if (controllerName.StartsWith("Admin"))
+    {
+        Layout = "_AdminLayout";
+    }
+    else if (controllerName.StartsWith("User") && isSignedIn)
+    {
+        Layout = "_DashboardLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+}

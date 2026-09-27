@@ -1,0 +1,52 @@
+@{
+    ViewData["Title"] = "Platform Statistics";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Platform Statistics</h2>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Content Library</h5>
+            <table class="table table-sm table-striped">
+                <tbody>
+                    <tr><td>Users</td><td class="text-end">@ViewBag.TotalUsers</td></tr>
+                    <tr><td>Categories</td><td class="text-end">@ViewBag.TotalCategories</td></tr>
+                    <tr><td>Content Items</td><td class="text-end">@ViewBag.TotalContents</td></tr>
+                    <tr><td>Character Profiles</td><td class="text-end">@ViewBag.TotalCharacterProfiles</td></tr>
+                    <tr><td>Featured Articles</td><td class="text-end">@ViewBag.TotalFeaturedArticles</td></tr>
+                    <tr><td>Media Items</td><td class="text-end">@ViewBag.TotalMediaItems</td></tr>
+                    <tr><td>Events</td><td class="text-end">@ViewBag.TotalEvents</td></tr>
+                    <tr><td>Merchandise Items</td><td class="text-end">@ViewBag.TotalMerchandiseItems</td></tr>
+                    <tr><td>Bookmarks</td><td class="text-end">@ViewBag.TotalBookmarks</td></tr>
+                    <tr><td>Chatbot Queries</td><td class="text-end">@ViewBag.TotalChatbotQueries</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Fan Submissions</h5>
+            <table class="table table-sm table-striped">
+                <tbody>
+                    <tr><td>Pending</td><td class="text-end">@ViewBag.PendingFanSubmissions</td></tr>
+                    <tr><td>Approved</td><td class="text-end">@ViewBag.ApprovedFanSubmissions</td></tr>
+                    <tr><td>Rejected</td><td class="text-end">@ViewBag.RejectedFanSubmissions</td></tr>
+                </tbody>
+            </table>
+
+            <h5 class="mt-4">Feedback</h5>
+            <table class="table table-sm table-striped">
+                <tbody>
+                    <tr><td>Open</td><td class="text-end">@ViewBag.OpenFeedback</td></tr>
+                    <tr><td>Resolved</td><td class="text-end">@ViewBag.ResolvedFeedback</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

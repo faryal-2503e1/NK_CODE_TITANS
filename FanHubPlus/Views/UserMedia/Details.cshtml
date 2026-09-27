@@ -1,0 +1,171 @@
+@model MediaItem
+@{
+    ViewData["Title"] = Model.Title;
+    double avgRating = ViewBag.AverageRating ?? 0;
+
+    string GetPoster(MediaItem item)
+    {
+        if (!string.IsNullOrEmpty(item.FileUrl) && (item.FileUrl.EndsWith(".png") || item.FileUrl.EndsWith(".jpg") || item.FileUrl.EndsWith(".jpeg") || item.FileUrl.EndsWith(".webp"))) return item.FileUrl;
+        var title = (item.Title ?? "").ToLower();
+        var cat = (item.Category?.Name ?? "").ToLower();
+        if (title.Contains("stranger")) return "/images/explore/stranger-things.png";
+        if (title.Contains("blackpink")) return "/images/explore/blackpink.png";
+        if (title.Contains("batman") || title.Contains("spider") || cat.Contains("comic")) return "/images/explore/spider-man.png";
+        if (title.Contains("solo") || title.Contains("leveling")) return "/images/explore/solo-leveling.png";
+        if (title.Contains("one piece") || title.Contains("luffy") || cat.Contains("manga")) return "/images/explore/one-piece.png";
+        if (title.Contains("genshin") || cat.Contains("game")) return "/images/explore/genshin-impact.png";
+        if (title.Contains("jujutsu") || title.Contains("demon") || cat.Contains("anime")) return "/images/explore/jujutsu-kaisen.png";
+        return "/images/explore/event-hero-convention.jpg";
+    }
+
+    var posterImage = GetPoster(Model);
+}
+
+<main class="explore-page py-4">
+    <div class="container-fluid site-container">
+        <!-- BREADCRUMB -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb fanhub-breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index">Media Hub</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.Title</li>
+            </ol>
+        </nav>
+
+        <div class="row g-4">
+            <!-- Media Player / Display -->
+            <div class="col-lg-8">
+                <div class="cyber-nebula-card p-0 rounded-4 overflow-hidden shadow-lg">
+                    <div class="bg-black text-center position-relative">
+                        @if (Model.MediaType == "Video" || Model.MediaType == "Trailer")
+                        {
+                            if (!string.IsNullOrEmpty(Model.FileUrl) && (Model.FileUrl.Contains("youtube") || Model.FileUrl.Contains("youtu.be") || Model.FileUrl.Contains("embed")))
+                            {
+                                <div class="ratio ratio-16x9">
+                                    <iframe src="@Model.FileUrl" title="@Model.Title" allowfullscreen class="w-100 border-0"></iframe>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="ratio ratio-16x9 bg-black">
+                                    <video controls autoplay poster="@posterImage" class="w-100 h-100 object-fit-contain">
+                                        <source src="@Model.FileUrl" type="video/mp4">
+                                        <source src="/images/category_media/anime/videos/solo-leveling-s2-video-design.mp4" type="video/mp4">
+                                        Your browser does not support video playback.
+                                    </video>
+                                </div>
+                            }
+                        }
+                        else if (Model.MediaType == "Audio")
+                        {
+                            <div class="p-5" style="background: radial-gradient(circle at center, rgba(16, 185, 129, 0.25), transparent 70%);">
+                                <div class="p-4 rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 90px; height: 90px; background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);">
+                                    <i class="bi bi-disc-fill fs-1"></i>
+                                </div>
+                                <h4 class="text-white mb-3">@Model.Title Soundtrack</h4>
+                                <audio controls class="w-100 rounded-pill shadow">
+                                    <source src="@Model.FileUrl" type="audio/mpeg">
+                                    <source src="/images/category_media/anime/audio/playtime.mp4" type="audio/mp4">
+                                    Your browser does not support audio playback.
+                                </audio>
+                            </div>
+                        }
+                        else
+                        {
+                            <img src="@posterImage" class="img-fluid w-100" alt="@Model.Title" style="max-height: 520px; object-fit: contain;">
+                        }
+                    </div>
+
+                    <div class="p-4">
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                            <h1 class="h3 fw-bold text-white mb-0" style="font-family: 'Manrope', sans-serif;">@Model.Title</h1>
+                            <span class="badge rounded-pill px-3 py-2 text-uppercase fw-bold" style="background: linear-gradient(135deg, #ff2e93, #8b5cf6); color: #fff;">@Model.MediaType</span>
+                        </div>
+                        <p class="text-muted small mb-3"><i class="bi bi-clock me-1"></i> Published on @Model.UploadedAt.ToString("MMMM dd, yyyy")</p>
+
+                        <div class="d-flex align-items-center gap-2 pt-3 border-top border-secondary border-opacity-25">
+                            <a asp-controller="UserShare" asp-action="Share"
+                               asp-route-title="@Model.Title"
+                               asp-route-url="@Url.Action("Details", "UserMedia", new { id = Model.MediaId })"
+                               class="cyber-meta-btn px-3 py-2"><i class="bi bi-share me-1"></i> Share Content</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Info & Rating -->
+            <div class="col-lg-4">
+                <div class="cyber-nebula-card p-4 rounded-4 mb-4 shadow-lg">
+                    <h5 class="fw-bold text-white mb-3"><i class="bi bi-info-circle text-primary me-2"></i> Media Details</h5>
+                    <div class="d-flex flex-column gap-2 text-muted small">
+                        <p class="mb-0"><strong>Category:</strong> <span class="text-primary fw-semibold">@(Model.Category?.Name ?? "General")</span></p>
+                        <p class="mb-0">
+                            <strong>Tags:</strong>
+                            @if (Model.MediaTags != null && Model.MediaTags.Any())
+                            {
+                                <span class="ms-1">
+                                    @foreach (var tag in Model.MediaTags)
+                                    {
+                                        <span class="badge bg-secondary bg-opacity-25 text-purple me-1">#@tag.Tag?.Name</span>
+                                    }
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-muted ms-1">No tags</span>
+                            }
+                        </p>
+                    </div>
+
+                    <hr class="my-3 border-secondary border-opacity-25" />
+
+                    <p class="mb-1 text-white fw-semibold small">Average Community Rating:</p>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="text-warning fs-5">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= Math.Round(avgRating))
+                                {
+                                    <i class="bi bi-star-fill"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-star opacity-25"></i>
+                                }
+                            }
+                        </div>
+                        <span class="fw-bold text-white fs-6">(@avgRating.ToString("0.0") / 5)</span>
+                    </div>
+                </div>
+
+                <!-- Add Rating Form -->
+                <div class="cyber-nebula-card p-4 rounded-4 shadow-lg">
+                    <h5 class="fw-bold text-white mb-3"><i class="bi bi-star text-warning me-2"></i> Rate Content</h5>
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <form asp-action="AddRating" method="post">
+                            <input type="hidden" name="mediaId" value="@Model.MediaId" />
+                            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+
+                            <div class="mb-3">
+                                <label class="form-label text-muted small">Select Rating:</label>
+                                <select name="rating" class="form-select bg-dark text-white border-secondary border-opacity-25" required style="background: rgba(255, 255, 255, 0.05) !important;">
+                                    <option value="5">⭐⭐⭐⭐⭐ (5/5) Amazing</option>
+                                    <option value="4">⭐⭐⭐⭐ (4/5) Very Good</option>
+                                    <option value="3">⭐⭐⭐ (3/5) Good</option>
+                                    <option value="2">⭐⭐ (2/5) Average</option>
+                                    <option value="1">⭐ (1/5) Poor</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="cyber-read-btn w-100 justify-content-center text-center">Submit Rating</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <p class="text-muted small mb-0">Please sign in to submit a rating for this media item.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

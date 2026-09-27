@@ -1,0 +1,21 @@
+﻿@model Feedback
+@{
+    ViewData["Title"] = "Feedback Details";
+    Layout = "_DashboardLayout";
+}
+
+<section class="feedback-details">
+    <h1>Feedback Details</h1>
+
+    <div class="feedback-meta">
+        <span class="badge">@Model.Type</span>
+        <span class="badge">@Model.Status</span>
+        <span class="text-muted">Sent on @Model.CreatedAt.ToString("dd MMM yyyy")</span>
+    </div>
+
+    <div class="feedback-message">
+        <p>@Model.Message</p>
+    </div>
+
+    <a asp-action="Index" class="btn btn-link">Back to My Feedback</a>
+</section>

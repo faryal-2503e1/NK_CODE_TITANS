@@ -1,0 +1,341 @@
+@using Microsoft.AspNetCore.Identity
+@using FanHubPlus.Data
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var routeValues = ViewContext.RouteData.Values;
+    var controllerName = routeValues["controller"]?.ToString() ?? "";
+    var actionName = routeValues["action"]?.ToString() ?? "";
+    var pagePath = routeValues["page"]?.ToString() ?? "";
+    var isAccountPage = pagePath.StartsWith("/Account/Manage");
+
+    bool IsAt(string controller, params string[] actions) =>
+        controllerName == controller && (actions.Length == 0 || actions.Contains(actionName));
+
+    bool onBookmarks = IsAt("UserBookmark") || IsAt("UserDashboard", "Bookmarks");
+    bool onNotes = IsAt("UserNote") || IsAt("UserDashboard", "Notes");
+    bool onFavorites = IsAt("UserProfile", "Favorites") || IsAt("UserDashboard", "Favorites");
+
+    var sectionLabels = new Dictionary<string, string>
+    {
+        ["UserCategory"] = "Categories",
+        ["UserContent"] = "Fandom Content",
+        ["UserCharacter"] = "Characters",
+        ["UserArticle"] = "Articles",
+        ["UserMedia"] = "Media Center",
+        ["UserMerchandise"] = "Merchandise",
+        ["UserEvent"] = "Events",
+        ["UserCalendar"] = "Event Calendar",
+        ["UserChatbot"] = "FanBot",
+        ["UserQuiz"] = "Fan Quiz",
+        ["UserPoll"] = "Live Polls",
+        ["Leaderboard"] = "Leaderboard",
+        ["UserEventChat"] = "Live Chat",
+        ["UserBookmark"] = "Bookmarks",
+        ["UserNote"] = "Notes",
+        ["UserProfile"] = "Profile",
+        ["UserFanSubmission"] = "Fan Submissions",
+        ["UserFeedback"] = "Feedback"
+    };
+    sectionLabels.TryGetValue(controllerName, out var sectionLabel);
+    var actionLabel = System.Text.RegularExpressions.Regex.Replace(actionName, "(?<=[a-z])(?=[A-Z])", " ");
+
+    var currentUser = await UserManager.GetUserAsync(User);
+    var displayName = !string.IsNullOrWhiteSpace(currentUser?.FullName) ? currentUser.FullName : User.Identity?.Name;
+    var logoutReturnUrl = Url.Action("Index", "Home", new { area = "" });
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - My Dashboard | Fan Hub Plus</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+    <!-- UserDashboard/Index.cshtml uses Font Awesome (fa-solid) icons; without this
+         they rendered as blank/invisible glyphs since only Bootstrap Icons was loaded. -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/redesign.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/user-pages.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+</head>
+<body>
+    <partial name="_ThemeInit" />
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <partial name="_PageLoader" />
+
+    <nav id="sidebar" class="user-sidebar" aria-label="Dashboard navigation">
+        <a class="user-sidebar-brand" asp-area="" asp-controller="UserDashboard" asp-action="Index">
+            <i class="bi bi-stars text-primary"></i> Fan<span>Hub</span>+
+        </a>
+
+        <div class="user-sidebar-scroll">
+            <ul class="list-unstyled mb-0">
+                <li>
+                    <a asp-area="" asp-controller="UserDashboard" asp-action="Index"
+                       class="@(IsAt("UserDashboard", "Index") ? "active" : "")"
+                       aria-current="@(IsAt("UserDashboard", "Index") ? "page" : null)">
+                        <i class="bi bi-speedometer2"></i> Overview
+                    </a>
+                </li>
+            </ul>
+
+            <div class="user-sidebar-heading">Explore</div>
+            <ul class="list-unstyled mb-0">
+                <li>
+                    <a asp-area="" asp-controller="UserCategory" asp-action="Index"
+                       class="@(IsAt("UserCategory") ? "active" : "")" aria-current="@(IsAt("UserCategory") ? "page" : null)">
+                        <i class="bi bi-grid"></i> Categories
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="UserContent" asp-action="Index"
+                       class="@(IsAt("UserContent") ? "active" : "")" aria-current="@(IsAt("UserContent") ? "page" : null)">
+                        <i class="bi bi-collection-play"></i> Fandom Content
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="UserCharacter" asp-action="Index"
+                       class="@(IsAt("UserCharacter") ? "active" : "")" aria-current="@(IsAt("UserCharacter") ? "page" : null)">
+                        <i class="bi bi-people"></i> Characters
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="UserArticle" asp-action="Index"
+                       class="@(IsAt("UserArticle") ? "active" : "")" aria-current="@(IsAt("UserArticle") ? "page" : null)">
+                        <i class="bi bi-newspaper"></i> Articles
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="UserMedia" asp-action="Index"
+                       class="@(IsAt("UserMedia") ? "active" : "")" aria-current="@(IsAt("UserMedia") ? "page" : null)">
+                        <i class="bi bi-collection-play-fill"></i> Media Center
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="UserMerchandise" asp-action="Index"
+                       class="@(IsAt("UserMerchandise") ? "active" : "")" aria-current="@(IsAt("UserMerchandise") ? "page" : null)">
+                        <i class="bi bi-bag-heart"></i> Merchandise
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="UserEvent" asp-action="Index"
+                       class="@(IsAt("UserEvent") ? "active" : "")" aria-current="@(IsAt("UserEvent") ? "page" : null)">
+                        <i class="bi bi-calendar-event"></i> Events
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="UserCalendar" asp-action="Index"
+                       class="@(IsAt("UserCalendar") ? "active" : "")" aria-current="@(IsAt("UserCalendar") ? "page" : null)">
+                        <i class="bi bi-calendar3"></i> Event Calendar
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="UserChatbot" asp-action="Index"
+                       class="@(IsAt("UserChatbot", "Index", "FAQ") ? "active" : "")" aria-current="@(IsAt("UserChatbot", "Index", "FAQ") ? "page" : null)">
+                        <i class="bi bi-robot"></i> Ask FanBot
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="UserQuiz" asp-action="Index"
+                       class="@(IsAt("UserQuiz") ? "active" : "")" aria-current="@(IsAt("UserQuiz") ? "page" : null)">
+                        <i class="bi bi-patch-question"></i> Fan Quiz
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="UserPoll" asp-action="Index"
+                       class="@(IsAt("UserPoll") ? "active" : "")" aria-current="@(IsAt("UserPoll") ? "page" : null)">
+                        <i class="bi bi-bar-chart-line"></i> Live Polls
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="Leaderboard" asp-action="Index"
+                       class="@(IsAt("Leaderboard") ? "active" : "")" aria-current="@(IsAt("Leaderboard") ? "page" : null)">
+                        <i class="bi bi-trophy"></i> Leaderboard
+                    </a>
+                </li>
+            </ul>
+
+            <div class="user-sidebar-heading">My Space</div>
+            <ul class="list-unstyled mb-0">
+                <li>
+                    <a asp-area="" asp-controller="UserBookmark" asp-action="Index"
+                       class="@(onBookmarks ? "active" : "")" aria-current="@(onBookmarks ? "page" : null)">
+                        <i class="bi bi-bookmark-star"></i> Bookmarks
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="UserNote" asp-action="Index"
+                       class="@(onNotes ? "active" : "")" aria-current="@(onNotes ? "page" : null)">
+                        <i class="bi bi-journal-text"></i> Notes
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="UserProfile" asp-action="Favorites"
+                       class="@(onFavorites ? "active" : "")" aria-current="@(onFavorites ? "page" : null)">
+                        <i class="bi bi-heart"></i> Favorite Categories
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="UserDashboard" asp-action="RecentActivity"
+                       class="@(IsAt("UserDashboard", "RecentActivity") ? "active" : "")" aria-current="@(IsAt("UserDashboard", "RecentActivity") ? "page" : null)">
+                        <i class="bi bi-clock-history"></i> Recent Activity
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="UserChatbot" asp-action="History"
+                       class="@(IsAt("UserChatbot", "History") ? "active" : "")" aria-current="@(IsAt("UserChatbot", "History") ? "page" : null)">
+                        <i class="bi bi-chat-left-text"></i> Chat History
+                    </a>
+                </li>
+            </ul>
+
+            <div class="user-sidebar-heading">Contribute</div>
+            <ul class="list-unstyled mb-0">
+                <li>
+                    <a asp-area="" asp-controller="UserFanSubmission" asp-action="Index"
+                       class="@(IsAt("UserFanSubmission", "Index", "Details", "Create") ? "active" : "")" aria-current="@(IsAt("UserFanSubmission", "Index", "Details", "Create") ? "page" : null)">
+                        <i class="bi bi-brush"></i> Fan Submissions
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="UserFanSubmission" asp-action="MySubmissions"
+                       class="@(IsAt("UserFanSubmission", "MySubmissions") ? "active" : "")" aria-current="@(IsAt("UserFanSubmission", "MySubmissions") ? "page" : null)">
+                        <i class="bi bi-file-earmark-person"></i> My Submissions
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="UserFeedback" asp-action="Index"
+                       class="@(IsAt("UserFeedback") ? "active" : "")" aria-current="@(IsAt("UserFeedback") ? "page" : null)">
+                        <i class="bi bi-chat-dots"></i> Feedback
+                    </a>
+                </li>
+            </ul>
+
+            <div class="user-sidebar-heading">Account</div>
+            <ul class="list-unstyled mb-0">
+                <li>
+                    <a asp-area="" asp-controller="UserProfile" asp-action="Index"
+                       class="@(IsAt("UserProfile", "Index", "Edit") ? "active" : "")" aria-current="@(IsAt("UserProfile", "Index", "Edit") ? "page" : null)">
+                        <i class="bi bi-person-circle"></i> Profile
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="UserProfile" asp-action="Preferences"
+                       class="@(IsAt("UserProfile", "Preferences") ? "active" : "")" aria-current="@(IsAt("UserProfile", "Preferences") ? "page" : null)">
+                        <i class="bi bi-sliders"></i> Preferences
+                    </a>
+                </li>
+            </ul>
+
+            <div class="user-sidebar-heading">Settings</div>
+            <ul class="list-unstyled mb-0">
+                <li>
+                    <a asp-area="Identity" asp-page="/Account/Manage/Index" class="@(isAccountPage ? "active" : "")"
+                       aria-current="@(isAccountPage ? "page" : null)">
+                        <i class="bi bi-gear"></i> Account Settings
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="Home" asp-action="Index"><i class="bi bi-globe2"></i> Visit Website</a>
+                </li>
+                @if (User.IsInRole("Admin"))
+                {
+                    <li>
+                        <a asp-area="" asp-controller="AdminDashboard" asp-action="Index"><i class="bi bi-shield-lock"></i> Admin Panel</a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <div class="user-sidebar-footer">
+            <div class="small text-truncate mb-2" title="@displayName">
+                @if (!string.IsNullOrEmpty(currentUser?.ProfilePictureUrl))
+                {
+                    <img src="@currentUser.ProfilePictureUrl" alt="" class="sidebar-avatar" />
+                }
+                else
+                {
+                    <i class="bi bi-person-circle me-1"></i>
+                }
+                @displayName
+            </div>
+            <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@logoutReturnUrl">
+                <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <div class="user-content">
+        <nav class="user-topbar rounded mb-3">
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" id="sidebar-toggle" class="btn btn-outline-secondary btn-sm d-md-none" aria-label="Toggle navigation menu">
+                    <i class="bi bi-list"></i>
+                </button>
+                <span class="h5 mb-0 text-secondary">My Dashboard</span>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <partial name="_DisplayControls" />
+                <span class="d-none d-sm-inline text-body-secondary d-flex align-items-center gap-2">
+                    @if (!string.IsNullOrEmpty(currentUser?.ProfilePictureUrl))
+                    {
+                        <img src="@currentUser.ProfilePictureUrl" alt="@displayName" class="rounded-circle" style="width: 28px; height: 28px; object-fit: cover; border: 1px solid rgba(139, 92, 246, 0.4);" />
+                    }
+                    else
+                    {
+                        <i class="bi bi-person-circle"></i>
+                    }
+                    Welcome, <strong>@displayName</strong>
+                </span>
+            </div>
+        </nav>
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                @if (controllerName == "UserDashboard" && actionName == "Index")
+                {
+                    <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                }
+                else
+                {
+                    <li class="breadcrumb-item"><a asp-area="" asp-controller="UserDashboard" asp-action="Index">Dashboard</a></li>
+
+                    if (controllerName == "UserDashboard")
+                    {
+                        <li class="breadcrumb-item active" aria-current="page">@actionLabel</li>
+                    }
+                    else if (sectionLabel != null && actionName == "Index")
+                    {
+                        <li class="breadcrumb-item active" aria-current="page">@sectionLabel</li>
+                    }
+                    else if (sectionLabel != null)
+                    {
+                        <li class="breadcrumb-item"><a asp-area="" asp-controller="@controllerName" asp-action="Index">@sectionLabel</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">@actionLabel</li>
+                    }
+                    else if (isAccountPage)
+                    {
+                        <li class="breadcrumb-item active" aria-current="page">Account Settings</li>
+                    }
+                }
+            </ol>
+        </nav>
+
+        <main id="main-content" class="container-fluid px-0" tabindex="-1">
+            <partial name="_StatusMessages" />
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/ui-preferences.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

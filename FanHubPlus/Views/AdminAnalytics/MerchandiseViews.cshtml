@@ -1,0 +1,72 @@
+@using FanHubPlus.ViewModels
+@model PagedList<ItemViewRow>
+
+@{
+    ViewData["Title"] = "Merchandise Views";
+    Layout = "_AdminLayout";
+    var q = Context.Request.Query["q"].ToString();
+    var sort = Context.Request.Query["sort"].ToString();
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Merchandise Views</h2>
+        <div class="d-flex gap-2">
+            <a asp-action="MerchandiseViewLog" class="btn btn-outline-secondary">View log</a>
+            <a asp-action="Index" class="btn btn-secondary">Back to Analytics</a>
+        </div>
+    </div>
+
+    <form method="get" class="row g-2 mb-3" role="search">
+        <div class="col-md-4">
+            <input type="search" name="q" value="@q" class="form-control" placeholder="Search by name" aria-label="Search merchandise" />
+        </div>
+        <div class="col-md-3">
+            <select name="sort" class="form-select" aria-label="Sort by">
+                <option value="" selected="@(sort == "")">Most viewed</option>
+                <option value="recent" selected="@(sort == "recent")">Recently viewed</option>
+                <option value="title" selected="@(sort == "title")">Name (A-Z)</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Apply</button>
+            <a asp-action="MerchandiseViews" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Tag</th>
+                    <th>Views</th>
+                    <th>Unique viewers</th>
+                    <th>Last viewed</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>@item.Title</strong></td>
+                        <td>@item.CategoryName</td>
+                        <td>@item.Tag</td>
+                        <td><span class="badge bg-warning text-dark">@item.Views</span></td>
+                        <td>@item.UniqueViewers</td>
+                        <td>@(item.LastViewed?.ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
+                        <td><a asp-action="MerchandiseViewLog" asp-route-itemId="@item.Id" class="btn btn-sm btn-outline-secondary">Log</a></td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7" class="text-center text-muted py-4">No merchandise found.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <partial name="_Pager" model="(IPagedList)Model" />
+</div>

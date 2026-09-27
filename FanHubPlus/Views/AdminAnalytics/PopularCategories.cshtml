@@ -1,0 +1,67 @@
+@using FanHubPlus.ViewModels
+@model List<CategoryPopularityRow>
+
+@{
+    ViewData["Title"] = "Popular Categories";
+    Layout = "_AdminLayout";
+    int days = ViewBag.Days;
+    var maxViews = Model.Any() ? Math.Max(1, Model.Max(r => r.TotalViews)) : 1;
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Popular Categories</h2>
+        <a asp-action="Index" class="btn btn-secondary">Back to Analytics</a>
+    </div>
+
+    <form method="get" class="row g-2 mb-3">
+        <div class="col-auto">
+            <select name="days" class="form-select" aria-label="Time window" onchange="this.form.submit()">
+                <option value="0" selected="@(days == 0)">All time</option>
+                <option value="7" selected="@(days == 7)">Last 7 days</option>
+                <option value="30" selected="@(days == 30)">Last 30 days</option>
+                <option value="90" selected="@(days == 90)">Last 90 days</option>
+            </select>
+        </div>
+        <noscript><div class="col-auto"><button class="btn btn-primary">Apply</button></div></noscript>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Category</th>
+                    <th>Content items</th>
+                    <th>Merchandise items</th>
+                    <th>Content views</th>
+                    <th>Merchandise views</th>
+                    <th>Bookmarks</th>
+                    <th style="min-width:160px">Total views</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model)
+                {
+                    var pct = (int)Math.Round(100.0 * row.TotalViews / maxViews);
+                    <tr>
+                        <td><strong>@row.Name</strong></td>
+                        <td>@row.ContentCount</td>
+                        <td>@row.MerchandiseCount</td>
+                        <td>@row.ContentViews</td>
+                        <td>@row.MerchandiseViews</td>
+                        <td>@row.Bookmarks</td>
+                        <td>
+                            <div class="progress" role="progressbar" aria-label="@row.Name total views" aria-valuenow="@pct" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar" style="width:@(pct)%">@row.TotalViews</div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7" class="text-center text-muted py-4">No categories yet.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

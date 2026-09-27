@@ -1,0 +1,32 @@
+﻿@model List<Content>
+@{
+    ViewData["Title"] = "Popular Content";
+}
+
+<section class="content-page">
+    <h1>Popular Content</h1>
+    <p class="text-muted">The most talked-about content on FanHubPlus right now.</p>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="card-grid">
+            @foreach (var item in Model)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <span class="badge">@item.Type</span>
+                        <h3><a asp-action="Details" asp-route-id="@item.ContentId">@item.Title</a></h3>
+                        @if (item.Category != null)
+                        {
+                            <p class="text-muted">@item.Category.Name</p>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>Nothing trending yet.</p>
+    }
+</section>

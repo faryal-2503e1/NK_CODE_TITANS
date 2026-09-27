@@ -1,0 +1,59 @@
+﻿@{
+    var controllerName = ViewContext.RouteData.Values["controller"]?.ToString() ?? "Home";
+    var actionName = ViewContext.RouteData.Values["action"]?.ToString() ?? "Index";
+
+    // Friendly names for each controller, used as the breadcrumb "section" label.
+    var sectionLabels = new Dictionary<string, string>
+    {
+        ["Home"] = "Home",
+        ["UserCategory"] = "Categories",
+        ["UserContent"] = "Content Explorer",
+        ["UserCharacter"] = "Character Profiles",
+        ["UserArticle"] = "Featured Articles",
+        ["UserMedia"] = "Media Center",
+        ["UserMerchandise"] = "Merchandise",
+        ["UserEvent"] = "Events",
+        ["UserCalendar"] = "Event Calendar",
+        ["UserChatbot"] = "FanBot",
+        ["UserDashboard"] = "My Dashboard",
+        ["UserProfile"] = "My Profile",
+        ["UserBookmark"] = "Bookmarks",
+        ["UserNote"] = "My Notes",
+        ["UserFanSubmission"] = "Fan Submissions",
+        ["UserFeedback"] = "Feedback",
+        ["UserShare"] = "Share"
+    };
+
+    var sectionLabel = sectionLabels.TryGetValue(controllerName, out var label) ? label : controllerName;
+
+    // ViewData["Title"] is set per-view (e.g. "Details", a movie title, etc.) — use it as
+    // the current-page crumb when it's more specific than the plain action name.
+    var pageTitle = ViewData["Title"] as string;
+    var showCurrentCrumb = !string.IsNullOrEmpty(pageTitle) && !string.Equals(pageTitle, sectionLabel, StringComparison.OrdinalIgnoreCase);
+}
+
+@if (controllerName != "Home" || actionName != "Index")
+{
+    <nav aria-label="breadcrumb" class="fh-breadcrumb mt-2">
+        <ol class="breadcrumb mb-3">
+            <li class="breadcrumb-item">
+                <a asp-area="" asp-controller="Home" asp-action="Index"><i class="bi bi-house-door"></i> Home</a>
+            </li>
+            @if (controllerName == "Home")
+            {
+                <li class="breadcrumb-item active" aria-current="page">@pageTitle</li>
+            }
+            else if (showCurrentCrumb)
+            {
+                <li class="breadcrumb-item">
+                    <a asp-area="" asp-controller="@controllerName" asp-action="Index">@sectionLabel</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">@pageTitle</li>
+            }
+            else
+            {
+                <li class="breadcrumb-item active" aria-current="page">@sectionLabel</li>
+            }
+        </ol>
+    </nav>
+}

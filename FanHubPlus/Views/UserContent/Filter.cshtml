@@ -1,0 +1,56 @@
+﻿@model List<Content>
+@{
+    ViewData["Title"] = "Filter Content";
+    var categories = ViewBag.Categories as List<Category> ?? new List<Category>();
+    var selectedCategoryId = ViewBag.SelectedCategoryId as int?;
+    var selectedType = ViewBag.SelectedType as string;
+}
+
+<section class="content-page">
+    <h1>Filter Content</h1>
+
+    <form asp-action="Filter" method="get" class="filter-bar">
+        <select name="categoryId" class="form-control">
+            <option value="">All Categories</option>
+            @foreach (var category in categories)
+            {
+                <option value="@category.CategoryId" selected="@(selectedCategoryId == category.CategoryId)">
+                    @category.Name
+                </option>
+            }
+        </select>
+
+        <select name="type" class="form-control">
+            <option value="">All Types</option>
+            <option value="article" selected="@(selectedType == "article")">Article</option>
+            <option value="video" selected="@(selectedType == "video")">Video</option>
+            <option value="audio" selected="@(selectedType == "audio")">Audio</option>
+            <option value="image" selected="@(selectedType == "image")">Image</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary">Apply Filters</button>
+    </form>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="card-grid">
+            @foreach (var item in Model)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <span class="badge">@item.Type</span>
+                        <h3><a asp-action="Details" asp-route-id="@item.ContentId">@item.Title</a></h3>
+                        @if (item.Category != null)
+                        {
+                            <p class="text-muted">@item.Category.Name</p>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No content matches these filters.</p>
+    }
+</section>

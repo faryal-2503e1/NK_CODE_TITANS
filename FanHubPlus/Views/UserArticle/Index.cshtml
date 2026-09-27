@@ -1,0 +1,94 @@
+@model List<FeaturedArticle>
+@{
+    ViewData["Title"] = "Articles & News | FanHub+";
+}
+
+<main class="explore-page py-4">
+    <div class="container-fluid site-container">
+        <!-- HERO HEADER -->
+        <div class="explore-hero mb-4 p-4 rounded-4 position-relative overflow-hidden shadow-lg border border-secondary border-opacity-20" style="background: linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(255,77,141,0.1) 100%); backdrop-filter: blur(16px);">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div>
+                    <span class="section-label text-uppercase text-warning fw-bold tracking-wider" style="font-size: 0.8rem;">EDITORIAL & DEEP DIVES</span>
+                    <h1 class="display-6 fw-extrabold mb-2">Featured <span>Articles</span></h1>
+                    <p class="text-muted mb-0">Read in-depth reviews, theory breakdowns, interviews, and community spot-lights.</p>
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="AdminArticle" asp-action="Create" class="btn btn-primary rounded-pill px-3 py-2"><i class="bi bi-plus-lg me-1"></i> Add Article</a>
+                    }
+                    <a asp-action="Featured" class="btn btn-outline-primary rounded-pill px-3 py-2"><i class="bi bi-star me-1"></i> Featured</a>
+                    <a asp-action="Timeline" class="btn btn-outline-secondary rounded-pill px-3 py-2"><i class="bi bi-clock-history me-1"></i> Timeline</a>
+                </div>
+            </div>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                @foreach (var article in Model)
+                {
+                    var titleLower = article.Title?.ToLower() ?? "";
+                    var tag1 = "#Fandom";
+                    var tag2 = "#Review";
+                    var tag3 = "#Editorial";
+
+                    if (titleLower.Contains("anime")) { tag1 = "#Anime"; tag2 = "#Season2026"; tag3 = "#Analysis"; }
+                    else if (titleLower.Contains("game") || titleLower.Contains("cgi")) { tag1 = "#Gaming"; tag2 = "#PatchUpdate"; tag3 = "#Esports"; }
+
+                    <div class="col">
+                        <article class="cyber-nebula-card">
+                            <div>
+                                <div class="cyber-hud-cover">
+                                    @if (!string.IsNullOrEmpty(article.ImageUrl))
+                                    {
+                                        <img src="@article.ImageUrl" alt="@article.Title" />
+                                    }
+                                    else
+                                    {
+                                        <div class="cyber-hud-placeholder">
+                                            <i class="bi bi-newspaper"></i>
+                                            <span class="cyber-hud-tag">FEATURED ARTICLE</span>
+                                        </div>
+                                    }
+                                </div>
+
+                                <div class="cyber-chip-group">
+                                    <span class="cyber-chip">@tag1</span>
+                                    <span class="cyber-chip">@tag2</span>
+                                    <span class="cyber-chip">@tag3</span>
+                                </div>
+
+                                <h3>
+                                    <a asp-action="Details" asp-route-id="@article.ArticleId">@article.Title</a>
+                                </h3>
+                                <p>Exploring in-depth stories, character lore, and community highlights from across the fandom universe.</p>
+                            </div>
+
+                            <div class="cyber-action-bar">
+                                <button type="button" class="cyber-meta-btn">
+                                    <i class="bi bi-heart-fill text-pink" style="color: #FF4D8D;"></i> 1.2k
+                                </button>
+                                <button type="button" class="cyber-meta-btn">
+                                    <i class="bi bi-bookmark"></i> Save
+                                </button>
+                                <a asp-action="Details" asp-route-id="@article.ArticleId" class="cyber-read-btn">
+                                    Read <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </article>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5 rounded-4 shadow-sm border border-secondary border-opacity-20 dash-card-panel">
+                <i class="bi bi-newspaper text-muted display-4 d-block mb-3"></i>
+                <h4 class="fw-bold">No Articles Published Yet</h4>
+                <p class="text-muted">Stay tuned for upcoming reviews, breakdowns, and fandom news.</p>
+            </div>
+        }
+    </div>
+</main>

@@ -1,0 +1,48 @@
+@using FanHubPlus.Helpers
+@model FeaturedArticle
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<main class="explore-page py-5">
+    <div class="container site-container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb fanhub-breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-controller="UserArticle" asp-action="Index">Articles</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.Title</li>
+            </ol>
+        </nav>
+
+        <article class="article-details-card glass-panel p-4 p-md-5 rounded-4 shadow-lg border border-secondary border-opacity-25" style="background: rgba(13, 11, 33, 0.85); backdrop-filter: blur(20px);">
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <div class="article-banner-wrap mb-4 rounded-4 overflow-hidden" style="max-height: 480px;">
+                    <img src="@Model.ImageUrl" alt="@Model.Title" class="w-100 h-100 object-fit-cover" style="max-height: 480px; object-fit: cover;" />
+                </div>
+            }
+
+            <h1 class="display-5 text-white fw-bold mb-3" style="font-family: 'Manrope', sans-serif;">@Model.Title</h1>
+            <p class="article-meta text-secondary mb-4 pb-3 border-bottom border-secondary border-opacity-25">
+                <i class="bi bi-calendar3 me-1"></i> Published @Model.PublishedAt.ToString("dd MMM yyyy")
+            </p>
+
+            <div class="article-body-text lead text-light mb-4" style="line-height: 1.8; font-size: 1.1rem;">
+                @Html.Raw(RichText.Sanitize(Model.Content))
+            </div>
+
+            <div class="article-actions pt-4 border-top border-secondary border-opacity-25 d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <a asp-action="Index" class="login-button text-decoration-none d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-arrow-left"></i> Back to Articles
+                </a>
+                <a asp-controller="UserShare" asp-action="Share"
+                   asp-route-title="@Model.Title"
+                   asp-route-url="@Url.Action("Details", "UserArticle", new { id = Model.ArticleId })"
+                   class="signup-button text-decoration-none d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-share"></i> Share Article
+                </a>
+            </div>
+        </article>
+    </div>
+</main>

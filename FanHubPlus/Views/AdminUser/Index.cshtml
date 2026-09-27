@@ -1,0 +1,114 @@
+@model PagedList<FanHubPlus.Data.ApplicationUser>
+
+@{
+    ViewData["Title"] = "Manage Users";
+    Layout = "_AdminLayout";
+    var q = Context.Request.Query["q"].ToString();
+    var role = Context.Request.Query["role"].ToString();
+    var status = Context.Request.Query["status"].ToString();
+    var roles = ViewBag.Roles as Dictionary<string, List<string>> ?? new Dictionary<string, List<string>>();
+    var roleNames = ViewBag.RoleNames as List<string> ?? new List<string>();
+    var currentUserId = ViewBag.CurrentUserId as string;
+    var now = DateTimeOffset.UtcNow;
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Users Management</h2>
+    </div>
+
+    <form method="get" class="row g-2 mb-3" role="search">
+        <div class="col-md-4">
+            <input type="search" name="q" value="@q" class="form-control" placeholder="Search username, name or email" aria-label="Search users" />
+        </div>
+        <div class="col-md-2">
+            <select name="role" class="form-select" aria-label="Filter by role">
+                <option value="">All roles</option>
+                @foreach (var r in roleNames)
+                {
+                    <option value="@r" selected="@(role == r)">@r</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="status" class="form-select" aria-label="Filter by status">
+                <option value="" selected="@(status == "")">Active and blocked</option>
+                <option value="active" selected="@(status == "active")">Active only</option>
+                <option value="blocked" selected="@(status == "blocked")">Blocked only</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Roles</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    var isBlocked = user.LockoutEnd.HasValue && user.LockoutEnd.Value > now;
+                    var isSelf = user.Id == currentUserId;
+                    <tr>
+                        <td><strong>@user.UserName</strong>@if (isSelf) { <span class="badge bg-secondary ms-1">You</span> }</td>
+                        <td>@user.FullName</td>
+                        <td>@user.Email</td>
+                        <td>
+                            @if (roles.TryGetValue(user.Id, out var userRoles))
+                            {
+                                foreach (var r in userRoles)
+                                {
+                                    <span class="badge @(r == "Admin" ? "bg-danger" : "bg-info text-dark") me-1">@r</span>
+                                }
+                            }
+                        </td>
+                        <td>
+                            @if (isBlocked) { <span class="badge bg-danger">Blocked</span> }
+                            else { <span class="badge bg-success">Active</span> }
+                        </td>
+                        <td class="text-end">
+                            <div class="d-flex flex-wrap gap-1 justify-content-end">
+                            <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-sm btn-warning">Edit</a>
+                            <a asp-action="Details" asp-route-id="@user.Id" class="btn btn-sm btn-info text-white">Details</a>
+                            <a asp-action="ManageRoles" asp-route-id="@user.Id" class="btn btn-sm btn-secondary">Roles</a>
+                            @if (!isSelf)
+                            {
+                                if (isBlocked)
+                                {
+                                    <form asp-action="Unblock" asp-route-id="@user.Id" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-success">Unblock</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="Block" asp-route-id="@user.Id" method="post" class="d-inline"
+                                          onsubmit="return confirm('Block @user.UserName? They will not be able to sign in.');">
+                                        <button type="submit" class="btn btn-sm btn-danger">Block</button>
+                                    </form>
+                                }
+                            }
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="6" class="text-center text-muted py-4">No users match these filters.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <partial name="_Pager" model="(IPagedList)Model" />
+</div>

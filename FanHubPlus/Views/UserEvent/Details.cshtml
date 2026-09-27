@@ -1,0 +1,139 @@
+﻿@model Event
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container py-4">
+    <a asp-action="Index" class="btn btn-outline-secondary mb-4"><i class="bi bi-arrow-left me-1"></i>Back to Events</a>
+
+    <div class="row g-4">
+        <!-- Main Event Details -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 p-4 mb-4">
+                <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-2">
+                    <div>
+                        <span class="badge bg-primary mb-2">
+                            <i class="bi bi-geo-alt-fill me-1"></i>@(string.IsNullOrEmpty(Model.City) ? "Location TBD" : Model.City)
+                        </span>
+                        <h1 class="fw-bold text-dark mb-1">@Model.Title</h1>
+                    </div>
+                    <a asp-controller="UserShare" asp-action="Share"
+                       asp-route-title="@Model.Title"
+                       asp-route-url="@Url.Action("Details", "UserEvent", new { id = Model.EventId })"
+                       class="btn btn-outline-secondary btn-sm"><i class="bi bi-share"></i> Share</a>
+                    <a asp-controller="UserEventChat" asp-action="Chat" asp-route-id="@Model.EventId"
+                       class="btn btn-primary btn-sm"><i class="bi bi-chat-dots"></i> Live Chat</a>
+                </div>
+
+                <div class="d-flex align-items-center text-muted mb-4 flex-wrap gap-3">
+                    <div><i class="bi bi-calendar3 text-primary me-2"></i>@Model.EventDate.ToString("dddd, MMMM dd, yyyy")</div>
+                    <div><i class="bi bi-clock text-primary me-2"></i>@Model.EventDate.ToString("hh:mm tt")</div>
+                </div>
+
+                <partial name="_WatchPartyCountdown" model="Model" />
+
+                <hr />
+
+                <h5 class="fw-bold mb-3">About This Event</h5>
+                <p class="text-secondary style-description" style="white-space: pre-line;">
+                    @(string.IsNullOrEmpty(Model.Description) ? "No detailed description provided for this event." : Model.Description)
+                </p>
+
+                <!-- Tags / Categories -->
+                @if (Model.EventCategories != null && Model.EventCategories.Any())
+                {
+                    <div class="mt-4">
+                        <h6 class="fw-bold mb-2">Categories:</h6>
+                        @foreach (var ec in Model.EventCategories)
+                        {
+                            <span class="badge bg-light text-dark border me-1 fs-6">@ec.Category?.Name</span>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Sidebar: Location & Ticket Platforms -->
+        <div class="col-lg-4">
+            <!-- Location Details Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-dark text-white fw-bold">
+                    <i class="bi bi-map me-2"></i>Location & Venue
+                </div>
+                <div class="card-body">
+                    <p class="mb-2"><strong>City:</strong> @(string.IsNullOrEmpty(Model.City) ? "N/A" : Model.City)</p>
+                    @if (!string.IsNullOrEmpty(Model.LocationCoordinates))
+                    {
+                        <p class="mb-2"><strong>Coordinates / Address:</strong></p>
+                        <p class="text-muted small">@Model.LocationCoordinates</p>
+                        <div class="ratio ratio-4x3 rounded overflow-hidden border">
+                            <iframe src="https://maps.google.com/maps?q=@Uri.EscapeDataString(Model.LocationCoordinates)&output=embed"
+                                    style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Get Tickets Card -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white fw-bold">
+                    <i class="bi bi-ticket-perforated me-2"></i>Get Tickets
+                </div>
+                <div class="card-body">
+                    @if (Model.EventTicketLinks != null && Model.EventTicketLinks.Any())
+                    {
+                        <p class="small text-muted mb-3">Official ticket purchasing options for this event:</p>
+                        <div class="d-grid gap-2">
+                            @foreach (var ticket in Model.EventTicketLinks)
+                            {
+                                <button type="button" class="btn btn-outline-primary d-flex justify-content-between align-items-center"
+                                        data-bs-toggle="modal" data-bs-target="#ticketModal"
+                                        data-platform="@ticket.PlatformName" data-url="@ticket.Url">
+                                    <span><i class="bi bi-bag-check me-2"></i>@ticket.PlatformName</span>
+                                    <i class="bi bi-info-circle small"></i>
+                                </button>
+                            }
+                        </div>
+
+                        <!-- Ticket Info Modal: shows the link as text only, no auto-redirect away from the site -->
+                        <div class="modal fade" id="ticketModal" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h6 class="modal-title" id="ticketModalPlatform">Ticket Info</h6>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p class="small text-muted mb-2">Tickets for this event are sold by the platform below. Copy the link to purchase on their website:</p>
+                                        <div class="input-group">
+                                            <input type="text" id="ticketModalUrl" class="form-control form-control-sm" readonly>
+                                            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="navigator.clipboard.writeText(document.getElementById('ticketModalUrl').value)">
+                                                <i class="bi bi-clipboard"></i> Copy
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            document.getElementById('ticketModal')?.addEventListener('show.bs.modal', function (event) {
+                                var btn = event.relatedTarget;
+                                document.getElementById('ticketModalPlatform').textContent = btn.getAttribute('data-platform') + ' — Ticket Link';
+                                document.getElementById('ticketModalUrl').value = btn.getAttribute('data-url');
+                            });
+                        </script>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-3">
+                            <i class="bi bi-info-circle fs-4 d-block mb-1"></i>
+                            <p class="mb-0 small">No external ticket links registered yet.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

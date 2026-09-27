@@ -1,0 +1,39 @@
+﻿@model List<Note>
+@{
+    ViewData["Title"] = "My Notes";
+}
+
+<section class="notes-page">
+    <div class="page-header">
+        <h1>My Notes</h1>
+        <a asp-action="Create" class="btn btn-primary">+ New Note</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="card-grid">
+            @foreach (var note in Model)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <h3><a asp-action="Details" asp-route-id="@note.NoteId">@note.Title</a></h3>
+                        <p class="text-muted">@note.CreatedAt.ToString("dd MMM yyyy")</p>
+                        <div class="card-actions">
+                            <a asp-action="Edit" asp-route-id="@note.NoteId" class="btn btn-outline-secondary btn-sm">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@note.NoteId" class="btn btn-outline-danger btn-sm">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>You haven't written any notes yet.</p>
+    }
+</section>

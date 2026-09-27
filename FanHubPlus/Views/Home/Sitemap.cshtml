@@ -1,0 +1,68 @@
+@{
+    ViewData["Title"] = "Site Map & Navigation Directory | FanHub+";
+}
+
+<main class="explore-page py-4">
+    <div class="container-fluid site-container">
+        <!-- BREADCRUMB -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb fanhub-breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Sitemap</li>
+            </ol>
+        </nav>
+
+        <!-- SITEMAP HEADER -->
+        <div class="explore-heading reveal mb-5">
+            <div>
+                <span class="section-label">FULL DIRECTORY</span>
+                <h1 class="display-4 text-white fw-extrabold" style="font-family: 'Manrope', sans-serif;">FanHub+ <span>Sitemap</span></h1>
+                <p class="lead text-secondary">Navigate to any section, fandom world, or page across FanHub+ instantly.</p>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <!-- MAIN NAVIGATION -->
+            <div class="col-lg-4 col-md-6">
+                <div class="cyber-nebula-card p-4 h-100 reveal">
+                    <h3 class="h5 text-primary mb-3"><i class="bi bi-compass me-2"></i> Main Navigation</h3>
+                    <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+                        <li><a asp-controller="Home" asp-action="Index" class="cyber-meta-btn w-100 justify-content-start"><i class="bi bi-house me-2"></i> Home Page</a></li>
+                        <li><a asp-controller="UserCategory" asp-action="Index" class="cyber-meta-btn w-100 justify-content-start"><i class="bi bi-grid-fill me-2"></i> Explore Fandom Categories</a></li>
+                        <li><a asp-controller="UserContent" asp-action="Index" class="cyber-meta-btn w-100 justify-content-start"><i class="bi bi-collection-play me-2"></i> Fandom Content & Media</a></li>
+                        <li><a asp-controller="UserCharacter" asp-action="Index" class="cyber-meta-btn w-100 justify-content-start"><i class="bi bi-people-fill me-2"></i> Character Codex Roster</a></li>
+                        <li><a asp-controller="UserArticle" asp-action="Index" class="cyber-meta-btn w-100 justify-content-start"><i class="bi bi-newspaper me-2"></i> Articles & News</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- COMMUNITY & INTERACTIVE -->
+            <div class="col-lg-4 col-md-6">
+                <div class="cyber-nebula-card p-4 h-100 reveal">
+                    <h3 class="h5 text-warning mb-3"><i class="bi bi-stars me-2"></i> Community & Features</h3>
+                    <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+                        <li><a asp-controller="UserEvent" asp-action="Index" class="cyber-meta-btn w-100 justify-content-start"><i class="bi bi-calendar-event me-2"></i> Events & Fan Expos</a></li>
+                        <li><a asp-controller="UserMerchandise" asp-action="Index" class="cyber-meta-btn w-100 justify-content-start"><i class="bi bi-bag-check me-2"></i> Shop & Collectibles</a></li>
+                        <li><a asp-controller="UserPoll" asp-action="Index" class="cyber-meta-btn w-100 justify-content-start"><i class="bi bi-bar-chart-line me-2"></i> Community Polls</a></li>
+                        <li><a asp-controller="UserQuiz" asp-action="Index" class="cyber-meta-btn w-100 justify-content-start"><i class="bi bi-question-circle me-2"></i> Fan Quizzes</a></li>
+                        <li><a asp-controller="Leaderboard" asp-action="Index" class="cyber-meta-btn w-100 justify-content-start"><i class="bi bi-trophy me-2"></i> Global Leaderboard</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- USER & ACCOUNT SPACE -->
+            <div class="col-lg-4 col-md-6">
+                <div class="cyber-nebula-card p-4 h-100 reveal">
+                    <h3 class="h5 text-danger mb-3"><i class="bi bi-person-badge me-2"></i> Account & Utilities</h3>
+                    <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+                        <li><a asp-controller="UserDashboard" asp-action="Index" class="cyber-meta-btn w-100 justify-content-start"><i class="bi bi-speedometer2 me-2"></i> User Dashboard</a></li>
+                        <li><a asp-area="Identity" asp-page="/Account/Login" class="cyber-meta-btn w-100 justify-content-start"><i class="bi bi-box-arrow-in-right me-2"></i> Log In</a></li>
+                        <li><a asp-area="Identity" asp-page="/Account/Register" class="cyber-meta-btn w-100 justify-content-start"><i class="bi bi-person-plus me-2"></i> Register / Sign Up</a></li>
+                        <li><a asp-controller="Home" asp-action="About" class="cyber-meta-btn w-100 justify-content-start"><i class="bi bi-info-circle me-2"></i> About FanHub+</a></li>
+                        <li><a asp-controller="Home" asp-action="Privacy" class="cyber-meta-btn w-100 justify-content-start"><i class="bi bi-shield-check me-2"></i> Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

@@ -1,0 +1,26 @@
+﻿@model List<MerchandiseItem>
+@{
+    ViewData["Title"] = "Popular Merchandise";
+}
+
+<div class="container mt-4">
+    <h2>Most Popular Merchandise</h2>
+    <div class="row mt-3">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                    {
+                        <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;" />
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <p class="text-muted">Views: @item.MerchandiseViews?.Count</p>
+                        <a href="/merchandise/@item.ItemId" class="btn btn-primary btn-sm">View Details</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

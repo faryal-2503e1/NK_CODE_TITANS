@@ -1,0 +1,46 @@
+﻿@model FanSubmission
+
+@{
+    ViewData["Title"] = "Review Submission";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid mt-4">
+    <h2>Review Fan Submission</h2>
+    <hr />
+    <div class="card shadow-sm col-md-8">
+        <div class="card-body">
+            <h4>@Model.Title</h4>
+            <p class="text-muted">Submitted on: @Model.SubmittedAt</p>
+            <hr />
+            <p><strong>Content:</strong></p>
+            <div class="p-3 bg-light rounded border mb-3">@Model.Content</div>
+
+            @if (!string.IsNullOrEmpty(Model.MediaUrl))
+            {
+                <p><strong>Media:</strong> <a href="@Model.MediaUrl" target="_blank" rel="noopener noreferrer">Open Link</a></p>
+            }
+
+            <p><strong>Current Status:</strong> <span class="badge bg-secondary">@Model.Status</span></p>
+
+            <div class="d-flex gap-2 mt-4">
+                @if (Model.Status == "Pending")
+                {
+                    <form asp-action="Approve" asp-route-id="@Model.SubmissionId" method="post">
+                        <button type="submit" class="btn btn-success">Approve Submission</button>
+                    </form>
+
+                    <form asp-action="Reject" asp-route-id="@Model.SubmissionId" method="post">
+                        <button type="submit" class="btn btn-danger">Reject Submission</button>
+                    </form>
+                }
+                else
+                {
+                    <span class="text-muted align-self-center">This submission has already been decided.</span>
+                }
+
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </div>
+    </div>
+</div>

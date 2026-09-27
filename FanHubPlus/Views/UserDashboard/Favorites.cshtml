@@ -1,0 +1,38 @@
+﻿@model List<UserFavoriteCategory>
+@{
+    ViewData["Title"] = "Favorite Categories";
+    Layout = "_DashboardLayout";
+}
+
+<section class="dashboard-page">
+    <div class="page-header">
+        <h1>Favorite Categories</h1>
+        <a asp-controller="UserProfile" asp-action="Favorites" class="btn btn-outline-secondary btn-sm">Manage Favorites</a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="card-grid">
+            @foreach (var favorite in Model)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <h3>
+                            <a asp-controller="UserCategory" asp-action="Details" asp-route-id="@favorite.Category.CategoryId">
+                                @favorite.Category.Name
+                            </a>
+                        </h3>
+                        @if (!string.IsNullOrEmpty(favorite.Category.Description))
+                        {
+                            <p class="text-muted">@favorite.Category.Description</p>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>You haven't favorited any categories yet.</p>
+    }
+</section>

@@ -1,0 +1,52 @@
+@model FeaturedArticle
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+@if (Model != null && Model.ArticleId > 0)
+{
+    <input type="hidden" asp-for="ArticleId" />
+}
+
+<div class="field-grid">
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="PublishedAt" class="form-label">Published At</label>
+        <input asp-for="PublishedAt" class="form-control" />
+        <span asp-validation-for="PublishedAt" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3 field-full">
+        <label class="form-label" id="content-label">Article Text</label>
+        <div id="article-editor" style="height: 320px;" aria-labelledby="content-label">@Html.Raw(RichText.Sanitize(Model?.Content ?? string.Empty))</div>
+        <input type="hidden" asp-for="Content" />
+        <div class="form-text">Use the toolbar for headings, lists, links and images (the image button asks for an image URL).</div>
+        <span asp-validation-for="Content" class="text-danger"></span>
+    </div>
+
+    @if (Model != null && !string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <div class="mb-3 field-full">
+            <label class="form-label fw-bold">Current Cover Image</label>
+            <div>
+                <img src="@Model.ImageUrl" alt="Article Preview" class="img-thumbnail" style="max-height: 100px;" />
+            </div>
+        </div>
+    }
+
+    <div class="mb-3">
+        <label class="form-label">Upload Cover Image File (Optional)</label>
+        <input type="file" name="imageFile" class="form-control" accept="image/*" />
+        <small class="text-muted">Allowed: JPG, PNG, WebP. Uploading a new file will replace the image URL below.</small>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ImageUrl" class="form-label">Or Cover Image URL</label>
+        <input asp-for="ImageUrl" class="form-control" placeholder="https://..." />
+        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+    </div>
+</div>

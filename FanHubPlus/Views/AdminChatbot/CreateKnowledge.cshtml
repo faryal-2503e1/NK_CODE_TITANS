@@ -1,0 +1,29 @@
+﻿@model ChatbotKnowledgeBaseEntry
+
+@{
+    ViewData["Title"] = "Create Knowledge Entry";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid mt-4">
+    <h2>Create Knowledge Entry</h2>
+    <hr />
+    <div class="card shadow-sm col-md-6">
+        <div class="card-body">
+            <form asp-action="CreateKnowledge" method="post">
+                <div class="mb-3">
+                    <label asp-for="Topic" class="form-label"></label>
+                    <input asp-for="Topic" class="form-control" />
+                    <span asp-validation-for="Topic" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Content" class="form-label"></label>
+                    <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="Content" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-success">Create</button>
+                <a asp-action="KnowledgeBase" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,63 @@
+@model IEnumerable<Quiz>
+
+@{
+    ViewData["Title"] = "Fan Quiz | FanHub+";
+}
+
+<main class="explore-page py-4">
+    <div class="container-fluid site-container">
+        <!-- BREADCRUMB -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb fanhub-breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Fan Quiz</li>
+            </ol>
+        </nav>
+
+        <!-- HERO HEADER -->
+        <div class="explore-hero mb-4 p-4 rounded-4 position-relative overflow-hidden shadow-lg border border-secondary border-opacity-20" style="background: linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(255,77,141,0.1) 100%); backdrop-filter: blur(16px);">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div>
+                    <span class="section-label text-uppercase text-warning fw-bold tracking-wider" style="font-size: 0.8rem;">TEST YOUR KNOWLEDGE</span>
+                    <h1 class="display-6 fw-extrabold mb-2">Fandom <span>Trivia & Quizzes</span></h1>
+                    <p class="text-muted mb-0">Test your anime, gaming, comic and movie trivia, earn high scores, and climb the leaderboard!</p>
+                </div>
+            </div>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5 rounded-4 shadow-sm border border-secondary border-opacity-20 dash-card-panel">
+                <i class="bi bi-patch-question text-muted display-4 d-block mb-3"></i>
+                <h4 class="fw-bold">No Quizzes Available Yet</h4>
+                <p class="text-muted">Check back soon for upcoming trivia challenges.</p>
+            </div>
+        }
+        else
+        {
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                @foreach (var quiz in Model)
+                {
+                    <div class="col">
+                        <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden dash-card-hero">
+                            <div class="card-body d-flex flex-column justify-content-between p-4">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="badge bg-primary bg-opacity-20 text-primary px-3 py-2 rounded-pill fw-semibold">@quiz.Category?.Name</span>
+                                        <span class="text-muted small"><i class="bi bi-question-circle me-1"></i> @quiz.Questions.Count questions</span>
+                                    </div>
+                                    <h4 class="card-title h5 fw-bold mb-2">@quiz.Title</h4>
+                                    <p class="card-text text-muted small">@quiz.Description</p>
+                                </div>
+                                <div class="mt-4 pt-3 border-top border-secondary border-opacity-20 d-flex gap-2">
+                                    <a asp-action="Take" asp-route-id="@quiz.QuizId" class="btn btn-primary rounded-pill flex-fill"><i class="bi bi-play-fill me-1"></i> Start Quiz</a>
+                                    <a asp-action="Leaderboard" asp-route-id="@quiz.QuizId" class="btn btn-outline-secondary rounded-pill"><i class="bi bi-trophy me-1"></i> Board</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</main>

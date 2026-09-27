@@ -1,0 +1,218 @@
+@model List<Category>
+@{
+    ViewData["Title"] = "Explore FanHub+";
+    var contents = ViewBag.Contents as List<Content> ?? new List<Content>();
+    var selectedCategory = ViewBag.SelectedCategory as string ?? "";
+}
+
+<main class="explore-page">
+    <!-- EXPLORE HERO -->
+    <section class="explore-hero">
+        <div class="container-fluid site-container">
+            <div class="explore-heading reveal">
+                <div>
+                    <span class="section-label">DISCOVER YOUR NEXT OBSESSION</span>
+                    <h1>Explore <span>FanHub+</span></h1>
+                    <p>Search thousands of fandoms, characters, stories and worlds from one place.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FANDOM WORLDS GRID -->
+    <section class="fandom-section py-5">
+        <div class="container-fluid site-container">
+            <div class="section-header reveal mb-4">
+                <span class="section-label">FANDOM WORLDS</span>
+                <h2 class="text-white h2 fw-extrabold">Browse Fandom Categories</h2>
+            </div>
+
+            <div class="fandom-grid" id="fandomWorldGrid">
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var category in Model)
+                    {
+                        string coverImg = "/images/explore/solo-leveling.png";
+                        var nameLower = category.Name.ToLower();
+
+                        if (nameLower.Contains("game") || nameLower.Contains("gaming")) { coverImg = "/images/explore/genshin-impact.png"; }
+                        else if (nameLower.Contains("movie")) { coverImg = "/images/explore/spider-man.png"; }
+                        else if (nameLower.Contains("tv") || nameLower.Contains("show")) { coverImg = "/images/explore/stranger-things.png"; }
+                        else if (nameLower.Contains("kpop") || nameLower.Contains("k-pop")) { coverImg = "/images/explore/blackpink.png"; }
+                        else if (nameLower.Contains("comic")) { coverImg = "/images/explore/spider-man.png"; }
+                        else if (nameLower.Contains("manga")) { coverImg = "/images/explore/one-piece.png"; }
+                        else if (nameLower.Contains("cosplay")) { coverImg = "/assets/images/hero/cosplay-hero.png"; }
+
+                        <a asp-controller="UserCategory" asp-action="Details" asp-route-id="@category.CategoryId" class="fandom-card reveal" data-category="@nameLower">
+                            <div class="fandom-image" style="background-image: url('@coverImg'); background-size: cover; background-position: center;">
+                                <div class="fandom-overlay-gradient"></div>
+                            </div>
+                            <div class="fandom-info">
+                                <span>@category.Name</span>
+                                <i class="bi bi-box-arrow-up-right"></i>
+                            </div>
+                        </a>
+                    }
+                }
+            </div>
+
+        </div>
+    </section>
+
+    <!-- EXPLORER GRID & CARDS -->
+    <section class="explorer-section py-5">
+        <div class="container-fluid site-container">
+            <div class="section-header reveal mb-4">
+                <span class="section-label">CURATED CONTENT</span>
+                <h2 class="text-white h2 fw-extrabold">Fandom Stories & Media</h2>
+            </div>
+
+            @if (contents != null && contents.Any())
+            {
+                <div class="trending-grid" id="exploreContentGrid">
+                    @foreach (var item in contents)
+                    {
+                        var imgUrl = "/images/explore/solo-leveling.png";
+                        var tLower = item.Title.ToLower();
+                        var catName = (item.Category?.Name ?? item.Type).ToLower();
+
+                        if (tLower.Contains("jujutsu")) imgUrl = "/images/explore/jujutsu-kaisen.png";
+                        else if (tLower.Contains("spider")) imgUrl = "/images/explore/spider-man.png";
+                        else if (tLower.Contains("genshin")) imgUrl = "/images/explore/genshin-impact.png";
+                        else if (tLower.Contains("stranger")) imgUrl = "/images/explore/stranger-things.png";
+                        else if (tLower.Contains("one piece") || tLower.Contains("luffy")) imgUrl = "/images/explore/one-piece.png";
+                        else if (tLower.Contains("blackpink")) imgUrl = "/images/explore/blackpink.png";
+
+                        <article class="content-card reveal" data-category="@catName" data-title="@tLower" data-type="@item.Type.ToLower()">
+                            <a asp-controller="UserContent" asp-action="Details" asp-route-id="@item.ContentId" class="content-poster">
+                                <img src="@imgUrl" alt="@item.Title" class="w-100 h-100 object-fit-cover" />
+                                <span class="trending-badge">#Trending</span>
+                                <button class="card-bookmark" type="button" data-bookmark="@item.Title">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                            </a>
+                            <div class="content-card-body">
+                                <div class="content-card-top">
+                                    <span>@(item.Category?.Name ?? item.Type)</span>
+                                    <span class="rating">
+                                        <i class="bi bi-star-fill"></i>
+                                        4.@(item.PopularityScore % 10)
+                                    </span>
+                                </div>
+                                <h3>
+                                    <a asp-controller="UserContent" asp-action="Details" asp-route-id="@item.ContentId">
+                                        @item.Title
+                                    </a>
+                                </h3>
+                                <small>@item.Type • @item.ReleaseDate.ToString("dd MMM yyyy")</small>
+                            </div>
+                        </article>
+                    }
+                </div>
+            }
+        </div>
+    </section>
+
+</main>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chips = document.querySelectorAll('#categoryChips .category-chip');
+            const fandomCards = document.querySelectorAll('#fandomWorldGrid .fandom-card');
+            const contentCards = document.querySelectorAll('#exploreContentGrid .content-card');
+            const searchInput = document.getElementById('exploreSearch');
+            const searchBtn = document.getElementById('exploreSearchButton');
+
+            // Read URL query parameter if present
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialSelected = urlParams.get('selected') || '@selectedCategory';
+
+            function filterCategory(catTarget) {
+                const target = catTarget ? catTarget.toLowerCase().trim() : 'all';
+
+                // Toggle active chip
+                chips.forEach(chip => {
+                    const cVal = chip.getAttribute('data-category') || 'all';
+                    if (cVal === target || (target === 'all' && cVal === 'all')) {
+                        chip.classList.add('active');
+                    } else {
+                        chip.classList.remove('active');
+                    }
+                });
+
+                // Filter fandom cards
+                fandomCards.forEach(card => {
+                    const cCat = (card.getAttribute('data-category') || '').toLowerCase();
+                    if (target === 'all' || cCat.includes(target) || target.includes(cCat)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Filter content cards
+                contentCards.forEach(card => {
+                    const cCat = (card.getAttribute('data-category') || '').toLowerCase();
+                    const cType = (card.getAttribute('data-type') || '').toLowerCase();
+                    if (target === 'all' || cCat.includes(target) || target.includes(cCat) || cType.includes(target)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            function filterSearch() {
+                const query = searchInput.value.toLowerCase().trim();
+                if (!query) {
+                    const activeChip = document.querySelector('#categoryChips .category-chip.active');
+                    const activeTarget = activeChip ? activeChip.getAttribute('data-category') : 'all';
+                    filterCategory(activeTarget);
+                    return;
+                }
+
+                contentCards.forEach(card => {
+                    const title = (card.getAttribute('data-title') || '').toLowerCase();
+                    const cat = (card.getAttribute('data-category') || '').toLowerCase();
+                    if (title.includes(query) || cat.includes(query)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                fandomCards.forEach(card => {
+                    const cat = (card.getAttribute('data-category') || '').toLowerCase();
+                    if (cat.includes(query)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            // Chip click listeners
+            chips.forEach(chip => {
+                chip.addEventListener('click', function () {
+                    const catTarget = this.getAttribute('data-category');
+                    filterCategory(catTarget);
+                });
+            });
+
+            // Search listeners
+            if (searchInput) {
+                searchInput.addEventListener('input', filterSearch);
+            }
+            if (searchBtn) {
+                searchBtn.addEventListener('click', filterSearch);
+            }
+
+            // Initial auto-filter if category parameter exists
+            if (initialSelected && initialSelected !== 'all') {
+                filterCategory(initialSelected);
+            }
+        });
+    </script>
+}

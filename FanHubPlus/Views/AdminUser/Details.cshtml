@@ -1,0 +1,43 @@
+﻿@model FanHubPlus.Data.ApplicationUser
+
+@{
+    ViewData["Title"] = "User Details";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid mt-4">
+    <h2>User Profile Details</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-3">
+            @if (!string.IsNullOrEmpty(Model.ProfilePictureUrl))
+            {
+                <img src="@Model.ProfilePictureUrl" alt="Profile Picture" class="img-fluid rounded-circle shadow mb-3" style="width: 150px; height: 150px; object-fit: cover;" />
+            }
+            else
+            {
+                <div class="p-4 bg-light text-center rounded-circle border mb-3" style="width: 150px; height: 150px; display: flex; align-items: center; justify-content: center;">No Image</div>
+            }
+        </div>
+        <div class="col-md-9">
+            <dl class="row">
+                <dt class="col-sm-3">Username</dt>
+                <dd class="col-sm-9"><strong>@Model.UserName</strong></dd>
+
+                <dt class="col-sm-3">Full Name</dt>
+                <dd class="col-sm-9">@Model.FullName</dd>
+
+                <dt class="col-sm-3">Email</dt>
+                <dd class="col-sm-9">@Model.Email</dd>
+
+                <dt class="col-sm-3">Address</dt>
+                <dd class="col-sm-9">@Model.Address</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>

@@ -1,0 +1,25 @@
+﻿@model FanSubmission
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "_DashboardLayout";
+}
+
+<section class="submission-details">
+    <h1>@Model.Title</h1>
+
+    <div class="submission-meta">
+        <span class="badge">@Model.Status</span>
+        <span class="text-muted">Submitted on @Model.SubmittedAt.ToString("dd MMM yyyy")</span>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.MediaUrl))
+    {
+        <img src="@Model.MediaUrl" alt="@Model.Title" class="submission-media" />
+    }
+
+    <div class="submission-content">
+        <p>@Model.Content</p>
+    </div>
+
+    <a asp-action="Index" class="btn btn-link">Back to Fan Submissions</a>
+</section>

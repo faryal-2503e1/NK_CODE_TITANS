@@ -1,0 +1,372 @@
+@{
+    ViewData["Title"] = "FanBot AI | FanHub+";
+}
+
+<main class="explore-page py-3">
+    <div class="container-fluid site-container">
+
+        <!-- BREADCRUMB -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb fanhub-breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Interactive</a></li>
+                <li class="breadcrumb-item active" aria-current="page">FanBot AI</li>
+            </ol>
+        </nav>
+
+        <!-- PAGE HEADER -->
+        <div class="row align-items-center mb-3">
+            <div class="col-lg-8">
+                <div class="d-flex align-items-center gap-3 mb-2">
+                    <div class="bot-icon-glow rounded-circle d-flex align-items-center justify-content-center" style="width: 52px; height: 52px; min-width: 52px; background: linear-gradient(135deg, #ff2e93, #8b5cf6); color: #fff; box-shadow: 0 0 25px rgba(255, 46, 147, 0.5);">
+                        <i class="bi bi-robot fs-2"></i>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center gap-2">
+                            <h1 class="h3 fw-extrabold text-white mb-0" style="font-family: 'Manrope', sans-serif;">FanBot AI Assistant</h1>
+                            <span class="badge rounded-pill text-uppercase px-2 py-1" style="background: rgba(168, 85, 247, 0.2); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.4); font-size: 0.75rem;">v2.0 Active</span>
+                        </div>
+                        <p class="text-muted mb-0 small">Ask anything about anime, games, events, merchandise, categories, or site features.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-2 mt-lg-0">
+                <div class="d-inline-flex gap-2">
+                    <a asp-action="FAQ" class="btn btn-sm px-3 py-2 rounded-pill text-white fw-semibold" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);">
+                        <i class="bi bi-question-circle me-1 text-primary"></i> Browse FAQ
+                    </a>
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <a asp-action="History" class="btn btn-sm px-3 py-2 rounded-pill text-white fw-semibold" style="background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.4);">
+                            <i class="bi bi-clock-history me-1 text-warning"></i> Chat History
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK PROMPT PILLS -->
+        <div class="mb-3">
+            <span class="d-block small text-muted mb-2 font-monospace text-uppercase" style="letter-spacing: 1px;">Suggested Prompts</span>
+            <div class="d-flex flex-wrap gap-2" id="prompt-pills">
+                <button type="button" class="btn btn-sm rounded-pill prompt-pill text-start" data-prompt="What upcoming events are happening?">
+                    <i class="bi bi-calendar-event text-danger me-1"></i> Upcoming Events
+                </button>
+                <button type="button" class="btn btn-sm rounded-pill prompt-pill text-start" data-prompt="Where can I explore merchandise and products?">
+                    <i class="bi bi-bag-heart text-purple me-1"></i> Shop Merchandise
+                </button>
+                <button type="button" class="btn btn-sm rounded-pill prompt-pill text-start" data-prompt="How do I participate in polls and quizzes?">
+                    <i class="bi bi-patch-question text-warning me-1"></i> Polls & Quizzes
+                </button>
+                <button type="button" class="btn btn-sm rounded-pill prompt-pill text-start" data-prompt="Where is the sitemap of the website?">
+                    <i class="bi bi-diagram-3 text-info me-1"></i> Site Map
+                </button>
+                <button type="button" class="btn btn-sm rounded-pill prompt-pill text-start" data-prompt="Tell me about FanHub Plus features">
+                    <i class="bi bi-stars text-primary me-1"></i> FanHub+ Features
+                </button>
+            </div>
+        </div>
+
+        <!-- CHAT WINDOW CONTAINER -->
+        <div class="row">
+            <div class="col-12">
+                <div class="cyber-nebula-card p-0 rounded-4 overflow-hidden shadow-lg border border-purple border-opacity-50">
+                    
+                    <!-- CHAT HEADER BAR -->
+                    <div class="p-3 px-4 d-flex justify-content-between align-items-center border-bottom border-secondary border-opacity-25" style="background: rgba(13, 11, 33, 0.85);">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="status-dot"></span>
+                            <span class="fw-bold small text-white">FanBot Cyber Assistant</span>
+                            <span class="text-muted small ms-2 d-none d-sm-inline">&bull; Powered by Fandom Knowledge Base</span>
+                        </div>
+                        <button type="button" id="clear-chat-btn" class="btn btn-link btn-sm text-muted text-decoration-none p-0">
+                            <i class="bi bi-trash me-1"></i> Clear Chat
+                        </button>
+                    </div>
+
+                    <!-- CHAT LOG -->
+                    <div id="chat-window" class="chat-log-body p-3 p-md-4" style="height: 500px; overflow-y: auto; background: rgba(7, 7, 20, 0.75);">
+                        <!-- Default Initial Welcome Message -->
+                        <div class="chat-message-row bot-row mb-3 d-flex gap-3 align-items-start">
+                            <div class="avatar-box rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                <i class="bi bi-robot fs-5"></i>
+                            </div>
+                            <div class="chat-bubble bot-bubble">
+                                <div class="fw-bold text-primary mb-1 small d-flex justify-content-between align-items-center gap-3">
+                                    <span>FanBot AI</span>
+                                    <span class="text-muted fw-normal font-monospace" style="font-size: 0.75rem;">Just now</span>
+                                </div>
+                                <div class="message-text">Greetings, Fandom Explorer! 👋 I am FanBot. Ask me anything about our categories, latest anime articles, merchandise shop, events, or community quizzes!</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TYPING INDICATOR -->
+                    <div id="typing-indicator" class="px-4 py-2 border-top border-secondary border-opacity-10 d-none" style="background: rgba(13, 11, 33, 0.5);">
+                        <div class="d-flex align-items-center gap-2 text-muted small">
+                            <div class="spinner-grow spinner-grow-sm text-primary" role="status"></div>
+                            <span>FanBot is thinking...</span>
+                        </div>
+                    </div>
+
+                    <!-- CHAT FORM INPUT -->
+                    <div class="p-3 p-md-4 border-top border-secondary border-opacity-25" style="background: rgba(13, 11, 33, 0.95);">
+                        <form id="chat-form" class="d-flex gap-2 align-items-center">
+                            @Html.AntiForgeryToken()
+                            <div class="input-group">
+                                <span class="input-group-text border-secondary border-opacity-25 text-muted px-3" style="background: rgba(255, 255, 255, 0.05);">
+                                    <i class="bi bi-chat-left-dots text-primary"></i>
+                                </span>
+                                <input type="text" id="chat-input" class="form-control form-control-lg border-secondary border-opacity-25 text-white" placeholder="Ask FanBot a question..." autocomplete="off" style="background: rgba(255, 255, 255, 0.05); font-size: 0.95rem;" />
+                                <button type="submit" class="btn px-4 fw-bold text-white d-flex align-items-center gap-2" style="background: linear-gradient(135deg, #ff2e93, #8b5cf6); border: none; box-shadow: 0 4px 15px rgba(255, 46, 147, 0.35);">
+                                    <span>Send</span>
+                                    <i class="bi bi-send-fill fs-6"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<style>
+    .prompt-pill {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #e2e8f0;
+        transition: all 0.25s ease;
+        font-size: 0.85rem;
+    }
+    .prompt-pill:hover {
+        background: rgba(168, 85, 247, 0.25);
+        border-color: rgba(168, 85, 247, 0.5);
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+    .status-dot {
+        width: 10px;
+        height: 10px;
+        background-color: #10b981;
+        border-radius: 50%;
+        display: inline-block;
+        box-shadow: 0 0 10px #10b981;
+        animation: pulseDot 2s infinite;
+    }
+    @@keyframes pulseDot {
+        0% { opacity: 0.6; box-shadow: 0 0 4px #10b981; }
+        50% { opacity: 1; box-shadow: 0 0 12px #10b981; }
+        100% { opacity: 0.6; box-shadow: 0 0 4px #10b981; }
+    }
+    .chat-log-body {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .chat-log-body::-webkit-scrollbar {
+        width: 6px;
+    }
+    .chat-log-body::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.2);
+    }
+    .chat-log-body::-webkit-scrollbar-thumb {
+        background: rgba(168, 85, 247, 0.4);
+        border-radius: 4px;
+    }
+    .chat-message-row {
+        width: 100% !important;
+        display: flex !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+        margin-bottom: 0.75rem !important;
+    }
+    .user-row {
+        justify-content: flex-end !important;
+    }
+    .bot-row {
+        justify-content: flex-start !important;
+    }
+    .chat-bubble {
+        flex: 1 1 auto !important;
+        max-width: 80% !important;
+        width: auto !important;
+        min-width: 240px !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+        white-space: normal !important;
+        padding: 1rem 1.25rem !important;
+        border-radius: 18px !important;
+        font-size: 0.95rem !important;
+        line-height: 1.6 !important;
+    }
+    .user-bubble {
+        background: linear-gradient(135deg, #ff2e93, #8b5cf6) !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 18px rgba(255, 46, 147, 0.35) !important;
+        border-top-right-radius: 4px !important;
+        border: none !important;
+    }
+    .bot-bubble {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border: 1px solid rgba(168, 85, 247, 0.3) !important;
+        color: #e2e8f0 !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+        border-top-left-radius: 4px !important;
+    }
+    .avatar-box {
+        width: 42px !important;
+        height: 42px !important;
+        min-width: 42px !important;
+        min-height: 42px !important;
+        border-radius: 50% !important;
+        flex-shrink: 0 !important;
+        background: linear-gradient(135deg, #ff2e93, #8b5cf6);
+        color: #fff;
+    }
+    .user-avatar-box {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatWindow = document.getElementById('chat-window');
+        const typingIndicator = document.getElementById('typing-indicator');
+        const clearChatBtn = document.getElementById('clear-chat-btn');
+
+        function getTimeString() {
+            const now = new Date();
+            return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function appendUserMessage(text) {
+            const row = document.createElement('div');
+            row.className = 'chat-message-row user-row';
+            row.innerHTML = `
+                <div class="chat-bubble user-bubble">
+                    <div class="fw-bold text-white-50 mb-1 small text-end d-flex justify-content-between align-items-center gap-3">
+                        <span class="font-monospace text-white-50" style="font-size: 0.75rem;">${getTimeString()}</span>
+                        <span>You</span>
+                    </div>
+                    <div class="message-text text-white">${escapeHtml(text)}</div>
+                </div>
+                <div class="avatar-box user-avatar-box d-flex align-items-center justify-content-center">
+                    <i class="bi bi-person-fill fs-5"></i>
+                </div>
+            `;
+            chatWindow.appendChild(row);
+            scrollToBottom();
+        }
+
+        function appendBotMessage(text) {
+            const row = document.createElement('div');
+            row.className = 'chat-message-row bot-row';
+            row.innerHTML = `
+                <div class="avatar-box d-flex align-items-center justify-content-center">
+                    <i class="bi bi-robot fs-5"></i>
+                </div>
+                <div class="chat-bubble bot-bubble">
+                    <div class="fw-bold text-primary mb-1 small d-flex justify-content-between align-items-center gap-3">
+                        <span>FanBot AI</span>
+                        <span class="text-muted fw-normal font-monospace" style="font-size: 0.75rem;">${getTimeString()}</span>
+                    </div>
+                    <div class="message-text">${formatBotResponse(text)}</div>
+                </div>
+            `;
+            chatWindow.appendChild(row);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        function formatBotResponse(text) {
+            let formatted = escapeHtml(text);
+            formatted = formatted.replace(/\n/g, '<br/>');
+            return formatted;
+        }
+
+        async function submitQuestion(messageText) {
+            if (!messageText || !messageText.trim()) return;
+
+            const cleanMsg = messageText.trim();
+            appendUserMessage(cleanMsg);
+            chatInput.value = '';
+            typingIndicator.classList.remove('d-none');
+            scrollToBottom();
+
+            const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+            const token = tokenInput ? tokenInput.value : '';
+
+            try {
+                const formData = new FormData();
+                formData.append('message', cleanMsg);
+                if (token) {
+                    formData.append('__RequestVerificationToken', token);
+                }
+
+                const response = await fetch('/chatbot/ask', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                typingIndicator.classList.add('d-none');
+
+                if (!response.ok) {
+                    appendBotMessage('Sorry, I ran into an error processing your query. Please try again.');
+                    return;
+                }
+
+                const data = await response.json();
+                appendBotMessage(data.response || 'No response recorded.');
+            } catch (err) {
+                typingIndicator.classList.add('d-none');
+                appendBotMessage('Could not reach FanBot right now. Please check your connection.');
+            }
+        }
+
+        chatForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            submitQuestion(chatInput.value);
+        });
+
+        // Prompt pills handler
+        document.querySelectorAll('.prompt-pill').forEach(pill => {
+            pill.addEventListener('click', function () {
+                const promptText = this.getAttribute('data-prompt');
+                if (promptText) {
+                    submitQuestion(promptText);
+                }
+            });
+        });
+
+        // Clear chat handler
+        clearChatBtn.addEventListener('click', function () {
+            chatWindow.innerHTML = `
+                <div class="chat-message-row bot-row">
+                    <div class="avatar-box d-flex align-items-center justify-content-center">
+                        <i class="bi bi-robot fs-5"></i>
+                    </div>
+                    <div class="chat-bubble bot-bubble">
+                        <div class="fw-bold text-primary mb-1 small d-flex justify-content-between align-items-center gap-3">
+                            <span>FanBot AI</span>
+                            <span class="text-muted fw-normal font-monospace" style="font-size: 0.75rem;">Just now</span>
+                        </div>
+                        <div class="message-text">Chat cleared! Feel free to ask another question.</div>
+                    </div>
+                </div>
+            `;
+        });
+    </script>
+}

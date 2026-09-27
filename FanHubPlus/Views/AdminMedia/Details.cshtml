@@ -1,0 +1,118 @@
+﻿@model MediaItem
+
+@{
+    ViewData["Title"] = "Media Details";
+    Layout = "_AdminLayout";
+    var users = ViewBag.Users as Dictionary<string, string> ?? new Dictionary<string, string>();
+}
+
+<div class="container-fluid px-4 py-4 text-white">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1" style="color: #fff;"><i class="bi bi-play-btn me-2 text-primary"></i>Media Item Details</h2>
+            <p class="text-muted small mb-0">View media playback, details, and user ratings.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.MediaId" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3" style="background-color: #0d6efd; border: none;">
+                <i class="bi bi-pencil"></i> Edit
+            </a>
+            <a asp-action="Index" class="btn btn-outline-light btn-sm d-flex align-items-center gap-1 px-3">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content Card -->
+    <div class="card shadow-lg border-0 rounded overflow-hidden p-4 p-md-5 mb-4" style="background-color: #12101e; border: 1px solid #2d2640 !important;">
+        <div class="row g-4">
+            <!-- Media Player Column (Controlled Size) -->
+            <div class="col-lg-6">
+                <h5 class="text-muted small text-uppercase fw-bold mb-3">Playback</h5>
+                <div class="rounded overflow-hidden border border-secondary p-2 d-flex justify-content-center align-items-center" style="background-color: #1a162b; max-height: 350px;">
+                    <div class="w-100" style="max-width: 480px;">
+                        <partial name="_MediaPlayer" model="Model" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Media Info Column -->
+            <div class="col-lg-6">
+                <h5 class="text-muted small text-uppercase fw-bold mb-3">Information</h5>
+                <dl class="row mb-0 gy-2">
+                    <dt class="col-sm-4 text-muted">Title</dt>
+                    <dd class="col-sm-8 fw-bold text-white">@Model.Title</dd>
+
+                    <dt class="col-sm-4 text-muted">Media Type</dt>
+                    <dd class="col-sm-8 text-white">@Model.MediaType</dd>
+
+                    <dt class="col-sm-4 text-muted">Category</dt>
+                    <dd class="col-sm-8 text-white">@(Model.Category?.Name ?? "None")</dd>
+
+                    <dt class="col-sm-4 text-muted">Tags</dt>
+                    <dd class="col-sm-8">
+                        @if (Model.MediaTags != null && Model.MediaTags.Any())
+                        {
+                            foreach (var mt in Model.MediaTags)
+                            {
+                                <span class="badge px-2 py-1 me-1" style="background-color: #2b1f3d; color: #d8b4fe; font-size: 0.75rem;">@mt.Tag?.Name</span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="text-muted small">No tags</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-4 text-muted">Source</dt>
+                    <dd class="col-sm-8">
+                        @if (MediaPlayback.IsLocalUpload(Model.FileUrl))
+                        {
+                            <span class="badge bg-success text-white" style="font-size: 0.75rem;">Uploaded</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary text-white" style="font-size: 0.75rem;">External</span>
+                        }
+                        <code class="ms-1 text-break text-muted small">@Model.FileUrl</code>
+                    </dd>
+
+                    <dt class="col-sm-4 text-muted">Uploaded At</dt>
+                    <dd class="col-sm-8 text-white small">@Model.UploadedAt.ToString("yyyy-MM-dd HH:mm")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ratings Section -->
+    <div class="card shadow-lg border-0 rounded overflow-hidden p-4" style="background-color: #12101e; border: 1px solid #2d2640 !important;">
+        <h4 class="fw-bold text-white mb-3"><i class="bi bi-star-fill text-warning me-2"></i>Ratings</h4>
+        @if (Model.MediaRatings != null && Model.MediaRatings.Any())
+        {
+            <p class="text-muted mb-3">Average <strong>@Model.MediaRatings.Average(r => r.Rating).ToString("0.0") / 5</strong> from @Model.MediaRatings.Count rating(s)</p>
+            <ul class="list-group col-md-6" style="background-color: #1a162b;">
+                @foreach (var rating in Model.MediaRatings)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center text-white border-secondary" style="background-color: #1a162b;">
+                        <span>@(users.TryGetValue(rating.UserId, out var name) ? name : rating.UserId)</span>
+                        <span class="badge bg-primary rounded-pill">@rating.Rating / 5</span>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p class="text-muted mb-0">No ratings yet for this media item.</p>
+        }
+    </div>
+</div>
+
+<style>
+    /* MediaPlayer ka size restrict karne ke liye */
+    ._MediaPlayer video, ._MediaPlayer img, ._MediaPlayer iframe {
+        max-height: 280px !important;
+        width: 100% !important;
+        object-fit: contain;
+        border-radius: 6px;
+    }
+</style>

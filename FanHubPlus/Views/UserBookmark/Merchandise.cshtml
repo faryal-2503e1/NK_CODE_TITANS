@@ -1,0 +1,54 @@
+﻿@model List<Bookmark>
+@{
+    ViewData["Title"] = "Bookmarked Merchandise";
+}
+
+<section class="bookmarks-page">
+    <h1>Bookmarked Merchandise</h1>
+
+    <div class="bookmark-tabs">
+        <a asp-action="Index">All</a>
+        <a asp-action="Content">Content</a>
+        <a asp-action="Characters">Characters</a>
+        <a asp-action="Media">Media</a>
+        <a asp-action="Merchandise" class="active">Merchandise</a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="card-grid">
+            @foreach (var bookmark in Model)
+            {
+                <div class="card">
+                    @if (!string.IsNullOrEmpty(bookmark.MerchandiseItem.ImageUrl))
+                    {
+                        <img src="@bookmark.MerchandiseItem.ImageUrl" alt="@bookmark.MerchandiseItem.Name" class="card-img" />
+                    }
+                    <div class="card-body">
+                        @if (!string.IsNullOrEmpty(bookmark.MerchandiseItem.Tag))
+                        {
+                            <span class="badge">@bookmark.MerchandiseItem.Tag</span>
+                        }
+                        <h3>
+                            <a asp-controller="UserMerchandise" asp-action="Details" asp-route-id="@bookmark.MerchandiseItem.ItemId">
+                                @bookmark.MerchandiseItem.Name
+                            </a>
+                        </h3>
+                        @if (!string.IsNullOrEmpty(bookmark.NoteText))
+                        {
+                            <p class="text-muted">@bookmark.NoteText</p>
+                        }
+                        <form asp-action="Remove" asp-route-id="@bookmark.BookmarkId" method="post" class="inline-form">
+                            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No merchandise bookmarked yet.</p>
+    }
+</section>

@@ -1,0 +1,30 @@
+﻿@model ChatbotFaq
+
+@{
+    ViewData["Title"] = "Edit FAQ";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid mt-4">
+    <h2>Edit FAQ</h2>
+    <hr />
+    <div class="card shadow-sm col-md-6">
+        <div class="card-body">
+            <form asp-action="EditFaq" method="post">
+                <input type="hidden" asp-for="FaqId" />
+                <div class="mb-3">
+                    <label asp-for="Question" class="form-label"></label>
+                    <input asp-for="Question" class="form-control" />
+                    <span asp-validation-for="Question" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Answer" class="form-label"></label>
+                    <textarea asp-for="Answer" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Answer" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-success">Save Changes</button>
+                <a asp-action="FAQs" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

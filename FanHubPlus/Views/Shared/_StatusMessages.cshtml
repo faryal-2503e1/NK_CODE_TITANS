@@ -1,0 +1,19 @@
+@{
+    var messageTypes = new Dictionary<string, string>
+    {
+        ["SuccessMessage"] = "success",
+        ["InfoMessage"] = "info",
+        ["ErrorMessage"] = "danger"
+    };
+}
+
+@foreach (var messageType in messageTypes)
+{
+    var message = TempData[messageType.Key] as string;
+    if (string.IsNullOrWhiteSpace(message)) continue;
+
+    <div class="@($"alert alert-{messageType.Value} alert-dismissible fade show")" role="alert">
+        @message
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}

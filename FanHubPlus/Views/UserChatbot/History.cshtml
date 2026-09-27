@@ -1,0 +1,32 @@
+﻿@model List<ChatbotQuery>
+@{
+    ViewData["Title"] = "Chat History";
+    Layout = "_DashboardLayout";
+}
+
+<section class="chat-history-page">
+    <div class="page-header">
+        <h1>Chat History</h1>
+        <a asp-action="Index" class="btn btn-primary btn-sm">Ask FanBot</a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="activity-list">
+            @foreach (var query in Model)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <p><strong>You:</strong> @query.Message</p>
+                        <p><strong>FanBot:</strong> @query.Response</p>
+                        <span class="text-muted">@query.CreatedAt.ToString("dd MMM yyyy, hh:mm tt")</span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>You haven't asked FanBot anything yet.</p>
+    }
+</section>

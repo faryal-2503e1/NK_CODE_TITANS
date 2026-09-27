@@ -1,0 +1,33 @@
+@page
+@model ResendEmailConfirmationModel
+@{
+    ViewData["Title"] = "Resend Email Confirmation";
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-5 col-lg-5">
+        <form method="post" class="p-4 p-md-5 rounded shadow-lg" style="background-color: #12101e; border: 1px solid #2d2640; color: #fff;">
+
+            <div class="text-center mb-4">
+                <h2 class="fw-bold mb-1" style="color: #fff;">Resend Confirmation</h2>
+                <p class="text-muted small">Enter your email to receive a new confirmation link.</p>
+            </div>
+
+            <div asp-validation-summary="All" class="text-danger mb-3 text-center small" role="alert"></div>
+
+            <!-- Email Field -->
+            <div class="form-floating mb-4">
+                <input asp-for="Input.Email" class="form-control bg-dark text-white border-secondary shadow-none" autocomplete="username" aria-required="true" placeholder="name@example.com" style="background-color: #1a162b !important; color: #fff !important; border-color: #3b3254 !important;" />
+                <label asp-for="Input.Email" class="text-muted">Email Address</label>
+                <span asp-validation-for="Input.Email" class="text-danger small"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="w-100 btn btn-lg btn-primary fw-semibold py-3" style="background-color: #7b2cbf; border: none; transition: background 0.2s;">Resend &rarr;</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

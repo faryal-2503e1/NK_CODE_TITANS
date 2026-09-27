@@ -1,0 +1,276 @@
+@model IEnumerable<Event>
+
+@{
+    ViewData["Title"] = "Events & Calendar";
+}
+
+<div class="container-fluid site-container py-3 ec-page">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-calendar3 me-2 text-primary"></i>Events &amp; Calendar</h2>
+            <p class="text-muted mb-0">Meet, watch, and celebrate with your fandom community.</p>
+        </div>
+        <div class="btn-group" role="group">
+            <a asp-controller="UserEvent" asp-action="Index" class="btn btn-outline-primary"><i class="bi bi-grid-fill me-1"></i>Browse All Events</a>
+            <a asp-action="Monthly" class="btn btn-outline-primary"><i class="bi bi-calendar-month me-1"></i>Monthly List</a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left: upcoming events list -->
+        <div class="col-lg-7">
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info text-center p-5 rounded-3">
+                    <i class="bi bi-calendar-x display-4 d-block mb-3 text-muted"></i>
+                    <h4>No Upcoming Events</h4>
+                    <p class="mb-0">Check back soon for new fandom conventions and meetups.</p>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex flex-column gap-3" id="ecEventList">
+                    @foreach (var evt in Model)
+                    {
+                        <div class="card border-0 shadow-sm ec-event-card" data-event-id="@evt.EventId" data-date="@evt.EventDate.ToString("yyyy-MM-dd")">
+                            <div class="card-body d-flex align-items-center justify-content-between gap-3 p-3">
+                                <div class="ec-date-badge flex-shrink-0 text-center">
+                                    <div class="ec-date-month">@evt.EventDate.ToString("MMM").ToUpper()</div>
+                                    <div class="ec-date-day">@evt.EventDate.ToString("dd")</div>
+                                </div>
+                                <div class="flex-grow-1 min-w-0">
+                                    <h5 class="fw-bold mb-1 text-wrap fs-6">@evt.Title</h5>
+                                    <div class="text-muted small">
+                                        <i class="bi bi-geo-alt me-1"></i>@(string.IsNullOrEmpty(evt.City) ? "Online / TBD" : evt.City)
+                                        <span class="mx-1">&middot;</span>
+                                        <i class="bi bi-calendar-event me-1"></i>@evt.EventDate.ToString("MMM dd, yyyy")
+                                    </div>
+                                </div>
+                                <a asp-action="EventDetails" asp-route-id="@evt.EventId" class="btn btn-primary btn-sm rounded-pill px-3 flex-shrink-0">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Right: mini calendar + event location map -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <button type="button" id="ecCalPrev" class="btn btn-sm btn-outline-secondary" aria-label="Previous month">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <strong id="ecCalMonthLabel"></strong>
+                        <button type="button" id="ecCalNext" class="btn btn-sm btn-outline-secondary" aria-label="Next month">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="ec-cal-weekdays">
+                        <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+                    </div>
+                    <div id="ecCalGrid" class="ec-cal-grid"></div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-2"><i class="bi bi-pin-map me-1 text-primary"></i>Event Location</h6>
+                    <div id="ecMapEmpty" class="text-muted small py-4 text-center">
+                        Select an event to see its location here.
+                    </div>
+                    <div class="ratio ratio-4x3 d-none" id="ecMapWrap">
+                        <iframe id="ecMapFrame" src="" style="border:0; border-radius: .5rem;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .ec-date-badge {
+        background: var(--bs-primary);
+        color: #fff;
+        border-radius: .6rem;
+        width: 60px;
+        padding: .4rem 0;
+        line-height: 1.1;
+    }
+    .ec-date-month { font-size: .68rem; font-weight: 700; letter-spacing: .04em; opacity: .85; }
+    .ec-date-day { font-size: 1.35rem; font-weight: 800; }
+    .ec-event-card { cursor: pointer; transition: box-shadow .15s, transform .15s; }
+    .ec-event-card:hover, .ec-event-card.ec-active { box-shadow: 0 .5rem 1rem rgba(0,0,0,.12) !important; }
+    .ec-event-card.ec-active { outline: 2px solid var(--bs-primary); }
+
+    .ec-cal-weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        text-align: center;
+        font-size: .72rem;
+        font-weight: 700;
+        color: var(--bs-secondary-color);
+        margin-bottom: .35rem;
+    }
+    .ec-cal-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+    }
+    .ec-cal-cell {
+        aspect-ratio: 1 / 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: .4rem;
+        font-size: .8rem;
+        position: relative;
+        color: var(--bs-body-color);
+    }
+    .ec-cal-cell.ec-muted { color: var(--bs-secondary-color); opacity: .4; }
+    .ec-cal-cell.ec-today { border: 1px solid var(--bs-primary); }
+    .ec-cal-cell.ec-has-event { cursor: pointer; background: var(--bs-tertiary-bg); font-weight: 600; }
+    .ec-cal-cell.ec-has-event:hover { background: var(--bs-secondary-bg); }
+    .ec-cal-cell.ec-selected { background: var(--bs-primary) !important; color: #fff !important; }
+    .ec-cal-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--bs-primary); margin-top: 1px; }
+    .ec-cal-cell.ec-selected .ec-cal-dot { background: #fff; }
+</style>
+
+@section Scripts {
+    <script>
+        (function () {
+            const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+            let events = [];
+            let viewYear, viewMonth; // 0-based month for JS Date
+
+            const gridEl = document.getElementById('ecCalGrid');
+            const labelEl = document.getElementById('ecCalMonthLabel');
+            const mapFrame = document.getElementById('ecMapFrame');
+            const mapWrap = document.getElementById('ecMapWrap');
+            const mapEmpty = document.getElementById('ecMapEmpty');
+
+            function showEventOnMap(evt) {
+                if (evt && evt.locationCoordinates) {
+                    mapFrame.src = "https://maps.google.com/maps?q=" + encodeURIComponent(evt.locationCoordinates) + "&z=14&output=embed";
+                    mapWrap.classList.remove('d-none');
+                    mapEmpty.classList.add('d-none');
+                } else {
+                    mapWrap.classList.add('d-none');
+                    mapEmpty.classList.remove('d-none');
+                    mapEmpty.textContent = evt ? (evt.title + " doesn't have a location set yet.") : "Select an event to see its location here.";
+                }
+            }
+
+            function highlightListCard(eventId) {
+                document.querySelectorAll('.ec-event-card').forEach(c => c.classList.remove('ec-active'));
+                if (eventId) {
+                    const card = document.querySelector('.ec-event-card[data-event-id="' + eventId + '"]');
+                    if (card) {
+                        card.classList.add('ec-active');
+                        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }
+            }
+
+            function renderCalendar() {
+                labelEl.textContent = monthNames[viewMonth] + " " + viewYear;
+                gridEl.innerHTML = "";
+
+                const firstDay = new Date(viewYear, viewMonth, 1);
+                const startOffset = firstDay.getDay(); // 0=Sun
+                const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+                const today = new Date();
+                today.setHours(0,0,0,0);
+
+                const eventsByDay = {};
+                events.forEach(e => {
+                    const d = new Date(e.start);
+                    if (d.getFullYear() === viewYear && d.getMonth() === viewMonth) {
+                        const key = d.getDate();
+                        (eventsByDay[key] = eventsByDay[key] || []).push(e);
+                    }
+                });
+
+                for (let i = 0; i < startOffset; i++) {
+                    gridEl.appendChild(document.createElement('div'));
+                }
+
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'ec-cal-cell';
+                    const cellDate = new Date(viewYear, viewMonth, day);
+                    cellDate.setHours(0,0,0,0);
+
+                    if (cellDate.getTime() === today.getTime()) cell.classList.add('ec-today');
+
+                    const dayNum = document.createElement('span');
+                    dayNum.textContent = day;
+                    cell.appendChild(dayNum);
+
+                    const dayEvents = eventsByDay[day];
+                    if (dayEvents && dayEvents.length) {
+                        cell.classList.add('ec-has-event');
+                        const dot = document.createElement('span');
+                        dot.className = 'ec-cal-dot';
+                        cell.appendChild(dot);
+                        cell.title = dayEvents.map(e => e.title).join(', ');
+                        cell.addEventListener('click', function () {
+                            document.querySelectorAll('.ec-cal-cell.ec-selected').forEach(c => c.classList.remove('ec-selected'));
+                            cell.classList.add('ec-selected');
+                            showEventOnMap(dayEvents[0]);
+                            highlightListCard(dayEvents[0].id);
+                        });
+                    }
+
+                    gridEl.appendChild(cell);
+                }
+            }
+
+            document.getElementById('ecCalPrev').addEventListener('click', function () {
+                viewMonth--;
+                if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+                renderCalendar();
+            });
+            document.getElementById('ecCalNext').addEventListener('click', function () {
+                viewMonth++;
+                if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+                renderCalendar();
+            });
+
+            document.querySelectorAll('.ec-event-card').forEach(card => {
+                card.addEventListener('click', function (e) {
+                    if (e.target.closest('a')) return;
+                    const id = parseInt(card.getAttribute('data-event-id'), 10);
+                    const evt = events.find(ev => ev.id === id);
+                    highlightListCard(id);
+                    if (evt) showEventOnMap(evt);
+                });
+            });
+
+            fetch('@Url.Action("GetEventsJson", "UserCalendar")')
+                .then(r => r.json())
+                .then(data => {
+                    events = data;
+                    const now = new Date();
+                    viewYear = now.getFullYear();
+                    viewMonth = now.getMonth();
+                    renderCalendar();
+
+                    if (events.length) {
+                        showEventOnMap(events[0]);
+                        highlightListCard(events[0].id);
+                    }
+                })
+                .catch(() => {
+                    const now = new Date();
+                    viewYear = now.getFullYear();
+                    viewMonth = now.getMonth();
+                    renderCalendar();
+                });
+        })();
+    </script>
+}

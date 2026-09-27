@@ -1,0 +1,123 @@
+@model IEnumerable<Poll>
+
+@{
+    ViewData["Title"] = "Live Polls | FanHub+";
+    var myVotes = (Dictionary<int, int>)ViewBag.MyVotes;
+}
+
+<main class="explore-page py-4">
+    <div class="container-fluid site-container">
+        <!-- BREADCRUMB -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb fanhub-breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Live Polls</li>
+            </ol>
+        </nav>
+
+        <!-- HERO HEADER -->
+        <div class="explore-hero mb-4 p-4 rounded-4 position-relative overflow-hidden shadow-lg border border-secondary border-opacity-20" style="background: linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(255,77,141,0.1) 100%); backdrop-filter: blur(16px);">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div>
+                    <span class="section-label text-uppercase text-warning fw-bold tracking-wider" style="font-size: 0.8rem;">REAL-TIME COMMUNITY VOTING</span>
+                    <h1 class="display-6 fw-extrabold mb-2">Live Fandom <span>Polls</span></h1>
+                    <p class="text-muted mb-0">Cast your vote and watch live results update automatically across the community!</p>
+                </div>
+            </div>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5 rounded-4 shadow-sm border border-secondary border-opacity-20 dash-card-panel">
+                <i class="bi bi-bar-chart text-muted display-4 d-block mb-3"></i>
+                <h4 class="fw-bold">No Active Polls Right Now</h4>
+                <p class="text-muted">Check back soon for new community voting topics.</p>
+            </div>
+        }
+
+        <div class="row row-cols-1 row-cols-lg-2 g-4">
+            @foreach (var poll in Model)
+            {
+                int totalVotes = poll.Options.Sum(o => o.Votes.Count);
+                int? myVotedOptionId = myVotes.ContainsKey(poll.PollId) ? myVotes[poll.PollId] : (int?)null;
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0 rounded-4 p-4 poll-card dash-card-hero" data-poll-id="@poll.PollId">
+                        <div class="card-body p-0 d-flex flex-column justify-content-between">
+                            <div>
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h4 class="card-title h5 fw-bold mb-0">@poll.Title</h4>
+                                    <span class="badge bg-primary bg-opacity-20 text-primary rounded-pill px-3 py-2 fw-semibold">
+                                        Total votes: <span class="total-votes">@totalVotes</span>
+                                    </span>
+                                </div>
+
+                                <div class="d-flex flex-column gap-3 mt-4">
+                                    @foreach (var option in poll.Options)
+                                    {
+                                        int votePercent = totalVotes > 0 ? (int)Math.Round((option.Votes.Count * 100.0) / totalVotes) : 0;
+
+                                        <div class="p-3 rounded-3 border border-secondary border-opacity-20 dash-card-item">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <form asp-action="Vote" method="post" class="d-inline">
+                                                    <input type="hidden" name="pollId" value="@poll.PollId" />
+                                                    <input type="hidden" name="optionId" value="@option.OptionId" />
+                                                    <button type="submit"
+                                                            class="btn btn-sm rounded-pill px-3 @(myVotedOptionId == option.OptionId ? "btn-success" : "btn-outline-primary")">
+                                                        @if (myVotedOptionId == option.OptionId)
+                                                        {
+                                                            <i class="bi bi-check-circle-fill me-1"></i>
+                                                        }
+                                                        @option.OptionText
+                                                    </button>
+                                                </form>
+                                                <span class="fw-bold option-percent" data-option-id="@option.OptionId">@votePercent%</span>
+                                            </div>
+                                            <div class="progress rounded-pill bg-secondary bg-opacity-20" style="height: 10px;">
+                                                <div class="progress-bar option-bar bg-gradient rounded-pill" data-option-id="@option.OptionId" role="progressbar" style="width: @votePercent%; background: linear-gradient(90deg, #8B5CF6, #FF4D8D);"></div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@8.0.0/dist/browser/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/hubs/poll")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.on("ReceiveResults", function (pollId, results) {
+            const card = document.querySelector('.poll-card[data-poll-id="' + pollId + '"]');
+            if (!card) return;
+
+            const totalVotes = results.reduce((sum, r) => sum + r.voteCount, 0);
+            card.querySelector('.total-votes').textContent = totalVotes;
+
+            results.forEach(function (r) {
+                const percent = totalVotes > 0 ? Math.round((r.voteCount * 100) / totalVotes) : 0;
+
+                const bar = card.querySelector('.option-bar[data-option-id="' + r.optionId + '"]');
+                if (bar) bar.style.width = percent + '%';
+
+                const label = card.querySelector('.option-percent[data-option-id="' + r.optionId + '"]');
+                if (label) label.textContent = percent + '%';
+            });
+        });
+
+        connection.start().then(function () {
+            document.querySelectorAll('.poll-card').forEach(function (card) {
+                connection.invoke("JoinPollGroup", parseInt(card.dataset.pollId));
+            });
+        });
+    </script>
+}

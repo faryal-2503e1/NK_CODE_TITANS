@@ -1,0 +1,79 @@
+@model MerchandiseItem
+
+@{
+    ViewData["Title"] = Model.Name + " | Shop & Collectibles";
+    var isBookmarked = ViewBag.IsBookmarked as bool? ?? false;
+    var imgUrl = !string.IsNullOrEmpty(Model.ImageUrl) ? Model.ImageUrl : "/images/explore/solo-leveling.png";
+}
+
+<main class="merchandise-page py-4">
+    <div class="container-fluid site-container">
+        <!-- BREADCRUMB -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb fanhub-breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index">Shop</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
+            </ol>
+        </nav>
+
+        <!-- BACK BUTTON -->
+        <div class="mb-4">
+            <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 btn-sm">
+                <i class="bi bi-arrow-left me-1"></i> Back to Shop Catalog
+            </a>
+        </div>
+
+        <!-- PRODUCT DETAILS CARD -->
+        <div class="cyber-nebula-card p-4 p-md-5 rounded-4 shadow-lg mb-5 reveal">
+            <div class="row g-4 align-items-center">
+                <!-- LEFT IMAGE -->
+                <div class="col-lg-5 text-center">
+                    <div class="position-relative overflow-hidden rounded-4 border border-secondary border-opacity-25 shadow-lg bg-black">
+                        <img src="@imgUrl" class="img-fluid w-100 object-fit-cover" alt="@Model.Name" style="max-height: 450px; min-height: 300px;" />
+                        @if (!string.IsNullOrEmpty(Model.Tag))
+                        {
+                            <span class="merch-badge limited position-absolute top-0 start-0 m-3 fs-6 px-3 py-2">@Model.Tag</span>
+                        }
+                    </div>
+                </div>
+
+                <!-- RIGHT CONTENT -->
+                <div class="col-lg-7">
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                        <span class="badge bg-primary bg-opacity-20 text-primary rounded-pill px-3 py-2 fw-semibold">
+                            <i class="bi bi-tag-fill me-1"></i> @(Model.Category?.Name ?? "Store Collectible")
+                        </span>
+                        @if (Model.IsUpcoming)
+                        {
+                            <span class="badge bg-warning text-dark rounded-pill px-3 py-2 fw-bold">
+                                <i class="bi bi-hourglass-split me-1"></i> Upcoming Release
+                            </span>
+                        }
+                    </div>
+
+                    <h1 class="display-5 text-white fw-extrabold mb-3" style="font-family: 'Manrope', sans-serif;">@Model.Name</h1>
+
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <span class="display-6 fw-bold text-primary">$49.99</span>
+                        <span class="text-success small fw-semibold"><i class="bi bi-check-circle-fill me-1"></i> In Stock & Ready to Ship</span>
+                    </div>
+
+                    <p class="lead text-secondary mb-4">
+                        High-quality official display collectible inspired by @(Model.Category?.Name ?? "fandom") universe. Crafted with premium details and durable materials for passionate collectors.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-3 pt-3 border-top border-secondary border-opacity-20">
+                        <a href="#" class="primary-button px-4 py-3 text-decoration-none">
+                            <i class="bi bi-cart-check-fill me-2"></i> Buy Collectible Now
+                        </a>
+
+                        <a href="/share?title=@Uri.EscapeDataString(Model.Name)&url=/merchandise/@Model.ItemId" class="outline-button px-4 py-3 text-decoration-none">
+                            <i class="bi bi-share me-2"></i> Share Item
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

@@ -1,0 +1,25 @@
+@model Quiz
+
+@{
+    ViewData["Title"] = "Delete Quiz";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid mt-4">
+    <h2 class="text-danger">Delete Quiz</h2>
+    <hr />
+    <p>Kya aap sure hain ke yeh quiz delete karna hai? Iske sath @Model.Questions.Count question(s) aur @Model.Attempts.Count attempt(s) bhi delete ho jayenge.</p>
+
+    <dl class="row">
+        <dt class="col-sm-2">Title</dt>
+        <dd class="col-sm-10">@Model.Title</dd>
+        <dt class="col-sm-2">Category</dt>
+        <dd class="col-sm-10">@Model.Category.Name</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="QuizId" />
+        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

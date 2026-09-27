@@ -1,0 +1,36 @@
+﻿@model List<FanSubmission>
+@{
+    ViewData["Title"] = "Fan Submissions";
+    Layout = "_DashboardLayout";
+}
+
+<section class="submissions-page">
+    <div class="page-header">
+        <h1>Fan Submissions</h1>
+        <a asp-action="Create" class="btn btn-primary">+ Submit Your Work</a>
+    </div>
+    <p class="text-muted">A showcase of fan art and stories shared by the community.</p>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="card-grid">
+            @foreach (var submission in Model)
+            {
+                <div class="card">
+                    @if (!string.IsNullOrEmpty(submission.MediaUrl))
+                    {
+                        <img src="@submission.MediaUrl" alt="@submission.Title" class="card-img" />
+                    }
+                    <div class="card-body">
+                        <h3><a asp-action="Details" asp-route-id="@submission.SubmissionId">@submission.Title</a></h3>
+                        <p class="text-muted">@submission.SubmittedAt.ToString("dd MMM yyyy")</p>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No approved submissions yet, be the first to share your work!</p>
+    }
+</section>

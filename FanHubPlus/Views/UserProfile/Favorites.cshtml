@@ -1,0 +1,45 @@
+﻿@model List<Category>
+@{
+    ViewData["Title"] = "Favorite Categories";
+    var favoritedIds = ViewBag.FavoritedCategoryIds as List<int> ?? new List<int>();
+}
+
+<section class="favorites-page">
+    <h1>Favorite Categories</h1>
+    <p class="text-muted">Pick the categories you care about most, we'll use these to personalize your feed.</p>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="card-grid">
+            @foreach (var category in Model)
+            {
+                var isFavorited = favoritedIds.Contains(category.CategoryId);
+                <div class="card @(isFavorited ? "card-active" : "")">
+                    <div class="card-body">
+                        <h3>@category.Name</h3>
+                        @if (!string.IsNullOrEmpty(category.Description))
+                        {
+                            <p class="text-muted">@category.Description</p>
+                        }
+
+                        <form asp-action="ToggleFavorite" method="post">
+                            <input type="hidden" name="categoryId" value="@category.CategoryId" />
+                            @if (isFavorited)
+                            {
+                                <button type="submit" class="btn btn-primary btn-sm">★ Favorited</button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">☆ Add to Favorites</button>
+                            }
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No categories available yet.</p>
+    }
+</section>

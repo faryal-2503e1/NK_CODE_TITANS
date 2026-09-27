@@ -1,0 +1,69 @@
+@model IEnumerable<Category>
+
+@{
+    ViewData["Title"] = "Platform Overview";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Platform Overview</h2>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-uppercase text-muted fw-bold">Media Items</h6>
+                    <h2 class="fw-bold">@ViewBag.TotalMediaItems</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-uppercase text-muted fw-bold">Total Events</h6>
+                    <h2 class="fw-bold">@ViewBag.TotalEvents</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-uppercase text-muted fw-bold">Upcoming Events</h6>
+                    <h2 class="fw-bold">@ViewBag.UpcomingEvents</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-striped table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Category</th>
+                <th>Content Items</th>
+                <th>Character Profiles</th>
+                <th>Merchandise</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in Model)
+            {
+                <tr>
+                    <td><strong>@category.Name</strong></td>
+                    <td>@(category.Contents?.Count ?? 0)</td>
+                    <td>@(category.CharacterProfiles?.Count ?? 0)</td>
+                    <td>@(category.MerchandiseItems?.Count ?? 0)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (!Model.Any())
+    {
+        <p class="text-muted">No categories have been created yet.</p>
+    }
+</div>
